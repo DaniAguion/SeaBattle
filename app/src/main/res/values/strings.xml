@@ -6,4 +6,9 @@
     <string name="login_page_desc">Introduce login information to access your user profile.</string>
     <string name="email">Email</string>
     <string name="password">Password\n</string>
+    <string name="sign_in">Sign in\n</string>
+    <string name="login_error">Login error</string>
+    <string name="empty_fields_error">Email or password can\'t be empty</string>
+    <string name="invalid_email_error">Invalid email format\n</string>
+    <string name="invalid_password_error">Password must has at least 6 characters.</string>
 </resources>

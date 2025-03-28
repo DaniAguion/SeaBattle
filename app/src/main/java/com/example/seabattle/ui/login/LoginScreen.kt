@@ -57,22 +57,26 @@ fun LoginScreen(
             value = loginUiState.email,
             onValueChange = { loginViewModel.onEmailUpdate(it) },
             label = { Text(stringResource(R.string.email)) },
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+            maxLines = 1,
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+
+        )
         )
         OutlinedTextField(
             value = loginUiState.password,
             onValueChange = { loginViewModel.onPasswordUpdate(it) },
             label = { Text(stringResource(R.string.password)) },
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+            maxLines = 1,
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
         )
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
         )
         Button(
-            onClick = { },
+            onClick = { loginViewModel.onSignInButtonClicked() },
             Modifier.widthIn(min = 250.dp)
-            ) {
-            Text(stringResource(R.string.login))
+        ) {
+            Text(stringResource(R.string.sign_in))
         }
 
     }
