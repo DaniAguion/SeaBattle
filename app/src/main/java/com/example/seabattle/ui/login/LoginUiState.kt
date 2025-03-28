@@ -1,4 +1,4 @@
-package com.example.seabattle.model
+package com.example.seabattle.ui.login
 
 data class LoginUiState(
     val email: String = "",

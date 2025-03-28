@@ -2,4 +2,8 @@
     <string name="app_name">Sea Battle</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="login_page_title">Login Page</string>
+    <string name="login_page_desc">Introduce login information to access your user profile.</string>
+    <string name="email">Email</string>
+    <string name="password">Password\n</string>
 </resources>

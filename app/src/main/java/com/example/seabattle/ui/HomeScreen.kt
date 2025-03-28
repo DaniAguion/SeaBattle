@@ -23,7 +23,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .padding(dimensionResource(R.dimen.padding_medium))
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -50,7 +52,5 @@ fun StartOrderPreview(){
         onLoginButtonClicked = {},
         onRegisterButtonClicked = {},
         modifier = Modifier
-            .padding(dimensionResource(R.dimen.padding_medium))
-            .fillMaxSize()
     )
 }
