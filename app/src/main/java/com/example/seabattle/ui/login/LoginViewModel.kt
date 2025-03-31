@@ -11,11 +11,13 @@ class LoginViewModel : ViewModel() {
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     fun onEmailUpdate(email: String) {
-        _uiState.value = _uiState.value.copy(email = email)
+        val emailError = if (email.isEmpty()) "Please introduce your password" else ""
+        _uiState.value = _uiState.value.copy(email = email, emailError = emailError)
     }
 
     fun onPasswordUpdate(password: String) {
-        _uiState.value = _uiState.value.copy(password = password)
+        val passwordError = if (password.isEmpty()) "Please introduce your password" else ""
+        _uiState.value = _uiState.value.copy(password = password, passwordError = passwordError)
     }
 
     fun onSignInButtonClicked() {
