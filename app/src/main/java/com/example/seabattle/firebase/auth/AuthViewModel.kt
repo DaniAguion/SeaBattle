@@ -2,7 +2,6 @@ package com.example.seabattle.firebase.auth
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.seabattle.R
 import com.google.firebase.auth.FirebaseAuth
 import android.util.Patterns
 
@@ -31,7 +30,7 @@ class AuthViewModel(private val auth: FirebaseAuth) : ViewModel() {
                 if (task.isSuccessful) {
                     _uiState.value = AuthState.Authenticated
                 } else {
-                    _uiState.value = AuthState.Error(task.exception?.message ?: R.string.login_error.toString())
+                    _uiState.value = AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
@@ -45,22 +44,22 @@ class AuthViewModel(private val auth: FirebaseAuth) : ViewModel() {
                 if (task.isSuccessful) {
                     _uiState.value = AuthState.Authenticated
                 } else {
-                    _uiState.value = AuthState.Error(task.exception?.message ?: R.string.register_error.toString())
+                    _uiState.value = AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
 
     private fun checkFormats(email: String, password: String) : Boolean {
         if (email.isEmpty() || password.isEmpty()) {
-            _uiState.value = AuthState.Error(R.string.empty_fields_error.toString())
+            _uiState.value = AuthState.Error("Empty fields")
             return false
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _uiState.value = AuthState.Error(R.string.invalid_email_error.toString())
+            _uiState.value = AuthState.Error("Invalid email format")
             return false
         }
         if (password.length < 6) {
-            _uiState.value = AuthState.Error(R.string.invalid_password_error.toString())
+            _uiState.value = AuthState.Error("Invalid password length")
             return false
         }
         return true

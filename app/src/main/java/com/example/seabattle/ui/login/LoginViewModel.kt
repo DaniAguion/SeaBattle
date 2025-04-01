@@ -1,12 +1,15 @@
 package com.example.seabattle.ui.login
 
 import androidx.lifecycle.ViewModel
-import com.example.seabattle.firebase.auth.AuthViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.seabattle.data.repository.AuthRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class LoginViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
+
+class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
@@ -21,9 +24,13 @@ class LoginViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
     }
 
     fun onSignInButtonClicked() {
-        authViewModel.signIn(
-            email = _uiState.value.email,
-            password = _uiState.value.password
-        )
+        viewModelScope.launch {
+            authRepository.loginUser(
+                email = _uiState.value.email,
+                password = _uiState.value.password
+            ).collect { authState ->
+
+            }
+        }
     }
 }

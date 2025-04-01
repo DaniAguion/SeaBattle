@@ -2,6 +2,7 @@ package com.example.seabattle
 
 import android.app.Application
 import com.example.seabattle.di.appModule
+import com.example.seabattle.di.dataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -10,7 +11,7 @@ class SeaBattleApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@SeaBattleApplication)
-            modules(appModule)
+            modules(appModule, dataModule)
         }
     }
 }
