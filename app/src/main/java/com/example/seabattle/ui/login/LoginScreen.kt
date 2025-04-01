@@ -30,17 +30,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getString
 import com.example.seabattle.R
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlin.coroutines.coroutineContext
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     val loginUiState by loginViewModel.uiState.collectAsState()
     var emailError by remember { mutableStateOf("") }

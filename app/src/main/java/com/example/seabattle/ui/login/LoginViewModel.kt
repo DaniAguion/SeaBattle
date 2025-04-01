@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
@@ -21,7 +21,6 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onSignInButtonClicked() {
-        val authViewModel = AuthViewModel()
         authViewModel.signIn(
             email = _uiState.value.email,
             password = _uiState.value.password

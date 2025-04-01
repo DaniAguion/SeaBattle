@@ -1,4 +1,4 @@
-package com.example.seabattle
+package com.example.seabattle.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

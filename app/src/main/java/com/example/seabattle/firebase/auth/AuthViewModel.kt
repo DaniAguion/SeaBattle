@@ -6,8 +6,7 @@ import com.example.seabattle.R
 import com.google.firebase.auth.FirebaseAuth
 import android.util.Patterns
 
-class AuthViewModel() : ViewModel() {
-    private val auth : FirebaseAuth = FirebaseAuth.getInstance()
+class AuthViewModel(private val auth: FirebaseAuth) : ViewModel() {
     private val _uiState = MutableLiveData<AuthState>()
 
     init{
