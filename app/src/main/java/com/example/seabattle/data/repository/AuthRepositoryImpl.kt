@@ -1,68 +1,22 @@
 package com.example.seabattle.data.repository
 
 import android.util.Patterns
-import androidx.lifecycle.MutableLiveData
 import com.example.seabattle.domain.repository.AuthRepository
-import com.example.seabattle.firebase.auth.AuthState
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.channels.awaitClose
-
 
 class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
-    private val _uiState = MutableLiveData<AuthState>()
 
-    override fun loginUser(email: String, password: String): Flow<AuthState> = callbackFlow {
-        if (!checkFormats(email, password)) {
-            trySend(AuthState.Error("Invalid email or password format"))
-            close()
-            return@callbackFlow
-        }
-
+    override fun loginUser(email: String, password: String) {
+        if (!checkFormats(email, password)) return
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    trySend(AuthState.Authenticated)
-                } else {
-                    trySend(AuthState.Error(task.exception?.message ?: "Login failed"))
-                }
-                close()
-            }
-        awaitClose { }
     }
 
-    override fun registerUser(email: String, password: String): Flow<AuthState> = callbackFlow {
-        if (!checkFormats(email, password)) {
-            trySend(AuthState.Error("Invalid email or password format"))
-            close()
-            return@callbackFlow
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    trySend(AuthState.Authenticated)
-                } else {
-                    trySend(AuthState.Error(task.exception?.message ?: "Registration failed"))
-                }
-                close()
-            }
-        awaitClose { }
-    }
-
-    override fun signOut(): Flow<AuthState> = flow {
-        auth.signOut()
-        emit(AuthState.Unauthenticated)
-    }
-
-    override fun checkAuthStatus(): Flow<AuthState> = flow {
+    override fun checkAuthStatus() {
         val user = auth.currentUser
         if (user != null) {
-            emit(AuthState.Authenticated)
+            // Usuario autenticado
         } else {
-            emit(AuthState.Unauthenticated)
+            // Usuario no autenticado
         }
     }
 
@@ -79,4 +33,3 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
         return true
     }
 }
-

@@ -1,7 +1,8 @@
 package com.example.seabattle.model
 
-import com.example.seabattle.firebase.auth.AuthState
+import com.example.seabattle.domain.model.User
 
 data class SesionState(
-    val userAuthState: AuthState = AuthState.Unauthenticated,
+    val user: User,
+    val authState : Boolean
 )

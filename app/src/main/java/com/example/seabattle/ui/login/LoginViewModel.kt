@@ -28,9 +28,7 @@ class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel
             authRepository.loginUser(
                 email = _uiState.value.email,
                 password = _uiState.value.password
-            ).collect { authState ->
-
-            }
+            )
         }
     }
 }
