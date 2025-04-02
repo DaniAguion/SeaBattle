@@ -1,5 +1,6 @@
 package com.example.seabattle.ui.login
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -62,20 +63,18 @@ fun LoginScreen(
         )
         OutlinedTextField(
             value = loginUiState.email,
-            onValueChange = {
-                loginViewModel.onEmailUpdate(it)
-            },
+            onValueChange = loginViewModel::onEmailUpdate,
             label = { Text(stringResource(R.string.email)) },
             singleLine = true,
-            /*
-            isError = loginUiState.emailError.isNotEmpty(),
+            isError = loginUiState.emailError != null,
             supportingText = {
-                Text(
-                    text = loginUiState.emailError,
-                    color = MaterialTheme.colorScheme.error
-                )
+                loginUiState.emailError?.let {
+                    Text(
+                        text = stringResource(it.idString),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             },
-            */
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email,
@@ -86,18 +85,18 @@ fun LoginScreen(
         )
         OutlinedTextField(
             value = loginUiState.password,
-            onValueChange = { loginViewModel.onPasswordUpdate(it) },
+            onValueChange = loginViewModel::onPasswordUpdate,
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
-            /*
-            isError = loginUiState.passwordError.isNotEmpty(),
+            isError = loginUiState.passwordError != null,
             supportingText = {
-                Text(
-                    text = loginUiState.passwordError,
-                    color = MaterialTheme.colorScheme.error
-                )
+                loginUiState.passwordError?.let {
+                    Text(
+                        text = stringResource(it.idString),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             },
-            */
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
@@ -114,6 +113,12 @@ fun LoginScreen(
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in))
+        }
+        loginUiState.loginResult?.let {
+            Text(
+                text = stringResource(it.idString),
+                color = it.color
+            )
         }
 
     }
