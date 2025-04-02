@@ -1,13 +1,8 @@
 package com.example.seabattle.ui.login
 
-import android.util.Patterns
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.data.repository.AuthRepositoryImpl
-import com.example.seabattle.validation.ValidationError
 import com.example.seabattle.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

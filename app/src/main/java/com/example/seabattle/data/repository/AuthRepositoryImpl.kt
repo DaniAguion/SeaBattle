@@ -1,12 +1,14 @@
 package com.example.seabattle.data.repository
 
 import android.util.Log
-import android.util.Patterns
+import com.example.seabattle.data.storage.SecurePrefsData
 import com.example.seabattle.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
+class AuthRepositoryImpl(
+    private val auth: FirebaseAuth
+) : AuthRepository {
 
     override suspend fun loginUser(email: String, password: String) : Boolean {
         return try {
@@ -19,12 +21,8 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
         }
     }
 
-    override fun checkAuthStatus() {
+    override fun checkAuthStatus() : Boolean {
         val user = auth.currentUser
-        if (user != null) {
-            // Usuario autenticado
-        } else {
-            // Usuario no autenticado
-        }
+        return (user != null)
     }
 }

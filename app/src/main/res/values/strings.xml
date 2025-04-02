@@ -2,24 +2,22 @@
     <string name="app_name">Sea Battle</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+
+    // Login Page and Register Page
     <string name="login_page_title">Login Page</string>
     <string name="login_page_desc">Introduce login information to access your user profile.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign in</string>
-    <string name="login_error">Login error</string>
-    <string name="empty_fields_error">Email or password can\'t be empty</string>
-    <string name="invalid_email_error">Invalid email format</string>
-    <string name="invalid_password_error">Password must has at least 6 characters.</string>
-    <string name="register_error">Register error\n</string>
+
+    // Login results messages
+    <string name="login_successful">Login has been successful!</string>
+    <string name="login_unsuccessful">Login try unsuccessful</string>
+
+    // Validation email and password messages
     <string name="error_empty_email">Please introduce your email</string>
-    <string name="error_empty_password">Please introduce your password\n</string>
-    <string name="error_empty_fields">Please, introduce your email and password</string>
+    <string name="error_empty_password">Please introduce your password</string>
     <string name="error_invalid_email">Email format is not correct.</string>
     <string name="error_short_password">Password is too short.</string>
-    <string name="login_successful">Login has been sucessfull!</string>
-    <string name="login_unsuccessful">Login try unsuccessful</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
-    <string name="empty_email">Please, introduce your email</string>
-    <string name="empty_password">Please, introduce your password\n</string>
 </resources>
