@@ -2,11 +2,13 @@ package com.example.seabattle.di
 
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.seabattle.data.repository.AuthRepositoryImpl
+import com.example.seabattle.data.session.SessionManager
 import com.example.seabattle.data.storage.SecurePrefsData
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-val storageModule = module {
+val sessionModule = module {
     single {
         val context = androidContext()
 
@@ -24,4 +26,5 @@ val storageModule = module {
     }
 
     single { SecurePrefsData(get()) }
+    single { SessionManager(get(), AuthRepositoryImpl(get())) }
 }

@@ -116,6 +116,12 @@ fun LoginScreen(
                 color = it.color
             )
         }
+        Button(
+            onClick = { loginViewModel.onSingOutButtonClicked() },
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text("SignOut")
+        }
 
     }
 }

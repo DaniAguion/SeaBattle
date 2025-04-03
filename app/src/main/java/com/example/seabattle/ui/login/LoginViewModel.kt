@@ -1,8 +1,10 @@
 package com.example.seabattle.ui.login
 
+import android.util.Log
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.data.repository.AuthRepositoryImpl
+import com.example.seabattle.data.session.SessionManager
 import com.example.seabattle.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel() {
+class LoginViewModel( private val sessionManager: SessionManager ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(LoginUiState())
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
@@ -45,13 +48,18 @@ class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel
         }
 
         viewModelScope.launch {
-            val tryResult = authRepository.loginUser(
+            val loggedIn = sessionManager.loginUser(
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
-            val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
+            Log.d("Result", "Logged In $loggedIn")
+            val loginResult = if (loggedIn) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(loginResult = loginResult)
         }
+    }
+
+    fun onSingOutButtonClicked() {
+        sessionManager.logoutUser()
     }
 
 

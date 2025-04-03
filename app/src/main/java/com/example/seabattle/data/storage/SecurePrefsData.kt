@@ -1,30 +1,36 @@
 package com.example.seabattle.data.storage
 
 import android.content.SharedPreferences
+import com.example.seabattle.domain.model.UserProfile
+import androidx.core.content.edit
 
 class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
 
     companion object {
-        private const val KEY_TOKEN = "user_token"
-        private const val KEY_NAME = "user_name"
-        private const val KEY_AVATAR = "user_avatar"
+        private const val KEY_UID = "-1"
+        private const val KEY_NAME = ""
+        private const val KEY_EMAIL = ""
+        private const val KEY_PHOTO = ""
     }
 
-    fun saveUserSession(token: String, name: String, avatar: String) {
-        sharedPrefs.edit()
-            .putString(KEY_TOKEN, token)
-            .putString(KEY_NAME, name)
-            .putString(KEY_AVATAR, avatar)
-            .apply()
+    fun saveUserSession(userProfile : UserProfile) {
+        sharedPrefs.edit() {
+            putString(KEY_UID, userProfile.uid ?: "-1")
+            .putString(KEY_NAME, userProfile.displayName ?: "")
+            .putString(KEY_EMAIL, userProfile.email ?: "")
+            .putString(KEY_PHOTO, userProfile.photoUrl ?: "")
+        }
     }
 
-    fun getToken(): String? = sharedPrefs.getString(KEY_TOKEN, null)
+    fun getUid(): String = sharedPrefs.getString(KEY_UID, "") ?: "-1"
 
-    fun getUserName(): String? = sharedPrefs.getString(KEY_NAME, null)
+    fun getDisplayName(): String = sharedPrefs.getString(KEY_NAME, "")  ?: ""
 
-    fun getAvatar(): String? = sharedPrefs.getString(KEY_AVATAR, null)
+    fun getEmail(): String = sharedPrefs.getString(KEY_EMAIL, "")  ?: ""
+
+    fun getPhoto(): String = sharedPrefs.getString(KEY_PHOTO, "")  ?: ""
 
     fun clearSession() {
-        sharedPrefs.edit().clear().apply()
+        sharedPrefs.edit() { clear() }
     }
 }

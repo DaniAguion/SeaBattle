@@ -1,8 +1,15 @@
 package com.example.seabattle.domain.model
 
-data class User(
+data class UserProfile(
+    val sessionState: SessionState,
     val uid: String,
-    val name: String,
+    val displayName: String,
     val email: String,
-    val photoUrl: String? = null,
+    val photoUrl: String,
 )
+
+enum class SessionState {
+    ANON,
+    NO_AUTH,
+    AUTH,
+}
