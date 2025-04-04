@@ -2,10 +2,10 @@ package com.example.seabattle.domain.validation
 
 import com.example.seabattle.R
 
-enum class ValidationError(val idString: Int) {
-    EMPTY_EMAIL(R.string.error_empty_email),
-    EMPTY_PASSWORD(R.string.error_empty_password),
-    INVALID_EMAIL(R.string.error_invalid_email),
-    PASSWORD_TOO_SHORT(R.string.error_short_password),
-    WEAK_PASSWORD(R.string.weak_password),
+sealed class ValidationError(val idString: Int) {
+    object EmptyEmail : ValidationError(R.string.error_empty_email)
+    object InvalidEmail : ValidationError(R.string.error_invalid_email)
+    object EmptyPassword : ValidationError(R.string.error_empty_password)
+    object PasswordShort : ValidationError(R.string.error_short_password)
+    object PasswordWeak : ValidationError(R.string.weak_password)
 }

@@ -3,7 +3,8 @@ package com.example.seabattle.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.data.repository.AuthRepositoryImpl
-import com.example.seabattle.domain.usecase.LoginUserUseCase
+import com.example.seabattle.domain.auth.LoginMethod
+import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
 import com.example.seabattle.domain.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,10 +47,10 @@ class LoginViewModel(private val loginUserUseCase: LoginUserUseCase) : ViewModel
         }
 
         viewModelScope.launch {
-            val tryResult = loginUserUseCase(
+            val tryResult = loginUserUseCase(LoginMethod.EmailPassword(
                 email = _uiState.value.email,
                 password = _uiState.value.password
-            )
+            ))
             val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(loginResult = loginResult)
         }
