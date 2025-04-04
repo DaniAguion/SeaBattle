@@ -1,0 +1,26 @@
+@startuml
+
+package "Data" {
+  class AuthRepositoryImpl
+  class SecurePrefsData
+  class SessionManager
+}
+
+package "Domain" {
+  interface AuthRepository
+  class LoginUserUseCase
+}
+
+package "UI" {
+  class LoginScreen
+  class LoginViewModel
+}
+
+
+LoginScreen --> LoginViewModel
+LoginViewModel --> LoginUserUseCase
+LoginUserUseCase --> SessionManager
+SessionManager --> SecurePrefsData
+SessionManager --> AuthRepositoryImpl
+AuthRepository <|-- AuthRepositoryImpl
+@enduml

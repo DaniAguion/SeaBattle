@@ -1,0 +1,44 @@
+@startuml
+title Flujo de navegación - SeaBattle App
+
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam ArrowColor DarkSlateGray
+skinparam ComponentBorderColor Black
+skinparam BackgroundColor #fdfdfd
+
+package "Pantallas de Inicio" {
+    [Main]
+}
+
+package "Autenticación" {
+    [Login]
+    [Register]
+}
+
+package "Núcleo" {
+    component "Home\n(Pantalla principal)" as Home
+    component "Profile\n(Gestión del perfil)" as Profile
+    component "BattlePlan\n(Organización del tablero)" as BattlePlan
+    component "Play\n(Busqueda de partida)" as Play
+    component "Gameboard\n(Partida)" as Gameboard
+}
+
+' Flujo principal
+Main --> Login
+Main --> Register
+
+Login --> Home : login exitoso
+Register --> Home : registro exitoso
+
+' Navegación interna desde Home
+Home <--> Play : buscar partida
+Home <--> BattlePlan : cambio de tab
+Home <--> Profile : cambio de tab
+
+' Flujo dentro del juego
+Play --> Gameboard : partida iniciada
+Gameboard --> Home : partida finalizada
+
+@enduml
