@@ -20,4 +20,8 @@
     <string name="error_invalid_email">Email format is not correct.</string>
     <string name="error_short_password">Password is too short.</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
+    <string name="register_successful">Register sucessful</string>
+    <string name="register_unsuccessful">Register try uncessful\n</string>
+    <string name="register_page_title">Register Page\n</string>
+    <string name="register_page_desc">Introduce your enamil and password to create a new acount.</string>
 </resources>

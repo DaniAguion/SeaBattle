@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.seabattle.ui.login.LoginScreen
+import com.example.seabattle.ui.register.RegisterScreen
 import com.example.seabattle.ui.theme.SeaBattleTheme
 
 enum class SeaBattleScreen(val title: String) {
@@ -49,7 +50,7 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                 LoginScreen()
             }
             composable(route = SeaBattleScreen.Register.title) {
-                //RegisterScreen()
+                RegisterScreen()
             }
         }
     }

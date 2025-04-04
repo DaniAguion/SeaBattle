@@ -1,10 +1,8 @@
-package com.example.seabattle.ui.login
+package com.example.seabattle.ui.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.auth.LoginMethod
-import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
-import com.example.seabattle.domain.auth.usecase.LogoutUserUseCase
+import com.example.seabattle.domain.auth.usecase.RegisterUserUseCase
 import com.example.seabattle.domain.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,12 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class LoginViewModel(
-    private val loginUserUseCase: LoginUserUseCase,
-    private val logoutUserUseCase: LogoutUserUseCase
+class RegisterViewModel(
+    private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LoginUiState())
-    var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(RegisterUiState())
+    var uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     fun onEmailUpdate(emailField: String) {
         validateEmail(emailField)
@@ -40,32 +37,22 @@ class LoginViewModel(
     }
 
 
-    fun onLoginButtonClicked() {
+    fun onRegisterButtonClicked() {
         validateEmail(_uiState.value.email)
         validatePassword(_uiState.value.password)
 
         if((uiState.value.emailError != null) || (uiState.value.passwordError != null)){
-            _uiState.value = _uiState.value.copy(loginResult = LoginMsgs.LOGIN_UNSUCCESSFUL)
+            _uiState.value = _uiState.value.copy(registerResult = RegisterMsgs.REGISTER_SUCCESSFUL)
             return
         }
 
         viewModelScope.launch {
-            val tryResult = loginUserUseCase(
-                LoginMethod.EmailPassword(
-                    email = _uiState.value.email,
-                    password = _uiState.value.password
-                )
+            val tryResult = registerUserUseCase(
+                email = _uiState.value.email,
+                password = _uiState.value.password
             )
-            val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
-            _uiState.value = _uiState.value.copy(loginResult = loginResult)
+            val registerResult = if (tryResult) RegisterMsgs.REGISTER_SUCCESSFUL else RegisterMsgs.REGISTER_UNSUCCESSFUL
+            _uiState.value = _uiState.value.copy(registerResult = registerResult)
         }
     }
-
-    fun onLogoutButtonClicked() {
-        viewModelScope.launch {
-            logoutUserUseCase()
-        }
-    }
-
-
 }

@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.login
+package com.example.seabattle.ui.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,11 +30,11 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel()
+    registerViewModel: RegisterViewModel = koinViewModel()
 ) {
-    val loginUiState by loginViewModel.uiState.collectAsState()
+    val registerUiState by registerViewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier
@@ -44,12 +44,12 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = stringResource(R.string.login_page_title),
+            text = stringResource(R.string.register_page_title),
             fontSize = 32.sp,
             style = MaterialTheme.typography.displayLarge
         )
         Text(
-            text = stringResource(R.string.login_page_desc),
+            text = stringResource(R.string.register_page_desc),
             fontSize = 20.sp,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
@@ -58,13 +58,13 @@ fun LoginScreen(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
         )
         OutlinedTextField(
-            value = loginUiState.email,
-            onValueChange = loginViewModel::onEmailUpdate,
+            value = registerUiState.email,
+            onValueChange = registerViewModel::onEmailUpdate,
             label = { Text(stringResource(R.string.email)) },
             singleLine = true,
-            isError = loginUiState.emailError != null,
+            isError = registerUiState.emailError != null,
             supportingText = {
-                loginUiState.emailError?.let {
+                registerUiState.emailError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -80,13 +80,13 @@ fun LoginScreen(
 
         )
         OutlinedTextField(
-            value = loginUiState.password,
-            onValueChange = loginViewModel::onPasswordUpdate,
+            value = registerUiState.password,
+            onValueChange = registerViewModel::onPasswordUpdate,
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
-            isError = loginUiState.passwordError != null,
+            isError = registerUiState.passwordError != null,
             supportingText = {
-                loginUiState.passwordError?.let {
+                registerUiState.passwordError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -105,32 +105,25 @@ fun LoginScreen(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
         )
         Button(
-            onClick = { loginViewModel.onLoginButtonClicked() },
+            onClick = { registerViewModel.onRegisterButtonClicked() },
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in))
         }
-        loginUiState.loginResult?.let {
+        registerUiState.registerResult?.let {
             Text(
                 text = stringResource(it.idString),
                 color = it.color
             )
         }
-        Button(
-            onClick = { loginViewModel.onLogoutButtonClicked() },
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text("SignOut")
-        }
-
     }
 }
 
 
 @Preview (showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen(
+fun RegisterScreenPreview() {
+    RegisterScreen(
         modifier = Modifier
     )
 }

@@ -33,6 +33,13 @@ class SessionManager(
     }
 
 
+    suspend fun registerUser(email: String, password: String) : Boolean {
+        authRepositoryImpl.registerUser(email, password)
+        saveUserProfile()
+        return authRepositoryImpl.isLoggedIn()
+    }
+
+
     fun getUserProfile() : UserProfile? {
         if (authRepositoryImpl.isLoggedIn()) {
             return UserProfile(
