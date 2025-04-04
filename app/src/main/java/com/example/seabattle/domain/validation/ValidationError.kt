@@ -1,4 +1,4 @@
-package com.example.seabattle.validation
+package com.example.seabattle.domain.validation
 
 import com.example.seabattle.R
 

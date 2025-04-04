@@ -2,7 +2,7 @@ package com.example.seabattle.ui.login
 
 import androidx.compose.ui.graphics.Color
 import com.example.seabattle.R
-import com.example.seabattle.validation.ValidationError
+import com.example.seabattle.domain.validation.ValidationError
 
 data class LoginUiState(
     val email: String = "",

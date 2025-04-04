@@ -12,7 +12,7 @@ class SeaBattleApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@SeaBattleApplication)
-            modules(appModule, dataModule, storageModule)
+            modules(appModule)
         }
     }
 }

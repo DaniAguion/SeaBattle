@@ -3,14 +3,15 @@ package com.example.seabattle.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.data.repository.AuthRepositoryImpl
-import com.example.seabattle.validation.Validator
+import com.example.seabattle.domain.usecase.LoginUserUseCase
+import com.example.seabattle.domain.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel() {
+class LoginViewModel(private val loginUserUseCase: LoginUserUseCase) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
@@ -45,7 +46,7 @@ class LoginViewModel(private val authRepository: AuthRepositoryImpl) : ViewModel
         }
 
         viewModelScope.launch {
-            val tryResult = authRepository.loginUser(
+            val tryResult = loginUserUseCase(
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
