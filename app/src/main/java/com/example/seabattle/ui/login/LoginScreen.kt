@@ -122,6 +122,12 @@ fun LoginScreen(
         ) {
             Text("SignOut")
         }
+        Button(
+            onClick = { loginViewModel.onGoogleButtonClicked() },
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text(stringResource(R.string.sign_in_with_google))
+        }
 
     }
 }

@@ -22,6 +22,7 @@ class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
         }
     }
 
+
     fun getUid(): String = sharedPrefs.getString(KEY_UID, "") ?: "-1"
 
     fun getDisplayName(): String = sharedPrefs.getString(KEY_NAME, "")  ?: ""

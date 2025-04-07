@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
+
 class LoginViewModel(
     private val loginUserUseCase: LoginUserUseCase,
     private val logoutUserUseCase: LogoutUserUseCase
@@ -54,6 +55,18 @@ class LoginViewModel(
                 LoginMethod.EmailPassword(
                     email = _uiState.value.email,
                     password = _uiState.value.password
+                )
+            )
+            val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
+            _uiState.value = _uiState.value.copy(loginResult = loginResult)
+        }
+    }
+
+    fun onGoogleButtonClicked() {
+        viewModelScope.launch {
+            val tryResult = loginUserUseCase(
+                LoginMethod.Google(
+                    googleIdToken = "googleIdToken"
                 )
             )
             val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
