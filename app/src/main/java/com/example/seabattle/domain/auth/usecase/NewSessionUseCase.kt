@@ -4,6 +4,7 @@ import com.example.seabattle.data.session.SessionManager
 
 class NewSessionUseCase ( private val sessionManager: SessionManager ) {
     operator fun invoke(): Boolean {
-        return sessionManager.syncSession()
+        //return sessionManager.syncSession()
+        return false
     }
 }

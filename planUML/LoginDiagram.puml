@@ -21,6 +21,6 @@ LoginScreen --> LoginViewModel
 LoginViewModel --> LoginUserUseCase
 LoginUserUseCase --> SessionManager
 SessionManager --> SecurePrefsData
-SessionManager --> AuthRepositoryImpl
-AuthRepository <|-- AuthRepositoryImpl
+SessionManager --> AuthRepository
+AuthRepository --> AuthRepositoryImpl
 @enduml

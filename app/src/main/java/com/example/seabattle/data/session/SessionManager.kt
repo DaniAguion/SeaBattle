@@ -1,42 +1,38 @@
 package com.example.seabattle.data.session
 
-import com.example.seabattle.data.repository.AuthRepositoryImpl
 import com.example.seabattle.data.storage.SecurePrefsData
 import com.example.seabattle.domain.auth.LoginMethod
+import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.domain.model.UserProfile
 
 class SessionManager(
     private val securePrefs: SecurePrefsData,
-    private val authRepositoryImpl: AuthRepositoryImpl
+    private val authRepository: AuthRepository
 ) {
 
-    fun syncSession() : Boolean {
-        if (authRepositoryImpl.isLoggedIn()) {
-            securePrefs.saveUserSession(userProfile = authRepositoryImpl.getCurrentUser())
-            return true
-        } else {
-            securePrefs.clearSession()
-            return false
-        }
+    fun isLoggedIn() : Boolean {
+        return authRepository.isLoggedIn()
     }
 
     suspend fun loginUser(loginMethod: LoginMethod) : Boolean{
-        authRepositoryImpl.loginUser(loginMethod)
-        return syncSession()
+        authRepository.loginUser(loginMethod)
+        securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
+        return isLoggedIn()
     }
 
     suspend fun registerUser(email: String, password: String) : Boolean {
-        authRepositoryImpl.registerUser(email, password)
-        return syncSession()
+        authRepository.registerUser(email, password)
+        securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
+        return isLoggedIn()
     }
 
     fun logoutUser(){
-        authRepositoryImpl.logoutUser()
+        authRepository.logoutUser()
         securePrefs.clearSession()
     }
 
     fun getUserProfile() : UserProfile? {
-        if (authRepositoryImpl.isLoggedIn()) {
+        if (authRepository.isLoggedIn()) {
             return UserProfile(
                 uid = securePrefs.getUid(),
                 displayName = securePrefs.getDisplayName(),
