@@ -8,13 +8,14 @@ skinparam ArrowColor DarkSlateGray
 skinparam ComponentBorderColor Black
 skinparam BackgroundColor #fdfdfd
 
-package "Pantallas de Inicio" {
-    [Main]
+package "Entrada" {
+    component "Splash Screen\n" as SplashScreen
 }
 
 package "Autenticación" {
-    [Login]
-    [Register]
+    component "Welcome\n(Selección método)" as Welcome
+    component "Login\n(Inicio de sesión)" as Login
+    component "Register\n(Registro)" as Register
 }
 
 package "Núcleo" {
@@ -26,8 +27,11 @@ package "Núcleo" {
 }
 
 ' Flujo principal
-Main --> Login
-Main --> Register
+SplashScreen --> Welcome : no autenticado
+SplashScreen --> Home : autenticado
+
+Welcome <--> Login
+Welcome <--> Register
 
 Login --> Home : login exitoso
 Register --> Home : registro exitoso

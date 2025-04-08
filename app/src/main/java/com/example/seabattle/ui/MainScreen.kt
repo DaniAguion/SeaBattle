@@ -9,12 +9,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.seabattle.ui.home.HomeScreen
 import com.example.seabattle.ui.login.LoginScreen
 import com.example.seabattle.ui.register.RegisterScreen
 import com.example.seabattle.ui.theme.SeaBattleTheme
+import com.example.seabattle.ui.splash.SplashScreen
+import com.example.seabattle.ui.welcome.WelcomeScreen
 
 enum class SeaBattleScreen(val title: String) {
     Splash(title = "Splash"),
+    Welcome(title = "Welcome"),
     Home(title = "Home"),
     Login(title = "Login"),
     Register(title = "Register"),
@@ -37,8 +41,8 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
             startDestination = SeaBattleScreen.Splash.title,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(route = SeaBattleScreen.Home.title) {
-                HomeScreen(
+            composable(route = SeaBattleScreen.Welcome.title) {
+                WelcomeScreen(
                     onLoginButtonClicked = {
                         navController.navigate(SeaBattleScreen.Login.title)
                     },
@@ -55,6 +59,9 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
             }
             composable(route = SeaBattleScreen.Register.title) {
                 RegisterScreen()
+            }
+            composable(route = SeaBattleScreen.Home.title) {
+                HomeScreen()
             }
         }
     }

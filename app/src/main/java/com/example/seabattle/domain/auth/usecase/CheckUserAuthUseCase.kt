@@ -2,9 +2,8 @@ package com.example.seabattle.domain.auth.usecase
 
 import com.example.seabattle.data.session.SessionManager
 
-class NewSessionUseCase ( private val sessionManager: SessionManager ) {
+class CheckUserAuthUseCase (private val sessionManager: SessionManager ) {
     operator fun invoke(): Boolean {
-        //return sessionManager.syncSession()
-        return false
+        return sessionManager.isLoggedIn()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.seabattle.ui
+package com.example.seabattle.ui.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.seabattle.R
 
 @Composable
-fun HomeScreen(
+fun WelcomeScreen(
     onLoginButtonClicked: () -> Unit,
     onRegisterButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -47,8 +47,8 @@ fun HomeScreen(
 
 @Preview
 @Composable
-fun StartOrderPreview(){
-    HomeScreen(
+fun WelcomeScreenPreview(){
+    WelcomeScreen(
         onLoginButtonClicked = {},
         onRegisterButtonClicked = {},
         modifier = Modifier
