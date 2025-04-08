@@ -14,6 +14,7 @@ import com.example.seabattle.ui.register.RegisterScreen
 import com.example.seabattle.ui.theme.SeaBattleTheme
 
 enum class SeaBattleScreen(val title: String) {
+    Splash(title = "Splash"),
     Home(title = "Home"),
     Login(title = "Login"),
     Register(title = "Register"),
@@ -33,7 +34,7 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
 
         NavHost(
             navController = navController,
-            startDestination = SeaBattleScreen.Home.title,
+            startDestination = SeaBattleScreen.Splash.title,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = SeaBattleScreen.Home.title) {
@@ -45,6 +46,9 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                         navController.navigate(SeaBattleScreen.Register.title)
                     }
                 )
+            }
+            composable(route = SeaBattleScreen.Splash.title) {
+                SplashScreen(navController = navController)
             }
             composable(route = SeaBattleScreen.Login.title) {
                 LoginScreen()
