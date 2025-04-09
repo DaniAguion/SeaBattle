@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Sea Battle</string>
+    <string name="default_web_client_id">535888489443-plcatcaacbg8b5a2v8abu9l7kireo4pi.apps.googleusercontent.com</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
 
@@ -35,4 +36,5 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">Login failed</string>
     <string name="error_splash_screen">Error, no ha sido posible determinar el usuario.</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>

@@ -65,6 +65,7 @@ dependencies {
     // Firebase authentication
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation("com.firebaseui:firebase-ui-auth:9.0.0")
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
