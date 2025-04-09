@@ -43,7 +43,7 @@ fun SplashScreen(
             is SplashState.Error -> {
                Toast.makeText(
                     context,
-                    state.message,
+                    context.getString(R.string.error_splash_screen),
                     Toast.LENGTH_LONG
                 ).show()
                 navController.navigate(SeaBattleScreen.Welcome.title) {

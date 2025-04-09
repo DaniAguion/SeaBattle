@@ -2,6 +2,7 @@ package com.example.seabattle.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seabattle.R
 import com.example.seabattle.domain.auth.usecase.CheckUserAuthUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,7 @@ class SplashViewModel(
                 val isLogged = checkUserAuthUseCase()
                 _uiState.value = SplashState.Success(isLogged)
             } catch (e: Exception) {
-                _uiState.value = SplashState.Error(e.message ?: "Error, no ha sido posible comprobar la sesión")
+                _uiState.value = SplashState.Error(e.message ?: "Unkwown error in splash screen")
             }
         }
     }
