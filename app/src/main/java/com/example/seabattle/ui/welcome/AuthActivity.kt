@@ -1,9 +1,8 @@
-package com.example.seabattle.ui
+package com.example.seabattle.ui.welcome
 
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -11,25 +10,18 @@ import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.lifecycleScope
 import com.example.seabattle.R
-import com.example.seabattle.ui.theme.SeaBattleTheme
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
 
 
-class MainActivity : ComponentActivity() {
+class AuthActivity : ComponentActivity() {
 
     private val context = this
     private val credentialManager = CredentialManager.create(context)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            SeaBattleTheme {
-                SeaBattleApp()
-            }
-        }
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -50,7 +42,6 @@ class MainActivity : ComponentActivity() {
                 Log.e("Error", "Failed to get credential: ${e.localizedMessage}")
             }
         }
-
     }
 
 
@@ -66,5 +57,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-}
 
+}
