@@ -1,14 +1,12 @@
 package com.example.seabattle.ui.login
 
-import androidx.credentials.exceptions.GetCredentialException
+
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
 import com.example.seabattle.domain.auth.usecase.LogoutUserUseCase
 import com.example.seabattle.domain.validation.Validator
-import com.example.seabattle.ui.welcome.AuthActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
