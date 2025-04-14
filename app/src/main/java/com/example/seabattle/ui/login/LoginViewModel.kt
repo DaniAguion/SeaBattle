@@ -2,7 +2,6 @@ package com.example.seabattle.ui.login
 
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.auth.LoginMethod
@@ -85,6 +84,4 @@ class LoginViewModel(
             logoutUserUseCase()
         }
     }
-
-
 }

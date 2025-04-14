@@ -1,5 +1,6 @@
 package com.example.seabattle.ui.login
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,10 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,17 +28,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
+import com.example.seabattle.di.appModule
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     val loginUiState by loginViewModel.uiState.collectAsState()
     val localContext = LocalContext.current
 
+    LoginScreenContent(
+        modifier = modifier,
+        loginUiState = loginUiState,
+        onEmailUpdate = loginViewModel::onEmailUpdate,
+        onPasswordUpdate = loginViewModel::onPasswordUpdate,
+        onLoginButtonClicked = loginViewModel::onLoginButtonClicked,
+        onLogoutButtonClicked = loginViewModel::onLogoutButtonClicked,
+        onGoogleButtonClicked = { loginViewModel.onGoogleButtonClicked(context = localContext) }
+    )
+}
+
+@Composable
+fun LoginScreenContent(
+    modifier: Modifier = Modifier,
+    loginUiState: LoginUiState = LoginUiState(),
+    onEmailUpdate: (String) -> Unit = {},
+    onPasswordUpdate: (String) -> Unit = {},
+    onLoginButtonClicked: () -> Unit = {},
+    onLogoutButtonClicked: () -> Unit = {},
+    onGoogleButtonClicked: () -> Unit = {},
+) {
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -63,7 +84,7 @@ fun LoginScreen(
         )
         OutlinedTextField(
             value = loginUiState.email,
-            onValueChange = loginViewModel::onEmailUpdate,
+            onValueChange = onEmailUpdate,
             label = { Text(stringResource(R.string.email)) },
             singleLine = true,
             isError = loginUiState.emailError != null,
@@ -82,10 +103,10 @@ fun LoginScreen(
             ),
             modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
 
-        )
+            )
         OutlinedTextField(
             value = loginUiState.password,
-            onValueChange = loginViewModel::onPasswordUpdate,
+            onValueChange = onPasswordUpdate,
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
             isError = loginUiState.passwordError != null,
@@ -109,7 +130,7 @@ fun LoginScreen(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
         )
         Button(
-            onClick = { loginViewModel.onLoginButtonClicked() },
+            onClick = { onLoginButtonClicked },
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in))
@@ -121,15 +142,13 @@ fun LoginScreen(
             )
         }
         Button(
-            onClick = { loginViewModel.onLogoutButtonClicked() },
+            onClick = { onLogoutButtonClicked },
             Modifier.widthIn(min = 250.dp)
         ) {
             Text("SignOut")
         }
         Button(
-            onClick = {
-                loginViewModel.onGoogleButtonClicked(context = localContext)
-            },
+            onClick = onGoogleButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in_with_google))
@@ -138,11 +157,8 @@ fun LoginScreen(
     }
 }
 
-
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        modifier = Modifier
-    )
+    LoginScreenContent()
 }
