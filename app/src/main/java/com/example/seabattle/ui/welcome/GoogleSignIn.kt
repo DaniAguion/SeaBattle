@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.login
+package com.example.seabattle.ui.welcome
 
 import android.content.Context
 import android.util.Log
@@ -11,7 +11,7 @@ import com.example.seabattle.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 
-class GoogleSignIn(context: Context) {
+class GoogleSignIn() {
     private lateinit var context : Context
     private lateinit var credentialManager: CredentialManager
 

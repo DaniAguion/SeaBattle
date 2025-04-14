@@ -13,9 +13,7 @@ package "Entrada" {
 }
 
 package "Autenticación" {
-    component "Welcome\n(Selección método)" as Welcome
-    component "Login\n(Inicio de sesión)" as Login
-    component "Register\n(Registro)" as Register
+    component "Welcome\n(Inicio sesión / Registro)" as Welcome
 }
 
 package "Núcleo" {
@@ -30,11 +28,7 @@ package "Núcleo" {
 SplashScreen --> Welcome : no autenticado
 SplashScreen --> Home : autenticado
 
-Welcome <--> Login
-Welcome <--> Register
-
-Login --> Home : login exitoso
-Register --> Home : registro exitoso
+Welcome --> Home : autenticado
 
 ' Navegación interna desde Home
 Home <--> Play : buscar partida

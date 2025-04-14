@@ -2,55 +2,169 @@ package com.example.seabattle.ui.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
+import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun WelcomeScreen(
-    onLoginButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    welcomeViewModel: WelcomeViewModel = koinViewModel()
+) {
+    val welcomeUiState by welcomeViewModel.uiState.collectAsState()
+    val localContext = LocalContext.current
+
+    WelcomeScreenContent(
+        modifier = modifier,
+        welcomeUiState = welcomeUiState,
+        onEmailUpdate = welcomeViewModel::onEmailUpdate,
+        onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
+        onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
+        onLogoutButtonClicked = welcomeViewModel::onLogoutButtonClicked,
+        onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
+        onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(localContext) }
+    )
+}
+
+@Composable
+fun WelcomeScreenContent(
+    modifier: Modifier = Modifier,
+    welcomeUiState: WelcomeUiState = WelcomeUiState(),
+    onEmailUpdate: (String) -> Unit = {},
+    onPasswordUpdate: (String) -> Unit = {},
+    onLoginButtonClicked: () -> Unit = {},
+    onLogoutButtonClicked: () -> Unit = {},
+    onRegisterButtonClicked: () -> Unit = {},
+    onGoogleButtonClicked: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = stringResource(R.string.welcome_page_title),
+            fontSize = 32.sp,
+            style = MaterialTheme.typography.displayLarge
+        )
+        Text(
+            text = stringResource(R.string.welcome_page_desc),
+            fontSize = 20.sp,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
+        )
+        Spacer(
+            modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
+        )
+        OutlinedTextField(
+            value = welcomeUiState.email,
+            onValueChange = onEmailUpdate,
+            label = { Text(stringResource(R.string.email)) },
+            singleLine = true,
+            isError = welcomeUiState.emailError != null,
+            supportingText = {
+                welcomeUiState.emailError?.let {
+                    Text(
+                        text = stringResource(it.idString),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+
+            )
+        OutlinedTextField(
+            value = welcomeUiState.password,
+            onValueChange = onPasswordUpdate,
+            label = { Text(stringResource(R.string.password)) },
+            singleLine = true,
+            isError = welcomeUiState.passwordError != null,
+            supportingText = {
+                welcomeUiState.passwordError?.let {
+                    Text(
+                        text = stringResource(it.idString),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+        )
+        Spacer(
+            modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
+        )
+        welcomeUiState.msgResult?.let {
+            Text(
+                text = stringResource(it.idString),
+                color = it.color
+            )
+        }
         Button(
             onClick = onLoginButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
-            Text(stringResource(R.string.login))
+            Text(stringResource(R.string.sign_in))
+        }
+        Button(
+            onClick = onLogoutButtonClicked,
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text("SignOut")
         }
         Button(
             onClick = onRegisterButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
-            Text(stringResource(R.string.register))
+            Text("Register")
         }
+        Button(
+            onClick = onGoogleButtonClicked,
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text(stringResource(R.string.sign_in_with_google))
+        }
+
     }
 }
 
-
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun WelcomeScreenPreview(){
-    WelcomeScreen(
-        onLoginButtonClicked = {},
-        onRegisterButtonClicked = {},
-        modifier = Modifier
-    )
+fun WelcomeScreenPreview() {
+    WelcomeScreenContent()
 }

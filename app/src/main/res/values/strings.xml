@@ -1,19 +1,18 @@
 <resources>
     <string name="app_name">Sea Battle</string>
     <string name="default_web_client_id">535888489443-plcatcaacbg8b5a2v8abu9l7kireo4pi.apps.googleusercontent.com</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
 
     // Login Page and Register Page
-    <string name="login_page_title">Login Page</string>
-    <string name="login_page_desc">Introduce login information to access your user profile.</string>
+    <string name="welcome_page_title">Welcome!</string>
+    <string name="welcome_page_desc">Sign in with your user account or sign up to create a new one.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign in</string>
-
-    // Login results messages
+    <string name="sign_in_with_google">Sign in with Google</string>
     <string name="login_successful">Login has been successful!</string>
     <string name="login_unsuccessful">Login try unsuccessful</string>
+    <string name="register_successful">Register sucessful</string>
+    <string name="register_unsuccessful">Register try uncessful\n</string>
 
     // Validation email and password messages
     <string name="error_empty_email">Please introduce your email</string>
@@ -21,20 +20,10 @@
     <string name="error_invalid_email">Email format is not correct.</string>
     <string name="error_short_password">Password is too short.</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
-    <string name="register_successful">Register sucessful</string>
-    <string name="register_unsuccessful">Register try uncessful\n</string>
-    <string name="register_page_title">Register Page\n</string>
-    <string name="register_page_desc">Introduce your enamil and password to create a new acount.</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="title_activity_sign_in">SignInActivity</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">Login failed</string>
-    <string name="error_splash_screen">Error, no ha sido posible determinar el usuario.</string>
+
+
+    // Splash Screen
+    <string name="error_splash_screen">Error, it wasnt possible to retrieve user information.</string>
     <string name="title_activity_login">LoginActivity</string>
+
 </resources>
