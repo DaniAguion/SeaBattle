@@ -9,7 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
+class AuthRepositoryImpl(
+    private val auth: FirebaseAuth
+) : AuthRepository {
 
     override suspend fun loginUser(method: LoginMethod) : Boolean {
         when (method) {

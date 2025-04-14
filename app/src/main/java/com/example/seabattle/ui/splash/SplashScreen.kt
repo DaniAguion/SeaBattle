@@ -31,7 +31,8 @@ fun SplashScreen(
         when (val state = uiState.value) {
             is SplashState.Success -> {
                 if (state.isLogged) {
-                    navController.navigate(SeaBattleScreen.Home.title) {
+                    // TODO: Navigate to HomeScreen instead of WelcomeScreen
+                    navController.navigate(SeaBattleScreen.Welcome.title) {
                         popUpTo(SeaBattleScreen.Splash.title) { inclusive = true }
                     }
                 } else {

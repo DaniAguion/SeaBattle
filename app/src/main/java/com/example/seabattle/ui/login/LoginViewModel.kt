@@ -1,6 +1,8 @@
 package com.example.seabattle.ui.login
 
 
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.auth.LoginMethod
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginUserUseCase: LoginUserUseCase,
-    private val logoutUserUseCase: LogoutUserUseCase
+    private val logoutUserUseCase: LogoutUserUseCase,
+    private val googleSignIn: GoogleSignIn
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     var uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -63,8 +66,18 @@ class LoginViewModel(
         }
     }
 
-    fun onGoogleButtonClicked() {
+    fun onGoogleButtonClicked(context: Context) {
+        viewModelScope.launch {
+            val googleIdToken = googleSignIn.signIn(context) ?: ""
 
+            val tryResult = loginUserUseCase(
+                LoginMethod.Google(
+                    googleIdToken = googleIdToken
+                )
+            )
+            val loginResult = if (tryResult) LoginMsgs.LOGIN_SUCCESSFUL else LoginMsgs.LOGIN_UNSUCCESSFUL
+            _uiState.value = _uiState.value.copy(loginResult = loginResult)
+        }
     }
 
     fun onLogoutButtonClicked() {

@@ -13,10 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -32,9 +35,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel()
+    loginViewModel: LoginViewModel = koinViewModel(),
 ) {
     val loginUiState by loginViewModel.uiState.collectAsState()
+    val localContext = LocalContext.current
 
     Column(
         modifier = modifier
@@ -123,7 +127,9 @@ fun LoginScreen(
             Text("SignOut")
         }
         Button(
-            onClick = { loginViewModel.onGoogleButtonClicked() },
+            onClick = {
+                loginViewModel.onGoogleButtonClicked(context = localContext)
+            },
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in_with_google))

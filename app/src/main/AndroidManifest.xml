@@ -13,11 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SeaBattle">
         <activity
-            android:name=".ui.welcome.AuthActivity"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.SeaBattle" />
-        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
