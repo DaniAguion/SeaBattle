@@ -54,7 +54,7 @@ fun SplashScreen(
             SplashState.Loading -> {
                 Toast.makeText(
                     context,
-                    "Comprobando sesión...",
+                    context.getString(R.string.loading_splash_screen),
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -70,7 +70,7 @@ fun SplashScreen(
 
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Logo de la aplicación"
+            contentDescription = "Application Logo"
         )
     }
 }

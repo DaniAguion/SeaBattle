@@ -24,6 +24,8 @@
 
     // Splash Screen
     <string name="error_splash_screen">Error, it wasnt possible to retrieve user information.</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="loading_splash_screen">Checking session..</string>
+
+    // Unordered strings
 
 </resources>
