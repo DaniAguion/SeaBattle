@@ -1,10 +1,11 @@
-package com.example.seabattle.ui.welcome
+package com.example.seabattle.ui.screens.welcome
 
 import androidx.compose.ui.graphics.Color
 import com.example.seabattle.R
 import com.example.seabattle.domain.validation.ValidationError
 
 data class WelcomeUiState(
+    val isLoggedIn: Boolean = false,
     val email: String = "",
     val password: String = "",
     val emailError: ValidationError? = null,

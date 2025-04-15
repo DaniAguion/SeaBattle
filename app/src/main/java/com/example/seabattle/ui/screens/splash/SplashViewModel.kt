@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.splash
+package com.example.seabattle.ui.screens.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

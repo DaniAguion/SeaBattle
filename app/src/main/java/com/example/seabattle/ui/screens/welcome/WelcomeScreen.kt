@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.welcome
+package com.example.seabattle.ui.screens.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,17 +27,26 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.seabattle.R
+import com.example.seabattle.ui.TabItem
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
     welcomeViewModel: WelcomeViewModel = koinViewModel()
 ) {
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
     val localContext = LocalContext.current
+
+    LaunchedEffect(key1 = welcomeUiState.isLoggedIn) {
+        if (welcomeUiState.isLoggedIn) {
+            navController.navigate(TabItem.Home.title)
+        }
+    }
 
     WelcomeScreenContent(
         modifier = modifier,
@@ -44,7 +54,6 @@ fun WelcomeScreen(
         onEmailUpdate = welcomeViewModel::onEmailUpdate,
         onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
         onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
-        onLogoutButtonClicked = welcomeViewModel::onLogoutButtonClicked,
         onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
         onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(localContext) }
     )
@@ -57,7 +66,6 @@ fun WelcomeScreenContent(
     onEmailUpdate: (String) -> Unit = {},
     onPasswordUpdate: (String) -> Unit = {},
     onLoginButtonClicked: () -> Unit = {},
-    onLogoutButtonClicked: () -> Unit = {},
     onRegisterButtonClicked: () -> Unit = {},
     onGoogleButtonClicked: () -> Unit = {},
 ) {
@@ -142,12 +150,6 @@ fun WelcomeScreenContent(
             Text(stringResource(R.string.sign_in))
         }
         Button(
-            onClick = onLogoutButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text("SignOut")
-        }
-        Button(
             onClick = onRegisterButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
@@ -159,7 +161,6 @@ fun WelcomeScreenContent(
         ) {
             Text(stringResource(R.string.sign_in_with_google))
         }
-
     }
 }
 

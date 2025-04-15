@@ -19,14 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.seabattle.ui.battleplan.BattlePlanScreen
-import com.example.seabattle.ui.home.HomeScreen
-import com.example.seabattle.ui.profile.ProfileScreen
-import com.example.seabattle.ui.welcome.WelcomeScreen
+import com.example.seabattle.ui.screens.battleplan.BattlePlanScreen
+import com.example.seabattle.ui.screens.home.HomeScreen
+import com.example.seabattle.ui.screens.profile.ProfileScreen
+import com.example.seabattle.ui.screens.welcome.WelcomeScreen
 import com.example.seabattle.ui.theme.SeaBattleTheme
-import com.example.seabattle.ui.splash.SplashScreen
-import com.example.seabattle.ui.tabs.TabNavigation
+import com.example.seabattle.ui.screens.splash.SplashScreen
 
 
 enum class SeaBattleScreen(val title: String) {
@@ -68,7 +68,7 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                 SplashScreen(navController = navController)
             }
             composable(route = SeaBattleScreen.Welcome.title) {
-                WelcomeScreen()
+                WelcomeScreen(navController = navController)
             }
             composable(route = SeaBattleScreen.BattlePlan.title) {
                 BattlePlanScreen()
@@ -77,7 +77,7 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                 HomeScreen()
             }
             composable(route = SeaBattleScreen.Profile.title) {
-                ProfileScreen()
+                ProfileScreen(navController = navController)
             }
         }
     }
@@ -85,6 +85,14 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
 
 @Composable
 fun TabBar(navController: NavHostController) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
+
+    if (currentRoute == SeaBattleScreen.Splash.title ||
+        currentRoute == SeaBattleScreen.Welcome.title) {
+        return
+    }
+
     TabNavigation(
         modifier = Modifier,
         tabs = listOf(

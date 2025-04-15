@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.battleplan
+package com.example.seabattle.ui.screens.battleplan
 
 import androidx.lifecycle.ViewModel
 

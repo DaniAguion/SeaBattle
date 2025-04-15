@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.home
+package com.example.seabattle.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 

@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.battleplan
+package com.example.seabattle.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun BattlePlanScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     // TO DO
@@ -15,7 +15,7 @@ fun BattlePlanScreen(
         modifier = modifier
     ) {
         Text(
-            text = "BattlePlan Screen",
+            text = "Home Screen",
             modifier = modifier
         )
     }
@@ -24,8 +24,8 @@ fun BattlePlanScreen(
 
 @Preview
 @Composable
-fun BattlePlanPreview(){
-    BattlePlanScreen(
+fun HomeScreenPreview(){
+    HomeScreen(
         modifier = Modifier
     )
 }

@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.welcome
+package com.example.seabattle.ui.screens.welcome
 
 import android.content.Context
 import android.util.Log

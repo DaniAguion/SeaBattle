@@ -1,14 +1,7 @@
-package com.example.seabattle.ui.tabs
+package com.example.seabattle.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.DirectionsBoat
-import androidx.compose.material.icons.filled.Games
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -19,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.seabattle.ui.TabItem
 
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.welcome
+package com.example.seabattle.ui.screens.welcome
 
 
 import android.content.Context
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
-import com.example.seabattle.domain.auth.usecase.LogoutUserUseCase
 import com.example.seabattle.domain.auth.usecase.RegisterUserUseCase
 import com.example.seabattle.domain.validation.Validator
 import com.example.seabattle.domain.validation.Validator.validateNewPassword
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 
 class WelcomeViewModel(
     private val loginUserUseCase: LoginUserUseCase,
-    private val logoutUserUseCase: LogoutUserUseCase,
     private val registerUserUseCase: RegisterUserUseCase,
     private val googleSignIn: GoogleSignIn
 ) : ViewModel() {
@@ -65,12 +63,7 @@ class WelcomeViewModel(
             )
             val loginResult = if (tryResult) InfoMsgs.LOGIN_SUCCESSFUL else InfoMsgs.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = loginResult)
-        }
-    }
-
-    fun onLogoutButtonClicked() {
-        viewModelScope.launch {
-            logoutUserUseCase()
+            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
     }
 
@@ -90,6 +83,7 @@ class WelcomeViewModel(
             )
             val registerResult = if (tryResult) InfoMsgs.REGISTER_SUCCESSFUL else InfoMsgs.REGISTER_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = registerResult)
+            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
     }
 
@@ -104,6 +98,7 @@ class WelcomeViewModel(
             )
             val loginResult = if (tryResult) InfoMsgs.LOGIN_SUCCESSFUL else InfoMsgs.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = loginResult)
+            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
     }
 }
