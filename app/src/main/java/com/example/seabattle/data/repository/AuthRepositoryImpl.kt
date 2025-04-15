@@ -1,6 +1,7 @@
 package com.example.seabattle.data.repository
 
 
+import android.util.Log
 import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.domain.model.UserProfile
@@ -8,7 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
+class AuthRepositoryImpl(
+    private val auth: FirebaseAuth
+) : AuthRepository {
 
     override suspend fun loginUser(method: LoginMethod) : Boolean {
         when (method) {
@@ -17,6 +20,7 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
                     val authResult = auth.signInWithEmailAndPassword(method.email, method.password).await()
                     return (authResult.user != null)
                 } catch (e: Exception) {
+                    Log.e("AuthRepository", "Login with email and password failed", e)
                     return false
                 }
             }
@@ -26,6 +30,7 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
                     val authResult = auth.signInWithCredential(credential).await()
                     return (authResult.user != null)
                 } catch (e: Exception) {
+                    Log.e("AuthRepository", "Google login failed", e)
                     return false
                 }
             }

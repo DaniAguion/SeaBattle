@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.login
+package com.example.seabattle.ui.screens.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,17 +27,48 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.seabattle.R
+import com.example.seabattle.ui.TabItem
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun LoginScreen(
+fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel()
+    navController: NavHostController,
+    welcomeViewModel: WelcomeViewModel = koinViewModel()
 ) {
-    val loginUiState by loginViewModel.uiState.collectAsState()
+    val welcomeUiState by welcomeViewModel.uiState.collectAsState()
+    val localContext = LocalContext.current
 
+    LaunchedEffect(key1 = welcomeUiState.isLoggedIn) {
+        if (welcomeUiState.isLoggedIn) {
+            navController.navigate(TabItem.Home.title)
+        }
+    }
+
+    WelcomeScreenContent(
+        modifier = modifier,
+        welcomeUiState = welcomeUiState,
+        onEmailUpdate = welcomeViewModel::onEmailUpdate,
+        onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
+        onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
+        onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
+        onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(localContext) }
+    )
+}
+
+@Composable
+fun WelcomeScreenContent(
+    modifier: Modifier = Modifier,
+    welcomeUiState: WelcomeUiState = WelcomeUiState(),
+    onEmailUpdate: (String) -> Unit = {},
+    onPasswordUpdate: (String) -> Unit = {},
+    onLoginButtonClicked: () -> Unit = {},
+    onRegisterButtonClicked: () -> Unit = {},
+    onGoogleButtonClicked: () -> Unit = {},
+) {
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -44,12 +77,12 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = stringResource(R.string.login_page_title),
+            text = stringResource(R.string.welcome_page_title),
             fontSize = 32.sp,
             style = MaterialTheme.typography.displayLarge
         )
         Text(
-            text = stringResource(R.string.login_page_desc),
+            text = stringResource(R.string.welcome_page_desc),
             fontSize = 20.sp,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
@@ -58,13 +91,13 @@ fun LoginScreen(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
         )
         OutlinedTextField(
-            value = loginUiState.email,
-            onValueChange = loginViewModel::onEmailUpdate,
+            value = welcomeUiState.email,
+            onValueChange = onEmailUpdate,
             label = { Text(stringResource(R.string.email)) },
             singleLine = true,
-            isError = loginUiState.emailError != null,
+            isError = welcomeUiState.emailError != null,
             supportingText = {
-                loginUiState.emailError?.let {
+                welcomeUiState.emailError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -78,15 +111,15 @@ fun LoginScreen(
             ),
             modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
 
-        )
+            )
         OutlinedTextField(
-            value = loginUiState.password,
-            onValueChange = loginViewModel::onPasswordUpdate,
+            value = welcomeUiState.password,
+            onValueChange = onPasswordUpdate,
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
-            isError = loginUiState.passwordError != null,
+            isError = welcomeUiState.passwordError != null,
             supportingText = {
-                loginUiState.passwordError?.let {
+                welcomeUiState.passwordError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -104,39 +137,35 @@ fun LoginScreen(
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
         )
-        Button(
-            onClick = { loginViewModel.onLoginButtonClicked() },
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text(stringResource(R.string.sign_in))
-        }
-        loginUiState.loginResult?.let {
+        welcomeUiState.msgResult?.let {
             Text(
                 text = stringResource(it.idString),
                 color = it.color
             )
         }
         Button(
-            onClick = { loginViewModel.onLogoutButtonClicked() },
+            onClick = onLoginButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
-            Text("SignOut")
+            Text(stringResource(R.string.sign_in))
         }
         Button(
-            onClick = { loginViewModel.onGoogleButtonClicked() },
+            onClick = onRegisterButtonClicked,
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text("Register")
+        }
+        Button(
+            onClick = onGoogleButtonClicked,
             Modifier.widthIn(min = 250.dp)
         ) {
             Text(stringResource(R.string.sign_in_with_google))
         }
-
     }
 }
 
-
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen(
-        modifier = Modifier
-    )
+fun WelcomeScreenPreview() {
+    WelcomeScreenContent()
 }

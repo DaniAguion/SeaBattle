@@ -1,15 +1,24 @@
-package com.example.seabattle.ui.home
+package com.example.seabattle.ui.screens.home
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.seabattle.ui.welcome.WelcomeScreen
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     // TO DO
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = "Home Screen",
+            modifier = modifier
+        )
+    }
 }
 
 

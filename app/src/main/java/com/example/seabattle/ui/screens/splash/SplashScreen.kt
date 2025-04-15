@@ -1,4 +1,4 @@
-package com.example.seabattle.ui.splash
+package com.example.seabattle.ui.screens.splash
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -53,7 +53,7 @@ fun SplashScreen(
             SplashState.Loading -> {
                 Toast.makeText(
                     context,
-                    "Comprobando sesión...",
+                    context.getString(R.string.loading_splash_screen),
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -69,7 +69,7 @@ fun SplashScreen(
 
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Logo de la aplicación"
+            contentDescription = "Application Logo"
         )
     }
 }
