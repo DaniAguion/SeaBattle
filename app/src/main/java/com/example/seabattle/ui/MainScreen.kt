@@ -20,7 +20,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.seabattle.ui.battleplan.BattlePlanScreen
 import com.example.seabattle.ui.home.HomeScreen
+import com.example.seabattle.ui.profile.ProfileScreen
 import com.example.seabattle.ui.welcome.WelcomeScreen
 import com.example.seabattle.ui.theme.SeaBattleTheme
 import com.example.seabattle.ui.splash.SplashScreen
@@ -46,15 +48,14 @@ enum class TabItem(
     Profile(SeaBattleScreen.Profile.title, Icons.Default.AccountCircle)
 }
 
-
-
 @Composable
 fun SeaBattleApp(modifier : Modifier = Modifier) {
     val navController = rememberNavController()
 
     Scaffold(
         topBar = { SeaBattleTopBar() },
-        modifier = Modifier.fillMaxSize()
+        bottomBar = { TabBar(navController) },
+        modifier = Modifier.fillMaxSize(),
     ) {
         innerPadding ->
 
@@ -70,16 +71,13 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                 WelcomeScreen()
             }
             composable(route = SeaBattleScreen.BattlePlan.title) {
-                TabBar(navController = navController)
-                HomeScreen()
+                BattlePlanScreen()
             }
             composable(route = SeaBattleScreen.Home.title) {
-                TabBar(navController = navController)
                 HomeScreen()
             }
             composable(route = SeaBattleScreen.Profile.title) {
-                TabBar(navController = navController)
-                HomeScreen()
+                ProfileScreen()
             }
         }
     }
@@ -88,7 +86,7 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
 @Composable
 fun TabBar(navController: NavHostController) {
     TabNavigation(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier,
         tabs = listOf(
             TabItem.BattlePlan,
             TabItem.Home,

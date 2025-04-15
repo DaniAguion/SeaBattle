@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.seabattle.ui.TabItem
-import com.example.seabattle.ui.home.HomeScreen
 
 
 @Composable
@@ -46,11 +45,6 @@ fun TabNavigation(
                     }
                 )
             }
-        }
-        when (tabIndex) {
-            0 -> HomeScreen()
-            1 -> HomeScreen()
-            2 -> HomeScreen()
         }
     }
 }
