@@ -5,9 +5,9 @@ import com.example.seabattle.domain.model.UserProfile
 
 
 interface AuthRepository {
-    suspend fun loginUser(method: LoginMethod) : Boolean
-    fun logoutUser() : Unit
-    fun isLoggedIn() : Boolean
-    fun getCurrentUser() : UserProfile
     suspend fun registerUser(email: String, password: String) : Boolean
+    suspend fun loginUser(method: LoginMethod) : Boolean
+    fun logoutUser()
+    fun isLoggedIn() : Boolean
+    fun getCurrentUser() : UserProfile?
 }

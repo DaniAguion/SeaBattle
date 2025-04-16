@@ -10,8 +10,10 @@ class SessionManager(
     private val authRepository: AuthRepository
 ) {
 
-    fun isLoggedIn() : Boolean {
-        return authRepository.isLoggedIn()
+    suspend fun registerUser(email: String, password: String) : Boolean {
+        authRepository.registerUser(email, password)
+        securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
+        return isLoggedIn()
     }
 
     suspend fun loginUser(loginMethod: LoginMethod) : Boolean{
@@ -20,16 +22,17 @@ class SessionManager(
         return isLoggedIn()
     }
 
-    suspend fun registerUser(email: String, password: String) : Boolean {
-        authRepository.registerUser(email, password)
-        securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
-        return isLoggedIn()
-    }
 
     fun logoutUser(){
         authRepository.logoutUser()
         securePrefs.clearSession()
     }
+
+
+    fun isLoggedIn() : Boolean {
+        return authRepository.isLoggedIn()
+    }
+
 
     fun getUserProfile() : UserProfile? {
         if (authRepository.isLoggedIn()) {
@@ -39,10 +42,7 @@ class SessionManager(
                 email = securePrefs.getEmail(),
                 photoUrl = securePrefs.getPhoto()
             )
-        } else {
-            securePrefs.clearSession()
-            return null
         }
+        return null
     }
-
 }

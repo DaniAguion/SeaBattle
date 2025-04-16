@@ -13,25 +13,27 @@ class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
         private const val KEY_PHOTO = ""
     }
 
-    fun saveUserSession(userProfile : UserProfile) {
+    fun saveUserSession(userProfile : UserProfile?) {
+        if (userProfile == null) {
+            return
+        }
         sharedPrefs.edit() {
-            putString(KEY_UID, userProfile.uid ?: "-1")
-                .putString(KEY_NAME, userProfile.displayName ?: "")
-                .putString(KEY_EMAIL, userProfile.email ?: "")
-                .putString(KEY_PHOTO, userProfile.photoUrl ?: "")
+            putString(KEY_UID, userProfile.uid)
+                .putString(KEY_NAME, userProfile.displayName)
+                .putString(KEY_EMAIL, userProfile.email)
+                .putString(KEY_PHOTO, userProfile.photoUrl)
         }
     }
 
+    fun clearSession() {
+        sharedPrefs.edit() { clear() }
+    }
 
-    fun getUid(): String = sharedPrefs.getString(KEY_UID, "") ?: "-1"
+    fun getUid(): String = sharedPrefs.getString(KEY_UID, "-1") ?: "-1"
 
     fun getDisplayName(): String = sharedPrefs.getString(KEY_NAME, "")  ?: ""
 
     fun getEmail(): String = sharedPrefs.getString(KEY_EMAIL, "")  ?: ""
 
     fun getPhoto(): String = sharedPrefs.getString(KEY_PHOTO, "")  ?: ""
-
-    fun clearSession() {
-        sharedPrefs.edit() { clear() }
-    }
 }

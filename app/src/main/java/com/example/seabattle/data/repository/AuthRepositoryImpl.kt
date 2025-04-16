@@ -13,6 +13,17 @@ class AuthRepositoryImpl(
     private val auth: FirebaseAuth
 ) : AuthRepository {
 
+    override suspend fun registerUser(email: String, password: String) : Boolean {
+        try {
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            return (authResult.user != null)
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Register with email and password failed", e)
+            return false
+        }
+    }
+
+
     override suspend fun loginUser(method: LoginMethod) : Boolean {
         when (method) {
             is LoginMethod.EmailPassword -> {
@@ -35,35 +46,29 @@ class AuthRepositoryImpl(
                 }
             }
         }
-
     }
+
 
     override fun logoutUser() : Unit {
         auth.signOut()
     }
 
+
     override fun isLoggedIn() : Boolean {
         return (auth.currentUser != null)
     }
 
-    override fun getCurrentUser(): UserProfile {
+
+    override fun getCurrentUser(): UserProfile? {
         val user = auth.currentUser
         return user?.let {
             UserProfile(
                 uid = it.uid,
-                displayName = it.displayName ?: "",
-                email = it.email ?: "",
-                photoUrl = it.photoUrl?.toString() ?: ""
+                displayName = it.providerData[0]?.displayName ?: it.displayName ?: "",
+                email = it.providerData[0]?.email ?: it.email ?: "",
+                photoUrl = (it.providerData[0]?.photoUrl ?: it.photoUrl ?: "").toString()
             )
-        } ?: UserProfile("-1", "", "", "")
-    }
-
-    override suspend fun registerUser(email: String, password: String) : Boolean {
-        try {
-            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-            return (authResult.user != null)
-        } catch (e: Exception) {
-            return false
         }
+        return null
     }
 }
