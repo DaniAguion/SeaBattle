@@ -19,6 +19,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.ui.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
@@ -62,18 +63,21 @@ fun ProfileScreenContent(
             modifier = modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
         )
-        Text(
-            text = profileUiState.userProfile?.uid ?: "No id",
-        )
+        profileUiState.userProfile?.photoUrl?.let {
+            if (it.isNotEmpty()){
+                AsyncImage(
+                    model = profileUiState.userProfile.photoUrl,
+                    contentDescription = "User Profile Picture"
+                )
+            }
+        }
         Text(
             text = profileUiState.userProfile?.displayName ?: "No name",
         )
         Text(
             text = profileUiState.userProfile?.email ?: "No email",
         )
-        Text(
-            text = profileUiState.userProfile?.photoUrl ?: "No photo",
-        )
+
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
         )
