@@ -17,9 +17,11 @@
     <string name="register_unsuccessful">Sign up try unsuccessful!</string>
 
     // Validation email and password messages
+    <string name="error_empty_username">Please introduce your username</string>
+    <string name="error_invalid_username">Username format is not correct.</string>
     <string name="error_empty_email">Please introduce your email</string>
-    <string name="error_empty_password">Please introduce your password</string>
     <string name="error_invalid_email">Email format is not correct.</string>
+    <string name="error_empty_password">Please introduce your password</string>
     <string name="error_short_password">Password is too short.</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
 
@@ -27,6 +29,7 @@
     // Splash Screen
     <string name="error_splash_screen">Error, it wasnt possible to retrieve user information.</string>
     <string name="loading_splash_screen">Checking session..</string>
+    <string name="username">Username</string>
 
     // Unordered strings
 

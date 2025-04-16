@@ -8,12 +8,14 @@ data class WelcomeUiState(
     val isLoggedIn: Boolean = false,
     val email: String = "",
     val password: String = "",
+    val username: String = "",
+    val usernameError: ValidationError? = null,
     val emailError: ValidationError? = null,
     val passwordError: ValidationError? = null,
-    val msgResult: InfoMsgs? = null,
+    val msgResult: InfoMessages? = null,
 )
 
-enum class InfoMsgs(val idString: Int, val color: Color) {
+enum class InfoMessages(val idString: Int, val color: Color) {
     LOGIN_SUCCESSFUL(R.string.login_successful, Color.Green),
     LOGIN_UNSUCCESSFUL(R.string.login_unsuccessful, Color.Red),
     REGISTER_SUCCESSFUL(R.string.register_successful, Color.Green),

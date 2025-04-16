@@ -59,6 +59,7 @@ fun WelcomeScreen(
     WelcomeScreenContent(
         modifier = modifier,
         welcomeUiState = welcomeUiState,
+        onUsernameUpdate = welcomeViewModel::onUsernameUpdate,
         onEmailUpdate = welcomeViewModel::onEmailUpdate,
         onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
         onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
@@ -71,6 +72,7 @@ fun WelcomeScreen(
 fun WelcomeScreenContent(
     modifier: Modifier = Modifier,
     welcomeUiState: WelcomeUiState = WelcomeUiState(),
+    onUsernameUpdate: (String) -> Unit = {},
     onEmailUpdate: (String) -> Unit = {},
     onPasswordUpdate: (String) -> Unit = {},
     onLoginButtonClicked: () -> Unit = {},
@@ -111,6 +113,7 @@ fun WelcomeScreenContent(
                 0 -> {
                     Column(
                         modifier = Modifier
+                            .height(350.dp)
                             .padding(dimensionResource(R.dimen.padding_medium))
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,6 +140,27 @@ fun WelcomeScreenContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {
+                        OutlinedTextField(
+                            value = welcomeUiState.username,
+                            onValueChange = onUsernameUpdate,
+                            label = { Text(stringResource(R.string.username)) },
+                            singleLine = true,
+                            isError = welcomeUiState.usernameError != null,
+                            supportingText = {
+                                welcomeUiState.usernameError?.let {
+                                    Text(
+                                        text = stringResource(it.idString),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                autoCorrectEnabled = false,
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                        )
                         CommonForm(
                             welcomeUiState = welcomeUiState,
                             onEmailUpdate = onEmailUpdate,

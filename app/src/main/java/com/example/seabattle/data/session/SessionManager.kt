@@ -11,10 +11,15 @@ class SessionManager(
     private val authRepository: AuthRepository
 ) {
 
-    suspend fun registerUser(email: String, password: String) : Boolean {
-        authRepository.registerUser(email, password)
-        securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
-        return isLoggedIn()
+    suspend fun registerUser(username: String, email: String, password: String) : Boolean {
+        if (authRepository.registerUser(email, password)) {
+            authRepository.setUserName(username)
+            securePrefs.saveUserSession(userProfile = authRepository.getCurrentUser())
+            return isLoggedIn()
+        } else {
+            Log.d("SessionManager", "User registration failed")
+            return false
+        }
     }
 
     suspend fun loginUser(loginMethod: LoginMethod) : Boolean{

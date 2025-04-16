@@ -24,6 +24,16 @@ class WelcomeViewModel(
     private val _uiState = MutableStateFlow(WelcomeUiState())
     var uiState: StateFlow<WelcomeUiState> = _uiState.asStateFlow()
 
+    fun onUsernameUpdate(usernameField: String) {
+        validateUsername(usernameField)
+        _uiState.value = _uiState.value.copy(username = usernameField)
+    }
+
+    private fun validateUsername(username: String){
+        val validationResult = Validator.validateUsername(username)
+        _uiState.value = _uiState.value.copy(usernameError = validationResult)
+    }
+
     fun onEmailUpdate(emailField: String) {
         validateEmail(emailField)
         _uiState.value = _uiState.value.copy(email = emailField)
@@ -44,13 +54,12 @@ class WelcomeViewModel(
         _uiState.value = _uiState.value.copy(passwordError = validationResult)
     }
 
-
     fun onLoginButtonClicked() {
         validateEmail(_uiState.value.email)
         validatePassword(_uiState.value.password)
 
         if((uiState.value.emailError != null) || (uiState.value.passwordError != null)){
-            _uiState.value = _uiState.value.copy(msgResult = InfoMsgs.LOGIN_UNSUCCESSFUL)
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
             return
         }
 
@@ -61,27 +70,32 @@ class WelcomeViewModel(
                     password = _uiState.value.password
                 )
             )
-            val loginResult = if (tryResult) InfoMsgs.LOGIN_SUCCESSFUL else InfoMsgs.LOGIN_UNSUCCESSFUL
+            val loginResult = if (tryResult) InfoMessages.LOGIN_SUCCESSFUL else InfoMessages.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = loginResult)
             _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
     }
 
     fun onRegisterButtonClicked() {
+        validateUsername(_uiState.value.username)
         validateEmail(_uiState.value.email)
         validateNewPassword(_uiState.value.password)
 
-        if((uiState.value.emailError != null) || (uiState.value.passwordError != null)){
-            _uiState.value = _uiState.value.copy(msgResult = InfoMsgs.REGISTER_UNSUCCESSFUL)
+        if ((uiState.value.usernameError != null) ||
+            (uiState.value.emailError != null) ||
+            (uiState.value.passwordError != null)
+        ){
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
             return
         }
 
         viewModelScope.launch {
             val tryResult = registerUseCase(
+                username = _uiState.value.username,
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
-            val registerResult = if (tryResult) InfoMsgs.REGISTER_SUCCESSFUL else InfoMsgs.REGISTER_UNSUCCESSFUL
+            val registerResult = if (tryResult) InfoMessages.REGISTER_SUCCESSFUL else InfoMessages.REGISTER_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = registerResult)
             _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
@@ -96,7 +110,7 @@ class WelcomeViewModel(
                     googleIdToken = googleIdToken
                 )
             )
-            val loginResult = if (tryResult) InfoMsgs.LOGIN_SUCCESSFUL else InfoMsgs.LOGIN_UNSUCCESSFUL
+            val loginResult = if (tryResult) InfoMessages.LOGIN_SUCCESSFUL else InfoMessages.LOGIN_UNSUCCESSFUL
             _uiState.value = _uiState.value.copy(msgResult = loginResult)
             _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
         }
