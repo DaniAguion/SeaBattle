@@ -3,6 +3,8 @@ package com.example.seabattle.domain.validation
 import com.example.seabattle.R
 
 sealed class ValidationError(val idString: Int) {
+    object EmptyUsername : ValidationError(R.string.error_empty_username)
+    object InvalidUsername : ValidationError(R.string.error_invalid_username)
     object EmptyEmail : ValidationError(R.string.error_empty_email)
     object InvalidEmail : ValidationError(R.string.error_invalid_email)
     object EmptyPassword : ValidationError(R.string.error_empty_password)

@@ -2,6 +2,12 @@ package com.example.seabattle.domain.validation
 
 object Validator {
 
+    fun validateUsername(username: String): ValidationError? {
+        if (username.isBlank()) return ValidationError.EmptyUsername
+        val usernameRegex = Regex("^[a-zA-Z0-9_]{3,15}\$")
+        return if (usernameRegex.matches(username)) null else ValidationError.InvalidUsername
+    }
+
     fun validateEmail(email: String): ValidationError? {
         if (email.isBlank()) return ValidationError.EmptyEmail
         val emailRegex = Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+\$")
