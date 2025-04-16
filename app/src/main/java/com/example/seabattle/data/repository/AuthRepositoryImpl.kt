@@ -50,7 +50,7 @@ class AuthRepositoryImpl(
     }
 
 
-    override fun logoutUser() : Unit {
+    override fun logoutUser() {
         auth.signOut()
     }
 
@@ -74,22 +74,17 @@ class AuthRepositoryImpl(
     }
 
 
-    override fun setUserName(userName: String) {
-        val user = auth.currentUser
-        if (user != null) {
-            val profileUpdates = userProfileChangeRequest {
-                displayName = userName
-            }
-
-            user.updateProfile(profileUpdates)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("Update Profile", "Updated.")
-                    }
-                    else {
-                        Log.e("Update Profile", "Update failed", task.exception)
-                    }
+    override suspend fun setUserName(userName: String) {
+        try {
+            val user = auth.currentUser
+            if (user != null) {
+                val profileUpdates = userProfileChangeRequest {
+                    displayName = userName
                 }
+                user.updateProfile(profileUpdates).await()
+            }
+        } catch (e: Exception) {
+            Log.e("Update Profile", "Update failed", e)
         }
     }
 }

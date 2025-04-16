@@ -10,5 +10,5 @@ interface AuthRepository {
     fun logoutUser()
     fun isLoggedIn() : Boolean
     fun getCurrentUser() : UserProfile?
-    fun setUserName(userName: String)
+    suspend fun setUserName(userName: String)
 }

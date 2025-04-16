@@ -6,6 +6,7 @@ import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.domain.model.UserProfile
 
+
 class SessionManager(
     private val securePrefs: SecurePrefsData,
     private val authRepository: AuthRepository
