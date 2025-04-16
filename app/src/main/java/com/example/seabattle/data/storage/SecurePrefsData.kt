@@ -7,21 +7,19 @@ import androidx.core.content.edit
 class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
 
     companion object {
-        private const val KEY_UID = "-1"
+        private const val KEY_UID = ""
         private const val KEY_NAME = ""
         private const val KEY_EMAIL = ""
         private const val KEY_PHOTO = ""
     }
 
     fun saveUserSession(userProfile : UserProfile?) {
-        if (userProfile == null) {
-            return
-        }
-        sharedPrefs.edit() {
-            putString(KEY_UID, userProfile.uid)
-                .putString(KEY_NAME, userProfile.displayName)
-                .putString(KEY_EMAIL, userProfile.email)
-                .putString(KEY_PHOTO, userProfile.photoUrl)
+        if (userProfile == null) return
+        sharedPrefs.edit {
+            putString("key_uid", userProfile.uid)
+            putString("key_name", userProfile.displayName)
+            putString("key_email", userProfile.email)
+            putString("key_photo", userProfile.photoUrl)
         }
     }
 
@@ -29,11 +27,11 @@ class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
         sharedPrefs.edit() { clear() }
     }
 
-    fun getUid(): String = sharedPrefs.getString(KEY_UID, "-1") ?: "-1"
+    fun getUid(): String = sharedPrefs.getString("key_uid", "") ?: ""
 
-    fun getDisplayName(): String = sharedPrefs.getString(KEY_NAME, "")  ?: ""
+    fun getDisplayName(): String = sharedPrefs.getString("key_name", "")  ?: ""
 
-    fun getEmail(): String = sharedPrefs.getString(KEY_EMAIL, "")  ?: ""
+    fun getEmail(): String = sharedPrefs.getString("key_email", "")  ?: ""
 
-    fun getPhoto(): String = sharedPrefs.getString(KEY_PHOTO, "")  ?: ""
+    fun getPhoto(): String = sharedPrefs.getString("key_photo", "")  ?: ""
 }

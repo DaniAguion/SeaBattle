@@ -64,9 +64,9 @@ class AuthRepositoryImpl(
         return user?.let {
             UserProfile(
                 uid = it.uid,
-                displayName = it.providerData[0]?.displayName ?: it.displayName ?: "",
-                email = it.providerData[0]?.email ?: it.email ?: "",
-                photoUrl = (it.providerData[0]?.photoUrl ?: it.photoUrl ?: "").toString()
+                displayName = it.displayName ?: it.providerData[0]?.displayName ?: "",
+                email =  it.email ?: it.providerData[0]?.email ?: "",
+                photoUrl = (it.photoUrl ?: it.providerData[0]?.photoUrl ?: "").toString()
             )
         }
         return null

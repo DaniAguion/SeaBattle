@@ -37,9 +37,9 @@ fun ProfileScreen(
             navController.navigate(SeaBattleScreen.Welcome.title)
         }
     }
-
     ProfileScreenContent(
         modifier = modifier,
+        profileUiState = profileUiState,
         onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked
     )
 }
@@ -47,6 +47,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
+    profileUiState: ProfileUiState = ProfileUiState(),
     onLogoutButtonClicked: () -> Unit = {},
 ) {
     Column(
@@ -59,6 +60,19 @@ fun ProfileScreenContent(
         Text(
             text = "Profile Screen",
             modifier = modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+        )
+        Text(
+            text = profileUiState.userProfile?.uid ?: "No id",
+        )
+        Text(
+            text = profileUiState.userProfile?.displayName ?: "No name",
+        )
+        Text(
+            text = profileUiState.userProfile?.email ?: "No email",
+        )
+        Text(
+            text = profileUiState.userProfile?.photoUrl ?: "No photo",
         )
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
@@ -73,7 +87,7 @@ fun ProfileScreenContent(
 }
 
 
-@Preview
+@Preview (showBackground = true)
 @Composable
 fun ProfilePreview(){
     ProfileScreenContent(

@@ -11,7 +11,7 @@ import org.koin.dsl.module
 val presentationModule = module {
     viewModel { SplashViewModel(get()) }
     viewModel { WelcomeViewModel(get(), get(), get()) }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { HomeViewModel() }
     viewModel { BattlePlanViewModel() }
 }

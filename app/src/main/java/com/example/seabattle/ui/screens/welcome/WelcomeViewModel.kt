@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
 
 
 class WelcomeViewModel(
-    private val loginUserUseCase: LoginUserUseCase,
-    private val registerUserUseCase: RegisterUserUseCase,
+    private val loginUseCase: LoginUserUseCase,
+    private val registerUseCase: RegisterUserUseCase,
     private val googleSignIn: GoogleSignIn
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(WelcomeUiState())
@@ -55,7 +55,7 @@ class WelcomeViewModel(
         }
 
         viewModelScope.launch {
-            val tryResult = loginUserUseCase(
+            val tryResult = loginUseCase(
                 LoginMethod.EmailPassword(
                     email = _uiState.value.email,
                     password = _uiState.value.password
@@ -77,7 +77,7 @@ class WelcomeViewModel(
         }
 
         viewModelScope.launch {
-            val tryResult = registerUserUseCase(
+            val tryResult = registerUseCase(
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
@@ -91,7 +91,7 @@ class WelcomeViewModel(
         viewModelScope.launch {
             val googleIdToken = googleSignIn.signIn(context) ?: ""
 
-            val tryResult = loginUserUseCase(
+            val tryResult = loginUseCase(
                 LoginMethod.Google(
                     googleIdToken = googleIdToken
                 )
