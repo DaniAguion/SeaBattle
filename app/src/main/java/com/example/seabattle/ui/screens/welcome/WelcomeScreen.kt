@@ -4,18 +4,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.ui.TabItem
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -69,6 +77,13 @@ fun WelcomeScreenContent(
     onRegisterButtonClicked: () -> Unit = {},
     onGoogleButtonClicked: () -> Unit = {},
 ) {
+    val tabs = listOf(
+        stringResource(R.string.sign_in),
+        stringResource(R.string.sign_up)
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { 2 })
+
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -90,6 +105,90 @@ fun WelcomeScreenContent(
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
         )
+
+        HorizontalPager(state = pagerState) { page ->
+            when(page) {
+                0 -> {
+                    Column(
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        CommonForm(
+                            welcomeUiState = welcomeUiState,
+                            onEmailUpdate = onEmailUpdate,
+                            onPasswordUpdate = onPasswordUpdate
+                        )
+                        Button(
+                            onClick = onLoginButtonClicked,
+                            Modifier.widthIn(min = 250.dp)
+                        ) {
+                            Text(stringResource(R.string.submit))
+                        }
+                    }
+                }
+                1 -> {
+                    Column(
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        CommonForm(
+                            welcomeUiState = welcomeUiState,
+                            onEmailUpdate = onEmailUpdate,
+                            onPasswordUpdate = onPasswordUpdate
+                        )
+                        Button(
+                            onClick = onRegisterButtonClicked,
+                            Modifier.widthIn(min = 250.dp)
+                        ) {
+                            Text(stringResource(R.string.submit))
+                        }
+                    }
+                }
+            }
+        }
+
+        TabRow(selectedTabIndex = pagerState.currentPage) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    text = { Text(text = title) },
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }
+                )
+            }
+        }
+        Spacer(
+            modifier = Modifier.height(dimensionResource(R.dimen.padding_big))
+        )
+        Button(
+            onClick = onGoogleButtonClicked,
+            Modifier.widthIn(min = 250.dp)
+        ) {
+            Text(stringResource(R.string.access_with_google))
+        }
+    }
+}
+
+@Composable
+fun CommonForm(
+    welcomeUiState : WelcomeUiState,
+    onEmailUpdate: (String) -> Unit,
+    onPasswordUpdate: (String) -> Unit
+){
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
         OutlinedTextField(
             value = welcomeUiState.email,
             onValueChange = onEmailUpdate,
@@ -134,35 +233,18 @@ fun WelcomeScreenContent(
             ),
             modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
         )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
+    }
+    Spacer(
+        modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
+    )
+    welcomeUiState.msgResult?.let {
+        Text(
+            text = stringResource(it.idString),
+            color = it.color
         )
-        welcomeUiState.msgResult?.let {
-            Text(
-                text = stringResource(it.idString),
-                color = it.color
-            )
-        }
-        Button(
-            onClick = onLoginButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text(stringResource(R.string.sign_in))
-        }
-        Button(
-            onClick = onRegisterButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text("Register")
-        }
-        Button(
-            onClick = onGoogleButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text(stringResource(R.string.sign_in_with_google))
-        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

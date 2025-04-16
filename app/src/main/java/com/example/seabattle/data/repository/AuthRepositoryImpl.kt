@@ -7,6 +7,7 @@ import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.domain.model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
@@ -70,5 +71,25 @@ class AuthRepositoryImpl(
             )
         }
         return null
+    }
+
+
+    override fun setUserName(userName: String) {
+        val user = auth.currentUser
+        if (user != null) {
+            val profileUpdates = userProfileChangeRequest {
+                displayName = userName
+            }
+
+            user.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("Update Profile", "Updated.")
+                    }
+                    else {
+                        Log.e("Update Profile", "Update failed", task.exception)
+                    }
+                }
+        }
     }
 }

@@ -7,12 +7,14 @@
     <string name="welcome_page_desc">Sign in with your user account or sign up to create a new one.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="sign_in">Sign in</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="login_successful">Login has been successful!</string>
-    <string name="login_unsuccessful">Login try unsuccessful</string>
-    <string name="register_successful">Register sucessful</string>
-    <string name="register_unsuccessful">Register try uncessful\n</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="submit">Submit</string>
+    <string name="access_with_google">Access with Google</string>
+    <string name="login_successful">Sign In has been successful!</string>
+    <string name="login_unsuccessful">Sign In try unsuccessful</string>
+    <string name="register_successful">Sign up successful!</string>
+    <string name="register_unsuccessful">Sign up try unsuccessful!</string>
 
     // Validation email and password messages
     <string name="error_empty_email">Please introduce your email</string>
