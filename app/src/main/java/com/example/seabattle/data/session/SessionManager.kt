@@ -24,7 +24,7 @@ class SessionManager(
 
             return isLoggedIn()
         } else {
-            Log.d("SessionManager", "User registration failed")
+            Log.e("SessionManager", "User registration failed")
             return false
         }
     }

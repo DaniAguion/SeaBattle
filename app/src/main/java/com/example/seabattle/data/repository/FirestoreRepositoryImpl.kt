@@ -1,5 +1,6 @@
 package com.example.seabattle.data.repository
 
+import android.util.Log
 import com.example.seabattle.domain.firestore.repository.FirestoreRepository
 import com.example.seabattle.domain.model.UserProfile
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,6 +14,7 @@ class FirestoreRepositoryImpl(
             db.collection("users").document(userId).set(userProfile).await()
             true
         } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error creating user profile: ${e.message}")
             false
         }
     }
@@ -26,6 +28,7 @@ class FirestoreRepositoryImpl(
                 null
             }
         } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error getting user profile: ${e.message}")
             null
         }
     }
