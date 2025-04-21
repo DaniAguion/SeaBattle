@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.battleplan
+package com.example.seabattle.presentation.screens.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,14 +11,18 @@ import com.example.seabattle.domain.model.GameBoard
 import com.example.seabattle.presentation.resources.Board
 
 @Composable
-fun BattlePlanScreen(
+fun GameScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
         Text(
-            text = "BattlePlan Screen"
+            text = "GameScreen Screen"
+        )
+        Board(
+            gameBoard = GameBoard(),
+            onCellClick = {}
         )
     }
 }
@@ -26,8 +30,8 @@ fun BattlePlanScreen(
 
 @Preview
 @Composable
-fun BattlePlanPreview(){
-    BattlePlanScreen(
+fun GameScreenPreview(){
+    GameScreen(
         modifier = Modifier
     )
 }

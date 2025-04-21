@@ -7,9 +7,10 @@ data class Cell(
     val cellStyle: CellStyle =
         when (cellValue) {
             0 -> CellStyle.Target
-            1 -> CellStyle.Water
-            2 -> CellStyle.Hit
-            3 -> CellStyle.Ship
+            1 -> CellStyle.Target
+            2 -> CellStyle.Water
+            3 -> CellStyle.Hit
+            4 -> CellStyle.Ship
             else -> CellStyle.Water
         }
 )

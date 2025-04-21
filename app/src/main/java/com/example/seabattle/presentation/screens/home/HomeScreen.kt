@@ -1,23 +1,41 @@
 package com.example.seabattle.presentation.screens.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.TabItem
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxSize(),
+    navController: NavHostController,
 ) {
-    // TO DO
     Column(
-        modifier = modifier
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Home Screen",
-            modifier = modifier
+            text = "Home Screen"
         )
+        Button(
+            onClick = {
+                navController.navigate(SeaBattleScreen.Game.title) {
+                }
+            },
+        ) {
+            Text(text = "Start Game")
+        }
     }
 }
 
@@ -26,6 +44,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview(){
     HomeScreen(
-        modifier = Modifier
+        modifier = Modifier,
+        navController = NavHostController(context = androidx.compose.ui.platform.LocalContext.current)
     )
 }

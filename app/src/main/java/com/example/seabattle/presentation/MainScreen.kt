@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.seabattle.presentation.screens.battleplan.BattlePlanScreen
+import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
 import com.example.seabattle.presentation.screens.profile.ProfileScreen
 import com.example.seabattle.presentation.screens.welcome.WelcomeScreen
@@ -36,7 +37,7 @@ enum class SeaBattleScreen(val title: String) {
     Profile(title = "Profile"),
     BattlePlan(title = "Battle Plan"),
     Play(title = "Play"),
-    Gameboard(title = "Gameboard")
+    Game(title = "Game")
 }
 
 enum class TabItem(
@@ -74,10 +75,16 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
                 BattlePlanScreen()
             }
             composable(route = SeaBattleScreen.Home.title) {
-                HomeScreen()
+                HomeScreen(navController = navController)
             }
             composable(route = SeaBattleScreen.Profile.title) {
                 ProfileScreen(navController = navController)
+            }
+            composable(route = SeaBattleScreen.Play.title) {
+                // TO DO: Implement Waiting Screen
+            }
+            composable(route = SeaBattleScreen.Game.title) {
+                GameScreen()
             }
         }
     }
@@ -88,8 +95,10 @@ fun TabBar(navController: NavHostController) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    if (currentRoute == SeaBattleScreen.Splash.title ||
-        currentRoute == SeaBattleScreen.Welcome.title) {
+    if (currentRoute != SeaBattleScreen.BattlePlan.title &&
+        currentRoute != SeaBattleScreen.Home.title &&
+        currentRoute != SeaBattleScreen.Profile.title)
+    {
         return
     }
 
