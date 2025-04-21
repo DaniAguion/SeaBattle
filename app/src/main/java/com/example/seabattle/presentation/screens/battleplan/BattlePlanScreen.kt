@@ -5,7 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.seabattle.presentation.resources.GameBoard
+import com.example.seabattle.domain.model.GameBoard
+import com.example.seabattle.presentation.resources.Board
 
 @Composable
 fun BattlePlanScreen(
@@ -15,11 +16,11 @@ fun BattlePlanScreen(
         modifier = modifier
     ) {
         Text(
-            text = "BattlePlan Screen",
-            modifier = modifier
+            text = "BattlePlan Screen"
         )
-        GameBoard(
-            modifier = modifier
+        Board(
+            gameBoard = GameBoard(),
+            onCellClick = {}
         )
     }
 }
