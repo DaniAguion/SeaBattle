@@ -27,7 +27,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     navController: NavHostController,
     profileViewModel: ProfileViewModel = koinViewModel(),
 ) {
@@ -60,8 +60,7 @@ fun ProfileScreenContent(
     ) {
         Text(
             text = "Profile Screen",
-            modifier = modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         profileUiState.userProfile?.photoUrl?.let {
             if (it.isNotEmpty()){
@@ -95,6 +94,6 @@ fun ProfileScreenContent(
 @Composable
 fun ProfilePreview(){
     ProfileScreenContent(
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize(),
     )
 }

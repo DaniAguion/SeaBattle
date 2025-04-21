@@ -2,6 +2,7 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,10 +13,12 @@ import com.example.seabattle.presentation.resources.Board
 
 @Composable
 fun GameScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "GameScreen Screen"
@@ -28,10 +31,10 @@ fun GameScreen(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GameScreenPreview(){
     GameScreen(
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize()
     )
 }

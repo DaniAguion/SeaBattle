@@ -50,7 +50,7 @@ enum class TabItem(
 }
 
 @Composable
-fun SeaBattleApp(modifier : Modifier = Modifier) {
+fun SeaBattleApp() {
     val navController = rememberNavController()
 
     Scaffold(
@@ -66,25 +66,39 @@ fun SeaBattleApp(modifier : Modifier = Modifier) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = SeaBattleScreen.Splash.title) {
-                SplashScreen(navController = navController)
+                SplashScreen(
+                    navController = navController
+                )
             }
             composable(route = SeaBattleScreen.Welcome.title) {
-                WelcomeScreen(navController = navController)
+                WelcomeScreen(
+                    navController = navController
+                )
             }
             composable(route = SeaBattleScreen.BattlePlan.title) {
-                BattlePlanScreen()
+                BattlePlanScreen(
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
             composable(route = SeaBattleScreen.Home.title) {
-                HomeScreen(navController = navController)
+                HomeScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
+                )
             }
             composable(route = SeaBattleScreen.Profile.title) {
-                ProfileScreen(navController = navController)
+                ProfileScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
+                )
             }
             composable(route = SeaBattleScreen.Play.title) {
                 // TO DO: Implement Waiting Screen
             }
             composable(route = SeaBattleScreen.Game.title) {
-                GameScreen()
+                GameScreen(
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

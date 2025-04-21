@@ -17,7 +17,7 @@ import com.example.seabattle.presentation.TabItem
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier,
     navController: NavHostController,
 ) {
     Column(
@@ -40,11 +40,11 @@ fun HomeScreen(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview(){
     HomeScreen(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = androidx.compose.ui.platform.LocalContext.current)
     )
 }
