@@ -10,11 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.seabattle.domain.model.GameBoard
 import com.example.seabattle.presentation.resources.Board
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GameScreen(
-    modifier: Modifier
+    modifier: Modifier,
+    gameViewModel: GameViewModel = koinViewModel(),
 ) {
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -25,7 +28,7 @@ fun GameScreen(
         )
         Board(
             gameBoard = GameBoard(),
-            onCellClick = {}
+            onCellClick = gameViewModel::onCellClick,
         )
     }
 }

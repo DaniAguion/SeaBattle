@@ -1,6 +1,7 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.presentation.screens.battleplan.BattlePlanViewModel
+import com.example.seabattle.presentation.screens.game.GameViewModel
 import com.example.seabattle.presentation.screens.home.HomeViewModel
 import com.example.seabattle.presentation.screens.profile.ProfileViewModel
 import com.example.seabattle.presentation.screens.welcome.WelcomeViewModel
@@ -14,6 +15,7 @@ val presentationModule = module {
     single { GoogleSignIn() }
     viewModel { WelcomeViewModel(get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get()) }
+    viewModel { GameViewModel(get()) }
     viewModel { HomeViewModel() }
     viewModel { BattlePlanViewModel() }
 }

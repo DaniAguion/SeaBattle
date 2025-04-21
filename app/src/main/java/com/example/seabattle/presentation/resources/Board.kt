@@ -24,7 +24,7 @@ import com.example.seabattle.domain.model.GameBoard
 @Composable
 fun Board(
     gameBoard: GameBoard,
-    onCellClick: (CellStyle) -> Unit = {}
+    onCellClick: (row: Int, col: Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -34,7 +34,7 @@ fun Board(
                 for (j in 0 until gameBoard.cells[i].size) {
                     Cell(
                         cell = gameBoard.cells[i][j].cellStyle,
-                        onCellClick = onCellClick
+                        onCellClick = { onCellClick(i, j) }
                     )
                 }
             }
@@ -45,7 +45,7 @@ fun Board(
 @Composable
 fun Cell(
     cell: CellStyle,
-    onCellClick: (CellStyle) -> Unit = {}
+    onCellClick: () -> Unit
 ) {
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
@@ -59,7 +59,7 @@ fun Cell(
             .size(cellSize)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
-                    onCellClick(cell)
+                    onCellClick()
                 })
             },
         shape = RectangleShape,
@@ -90,6 +90,6 @@ fun Cell(
 fun BattlePlanPreview(){
     Board(
         gameBoard = GameBoard(),
-        onCellClick = {}
+        onCellClick = { _, _ ->  } // Dummy click handler for preview
     )
 }

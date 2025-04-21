@@ -1,5 +1,6 @@
 package com.example.seabattle.di
 
+import com.example.seabattle.domain.auth.usecase.CellActionUseCase
 import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
 import com.example.seabattle.domain.auth.usecase.LogoutUserUseCase
 import com.example.seabattle.domain.auth.usecase.CheckUserAuthUseCase
@@ -13,4 +14,5 @@ val domainModule = module {
     factory { RegisterUserUseCase(get()) }
     factory { CheckUserAuthUseCase(get()) }
     factory { GetProfileUseCase(get()) }
+    factory { CellActionUseCase() }
 }
