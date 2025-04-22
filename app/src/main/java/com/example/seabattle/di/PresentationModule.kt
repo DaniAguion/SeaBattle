@@ -11,11 +11,11 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val presentationModule = module {
-    viewModel { SplashViewModel(get()) }
     single { GoogleSignIn() }
+    viewModel { SplashViewModel(get()) }
     viewModel { WelcomeViewModel(get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get()) }
-    viewModel { GameViewModel(get()) }
+    viewModel { GameViewModel(get(), get()) }
     viewModel { HomeViewModel() }
     viewModel { BattlePlanViewModel() }
 }

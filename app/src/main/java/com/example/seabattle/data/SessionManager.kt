@@ -1,4 +1,4 @@
-package com.example.seabattle.data.session
+package com.example.seabattle.data
 
 import android.util.Log
 import com.example.seabattle.data.storage.SecurePrefsData
@@ -6,7 +6,6 @@ import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.domain.firestore.repository.FirestoreRepository
 import com.example.seabattle.domain.model.UserProfile
-
 
 class SessionManager(
     private val securePrefs: SecurePrefsData,

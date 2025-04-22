@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.auth.usecases
 
-import com.example.seabattle.data.session.SessionManager
+import com.example.seabattle.data.SessionManager
 
 
 class LogoutUserUseCase (private val sessionManager: SessionManager ) {
