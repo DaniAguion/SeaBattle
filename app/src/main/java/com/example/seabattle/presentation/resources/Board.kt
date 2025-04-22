@@ -33,7 +33,7 @@ fun Board(
             Row {
                 for (j in 0 until gameBoard.cells[i].size) {
                     Cell(
-                        cell = gameBoard.cells[i][j].cellStyle,
+                        cellStyle = gameBoard.cells[i][j].cellStyle,
                         onCellClick = { onCellClick(i, j) }
                     )
                 }
@@ -44,24 +44,26 @@ fun Board(
 
 @Composable
 fun Cell(
-    cell: CellStyle,
+    cellStyle: CellStyle,
     onCellClick: () -> Unit
 ) {
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
 
-    var cellColor : Color = colorResource(id = cell.backgroundColor)
-    val targetColorId = cell.targetColor
-    val targetSize = dimensionResource(cell.targetSize)
+    val cellClickable = cellStyle.clickable
+    val cellColor : Color = colorResource(id = cellStyle.backgroundColor)
+    val targetColorId = cellStyle.targetColor
+    val targetSize = dimensionResource(cellStyle.targetSize)
 
     Surface(
         modifier = Modifier
             .size(cellSize)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    onCellClick()
+                detectTapGestures(onTap =  {
+                    if (cellClickable) onCellClick()
                 })
-            },
+            }
+        ,
         shape = RectangleShape,
         color = Color.Transparent,
         contentColor = LocalContentColor.current,

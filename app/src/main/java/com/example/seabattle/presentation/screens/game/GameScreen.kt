@@ -23,7 +23,7 @@ fun GameScreen(
 
     GameScreenContent(
         modifier = modifier,
-        gameUiState = gameUiState,
+        gameBoard = gameUiState.gameBoard,
         onCellClick = gameViewModel::onCellClick
     )
 }
@@ -31,7 +31,7 @@ fun GameScreen(
 @Composable
 fun GameScreenContent(
     modifier: Modifier,
-    gameUiState: GameUiState,
+    gameBoard: GameBoard,
     onCellClick: (Int, Int) -> Unit
 ) {
     Column(
@@ -40,10 +40,10 @@ fun GameScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "GameScreen Screen"
+            text = "Game Screen"
         )
         Board(
-            gameBoard = gameUiState.gameBoard,
+            gameBoard = gameBoard,
             onCellClick = onCellClick,
         )
     }
@@ -55,7 +55,7 @@ fun GameScreenContent(
 fun GameScreenPreview(){
     GameScreenContent(
         modifier = Modifier.fillMaxSize(),
-        gameUiState = GameUiState(GameBoard()),
+        gameBoard = GameBoard(),
         onCellClick = { x, y -> }
     )
 }

@@ -1,11 +1,12 @@
 package com.example.seabattle.domain.game.usecases
 
-import com.example.seabattle.domain.game.repository.GameRepository
+import com.example.seabattle.data.BoardManager
+import com.example.seabattle.domain.model.GameBoard
 
 class CellActionUseCase(
-    val gameRepository: GameRepository
+    val boardManager: BoardManager
 ) {
-    operator fun invoke(x: Int, y: Int) {
-        gameRepository.cellAction(x, y)
+    operator fun invoke(x: Int, y: Int) : GameBoard {
+        return boardManager.discoverCell(x, y)
     }
 }

@@ -6,8 +6,7 @@ import com.example.seabattle.domain.model.GameBoard
 class StartGameUseCase(
     val boardManager: BoardManager
 ) {
-    fun getGameBoard() : GameBoard {
-        // TO DO
-        return boardManager.getBoard()
+    operator fun invoke() : GameBoard {
+        return boardManager.getGameBoard()
     }
 }

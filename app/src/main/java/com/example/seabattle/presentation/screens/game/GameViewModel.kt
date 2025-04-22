@@ -14,16 +14,12 @@ class GameViewModel(
     private val cellActionUseCase: CellActionUseCase,
     private val startGameUseCase: StartGameUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(GameUiState(GameBoard()))
+    private val _uiState = MutableStateFlow(GameUiState(gameBoard = startGameUseCase()))
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    init{
-        _uiState.value = GameUiState(
-            gameBoard = startGameUseCase.getGameBoard()
-        )
-    }
-
     fun onCellClick(x: Int, y: Int) {
-        cellActionUseCase(x, y)
+        val newBoard = cellActionUseCase(x, y)
+        _uiState.value = _uiState.value.copy(gameBoard = newBoard)
+        println("Cell clicked at coordinates: ($x, $y) with value: ${uiState.value.gameBoard.cells[x][y].cellValue}")
     }
 }
