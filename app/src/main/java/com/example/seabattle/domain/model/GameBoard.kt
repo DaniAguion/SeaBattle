@@ -1,5 +1,15 @@
 package com.example.seabattle.domain.model
 
-data class GameBoard (
-    val cells: List<List<Cell>> = List(10) { List(10) { Cell(cellValue = 0) } }
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import kotlin.Int
+
+data class GameBoard(
+    var cells: SnapshotStateList<SnapshotStateList<Int>> = mutableStateListOf<SnapshotStateList<Int>>().apply {
+        repeat(10) {
+            add(mutableStateListOf<Int>().apply {
+                repeat(10) { add(0) }
+            })
+        }
+    }
 )

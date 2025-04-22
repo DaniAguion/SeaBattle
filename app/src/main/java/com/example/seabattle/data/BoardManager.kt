@@ -13,16 +13,16 @@ class BoardManager {
     fun seedGameBoard() {
         for (i in 0 until gameBoard.cells.size) {
             for (j in 0 until gameBoard.cells[i].size) {
-                gameBoard.cells[i][j].cellValue = (0..1).random()
+                gameBoard.cells[i][j] = (0..1).random()
             }
         }
     }
 
     fun discoverCell(x: Int, y: Int) : GameBoard {
-        when (gameBoard.cells[x][y].cellValue) {
-            0 -> gameBoard.cells[x][y].cellValue = 2
-            1 -> gameBoard.cells[x][y].cellValue = 3
-            else -> gameBoard.cells[x][y].cellValue = gameBoard.cells[x][y].cellValue
+        when (gameBoard.cells[x][y]) {
+            0 -> gameBoard.cells[x][y] = 2
+            1 -> gameBoard.cells[x][y] = 3
+            else -> gameBoard.cells[x][y] = gameBoard.cells[x][y]
         }
         return gameBoard
     }
