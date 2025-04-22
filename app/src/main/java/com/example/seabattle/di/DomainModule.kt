@@ -1,11 +1,11 @@
 package com.example.seabattle.di
 
-import com.example.seabattle.domain.auth.usecase.CellActionUseCase
-import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
-import com.example.seabattle.domain.auth.usecase.LogoutUserUseCase
-import com.example.seabattle.domain.auth.usecase.CheckUserAuthUseCase
-import com.example.seabattle.domain.auth.usecase.GetProfileUseCase
-import com.example.seabattle.domain.auth.usecase.RegisterUserUseCase
+import com.example.seabattle.domain.game.usecases.CellActionUseCase
+import com.example.seabattle.domain.auth.usecases.LoginUserUseCase
+import com.example.seabattle.domain.auth.usecases.LogoutUserUseCase
+import com.example.seabattle.domain.auth.usecases.CheckUserAuthUseCase
+import com.example.seabattle.domain.auth.usecases.GetProfileUseCase
+import com.example.seabattle.domain.auth.usecases.RegisterUserUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -14,5 +14,5 @@ val domainModule = module {
     factory { RegisterUserUseCase(get()) }
     factory { CheckUserAuthUseCase(get()) }
     factory { GetProfileUseCase(get()) }
-    factory { CellActionUseCase() }
+    factory { CellActionUseCase(get()) }
 }

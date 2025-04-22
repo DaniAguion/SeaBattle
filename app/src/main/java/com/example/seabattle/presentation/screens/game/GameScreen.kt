@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.seabattle.domain.model.GameBoard
 import com.example.seabattle.presentation.resources.Board
 import org.koin.androidx.compose.koinViewModel
 
@@ -17,7 +18,21 @@ fun GameScreen(
     modifier: Modifier,
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
+    val gameUiState by gameViewModel.uiState.collectAsState()
 
+    GameScreenContent(
+        modifier = modifier,
+        gameUiState = gameUiState,
+        onCellClick = gameViewModel::onCellClick
+    )
+}
+
+@Composable
+fun GameScreenContent(
+    modifier: Modifier,
+    gameUiState: GameUiState,
+    onCellClick: (Int, Int) -> Unit
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -27,8 +42,8 @@ fun GameScreen(
             text = "GameScreen Screen"
         )
         Board(
-            gameBoard = GameBoard(),
-            onCellClick = gameViewModel::onCellClick,
+            gameBoard = gameUiState.gameBoard,
+            onCellClick = onCellClick,
         )
     }
 }
@@ -37,7 +52,9 @@ fun GameScreen(
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview(){
-    GameScreen(
-        modifier = Modifier.fillMaxSize()
+    GameScreenContent(
+        modifier = Modifier.fillMaxSize(),
+        gameUiState = GameUiState(),
+        onCellClick = { x, y -> }
     )
 }

@@ -3,8 +3,10 @@ package com.example.seabattle.di
 import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.data.repository.AuthRepositoryImpl
 import com.example.seabattle.data.repository.FirestoreRepositoryImpl
+import com.example.seabattle.data.repository.GameRepositoryImpl
 import com.example.seabattle.data.session.SessionManager
 import com.example.seabattle.domain.firestore.repository.FirestoreRepository
+import com.example.seabattle.domain.game.repository.GameRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.dsl.module
@@ -18,4 +20,6 @@ val dataModule = module {
     single<FirestoreRepository> { FirestoreRepositoryImpl(get()) }
     // SessionManager instance
     single { SessionManager(get(), get(), get()) }
+    // GameRepository instance
+    single<GameRepository> { GameRepositoryImpl(get()) }
 }

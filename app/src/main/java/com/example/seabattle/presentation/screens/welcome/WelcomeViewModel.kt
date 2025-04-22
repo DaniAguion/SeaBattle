@@ -5,8 +5,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.auth.LoginMethod
-import com.example.seabattle.domain.auth.usecase.LoginUserUseCase
-import com.example.seabattle.domain.auth.usecase.RegisterUserUseCase
+import com.example.seabattle.domain.auth.usecases.LoginUserUseCase
+import com.example.seabattle.domain.auth.usecases.RegisterUserUseCase
 import com.example.seabattle.presentation.screens.welcome.validation.Validator
 import com.example.seabattle.presentation.screens.welcome.validation.Validator.validateNewPassword
 import kotlinx.coroutines.flow.MutableStateFlow
