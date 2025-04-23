@@ -39,7 +39,6 @@ fun Board(
                             onCellClick(i, j)
                         }
                     )
-                    Log.d("Board", "Composing Cell at ($i, $j) with value ${gameBoard.cells[i][j]}")
                 }
             }
         }
