@@ -8,19 +8,18 @@ import com.example.seabattle.domain.model.Ship
 
 class BoardManager {
     private val gameBoard: GameBoard = GameBoard()
+    val gameBoardSize: Int = gameBoard.cells.size
+    val ships: List<Ship>
 
     init {
-        val ships = listOf(
-            Ship(size = 5, setPosition(5)),
-            Ship(size = 4, setPosition(4)),
-            Ship(size = 3, setPosition(3)),
-            Ship(size = 3, setPosition(3)),
-            Ship(size = 2, setPosition(2)),
-        )
+        val shipSizes = listOf(5, 4, 3, 3, 2)
+        ships = shipSizes.map { size -> Ship(size, setPosition(size)) }
     }
 
+
+    // Function to set the position of a ship on the game board
     fun setPosition(shipSize: Int) : Position {
-        val position = randomPosition(shipSize)
+        val position = definePosition(shipSize)
         for (i in 0 until shipSize)
             when (position.shipDirection) {
                 ShipDirection.VERTICAL -> gameBoard.cells[position.x][position.y + i] = 1
@@ -29,7 +28,9 @@ class BoardManager {
         return position
     }
 
-    fun randomPosition(shipSize: Int): Position {
+
+    // Function to define a random position for a ship on the game board
+    fun definePosition(shipSize: Int): Position {
         while (true) {
             val shipDirection = ShipDirection.entries.random()
             var x: Int
@@ -37,30 +38,18 @@ class BoardManager {
 
             when (shipDirection){
                 ShipDirection.VERTICAL -> {
-                    x = (0 until gameBoard.cells.size).random()
-                    y = (0 until gameBoard.cells[0].size - shipSize).random()
+                    x = (0 until gameBoardSize).random()
+                    y = (0 until gameBoardSize - shipSize).random()
 
-                    // Limits the position to ensure ships separation
-                    val x0 = if (x > 0) (x-1) else x
-                    val y0 = if (y > 0) (y-1) else y
-                    val x1 = if (x < gameBoard.cells.size - 1) (x + 1) else x
-                    val y1 = if (y + shipSize < gameBoard.cells[0].size - 1) (y + shipSize + 1) else (y + shipSize)
-
-                    if (checkPosition(gameBoard, x0, x1, y0, y1)) {
+                    if (checkPosition(gameBoard, x0 = x, x1 = x, y0 = y, y1 = y + shipSize)) {
                         return Position(x, y, shipDirection)
                     }
                 }
                 ShipDirection.HORIZONTAL -> {
-                    x = (0 until gameBoard.cells.size - shipSize).random()
-                    y = (0 until gameBoard.cells[0].size).random()
+                    x = (0 until gameBoardSize - shipSize).random()
+                    y = (0 until gameBoardSize).random()
 
-                    // Limits the position to ensure ships separation
-                    val x0 = if (x > 0) (x-1) else x
-                    val y0 = if (y > 0) (y-1) else y
-                    val x1 = if (x + shipSize < gameBoard.cells.size - 1) (x + shipSize + 1) else (x + shipSize)
-                    val y1 = if (y < gameBoard.cells[0].size - 1) (y + 1) else y
-
-                    if (checkPosition(gameBoard, x0, x1, y0, y1)) {
+                    if (checkPosition(gameBoard, x0 = x, x1 = x + shipSize, y0 = y, y1 = y)) {
                         return Position(x, y, shipDirection)
                     }
                 }
@@ -68,16 +57,24 @@ class BoardManager {
         }
     }
 
+
+    // Function to check if a ship can be placed at the given position
     fun checkPosition(
         gameBoard: GameBoard,
         x0: Int,
         x1: Int,
         y0: Int,
-        y1: Int
+        y1: Int,
     ): Boolean {
 
-        for (x in x0..x1) {
-            for (y in y0 .. y1) {
+        // Extend the area to ensure that the ship is not placed next to another ship
+        val xMin = (x0 - 1).coerceAtLeast(0)
+        val xMax = (x1 + 1).coerceAtMost(gameBoardSize - 1)
+        val yMin = (y0 - 1).coerceAtLeast(0)
+        val yMax = (y1 + 1).coerceAtMost(gameBoardSize - 1)
+
+        for (x in xMin..xMax) {
+            for (y in yMin .. yMax) {
                 if (gameBoard.cells[x][y] != 0) {
                     return false
                 }
