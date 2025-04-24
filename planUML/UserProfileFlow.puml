@@ -1,63 +1,48 @@
 @startuml
 top to bottom direction
-rectangle "Data" {
-    component "SessionManager" {
-        class getLocalUserProfile
-        class getFireStoreUserProfile
-        class uploadUserProfile
-        class registerUser
-        class loginUser
-    }
-    component "FiresStoreRepositoryImpl" {
-    }
-    component "AuthRepositoryImpl"{
-    }
-    component "Local Storage" {
-        class SecurePrefsData
-    }
-    component "Firebase Services" {
-        class FirebaseAuth
-        class FiresStore
-    }
+
+object SecurePrefsData{
 }
 
-rectangle "Domain" {
-    component GetProfileUseCase {
+rectangle "UserProfile para representación" as Caso1{
+    component ProfileScreen{
     }
-    component "FiresStoreRepository" {
+    component ProfileViewModel{
+    }
+    component GetProfileUseCase{
+    }
+    class SessionManager.getLocalUserProfile
+}
+
+Caso1.ProfileViewModel <--> Caso1.ProfileScreen
+Caso1.ProfileViewModel --> Caso1.GetProfileUseCase
+
+Caso1.GetProfileUseCase --> Caso1.SessionManager.getLocalUserProfile : Solicita datos para presentación
+Caso1.SessionManager.getLocalUserProfile --> SecurePrefsData
+
+
+rectangle "Inicio de sesion \n (Muy similar al flujo de registro)" as Caso2{
+    class SessionManager.loginUser
+    class SessionManager.uploadUserProfile
+    component FiresStoreRepository{
         class getUserProfile
         class createUserProfile
     }
-    component "AuthRepository" {
+    component AuthRepository{
         class getAuthUserProfile
+        class loginUser
+    }
+    component LoginUserUseCase{
     }
 }
 
-rectangle "Presentation" {
-    class ProfileViewModel
-    class ProfileScreen
-}
+Caso2.LoginUserUseCase --> Caso2.SessionManager.loginUser
 
+Caso2.SessionManager.loginUser --> Caso2.AuthRepository.loginUser : Solicita inicio de sesión
+Caso2.SessionManager.loginUser <-- Caso2.AuthRepository.getAuthUserProfile : Comprueba que la sesión se ha iniciado
+Caso2.SessionManager.loginUser --> Caso2.SessionManager.uploadUserProfile : Guarda el perfil de usuario en Firestore si no existe
+Caso2.SessionManager.loginUser --> SecurePrefsData : Guarda datos para representación local
 
-ProfileViewModel <--> ProfileScreen
-ProfileViewModel --> GetProfileUseCase
-
-GetProfileUseCase --> getLocalUserProfile
-getLocalUserProfile --> SecurePrefsData
-
-registerUser --> getAuthUserProfile
-loginUser --> getAuthUserProfile
-registerUser --> uploadUserProfile
-loginUser --> uploadUserProfile
-
-
-uploadUserProfile --> createUserProfile
-getFireStoreUserProfile --> getUserProfile
-
-
-FiresStoreRepository <-- FiresStoreRepositoryImpl
-FiresStoreRepositoryImpl <--> FiresStore
-
-AuthRepository <-- AuthRepositoryImpl
-AuthRepositoryImpl <--> FirebaseAuth
+Caso2.SessionManager.uploadUserProfile --> Caso2.FiresStoreRepository.getUserProfile
+Caso2.SessionManager.uploadUserProfile --> Caso2.FiresStoreRepository.createUserProfile
 @enduml
