@@ -9,6 +9,6 @@ interface AuthRepository {
     suspend fun loginUser(method: LoginMethod) : Boolean
     fun logoutUser()
     fun isLoggedIn() : Boolean
-    fun getCurrentUser() : UserProfile?
+    fun getAuthUserProfile() : UserProfile?
     suspend fun setUserName(userName: String)
 }

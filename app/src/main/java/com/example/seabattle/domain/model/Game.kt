@@ -1,16 +1,20 @@
 package com.example.seabattle.domain.model
 
+import com.google.firebase.firestore.FieldValue
+import java.security.Timestamp
+
 data class Game(
-    val id: String,
+    val gameId: String,
     val player1: UserProfile,
-    val player1BattlePlan: List<List<Int>>,
-    val player1Board: List<List<Int>>,
+    val player1Board: Map<String, Map<String, Int>>,
     val player2: UserProfile,
-    val player2BattlePlan: List<List<Int>>,
-    val player2Board: List<List<Int>>,
-    val actualTurn: Int,
-    val actualPlayer: Int,
-    val turnTimer: Long,
-    val gameStatus: Int,
-    val winner: Int?,
+    val player2Board: Map<String, Map<String, Int>>,
+    val currentTurn: Int,
+    val currentPlayer: Int,
+    val createdAt: FieldValue,
+    val updatedAt: FieldValue,
+    val gameFinished: Boolean,
+    val winnerId: Int?,
+    //val player1BattlePlan: List<List<Int>>,
+    //val player2BattlePlan: List<List<Int>>,
 )

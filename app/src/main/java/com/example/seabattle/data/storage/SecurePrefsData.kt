@@ -16,7 +16,7 @@ class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
     fun saveUserSession(userProfile : UserProfile?) {
         if (userProfile == null) return
         sharedPrefs.edit {
-            putString("key_uid", userProfile.uid)
+            putString("key_uid", userProfile.userId)
             putString("key_name", userProfile.displayName)
             putString("key_email", userProfile.email)
             putString("key_photo", userProfile.photoUrl)

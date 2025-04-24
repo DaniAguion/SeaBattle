@@ -8,5 +8,5 @@ interface FirestoreRepository {
     suspend fun getUserProfile(userId: String): UserProfile?
     suspend fun createGame(game: Game): Boolean
     suspend fun getGame(gameId: String): Game?
-    suspend fun updateGame(gameId: String, game: Game): Boolean
+    suspend fun updateGame(game: Game): Boolean
 }

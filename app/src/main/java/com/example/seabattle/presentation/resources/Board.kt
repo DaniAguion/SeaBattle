@@ -54,8 +54,6 @@ fun Cell(
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
 
-    Log.d("Cell", "Composing Cell con cellValue = $cellValue")
-
     val cellStyle: CellStyle =
         when(cellValue){
             0, 1 -> CellStyle.Target

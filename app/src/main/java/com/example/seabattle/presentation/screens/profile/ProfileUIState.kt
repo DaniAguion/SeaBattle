@@ -4,5 +4,5 @@ import com.example.seabattle.domain.model.UserProfile
 
 data class ProfileUiState(
     val userLoggedIn: Boolean = true,
-    val userProfile: UserProfile? = null
+    val userProfile: UserProfile = UserProfile()
 )

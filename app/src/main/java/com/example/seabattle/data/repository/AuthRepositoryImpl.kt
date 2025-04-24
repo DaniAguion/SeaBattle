@@ -60,11 +60,11 @@ class AuthRepositoryImpl(
     }
 
 
-    override fun getCurrentUser(): UserProfile? {
+    override fun getAuthUserProfile(): UserProfile? {
         val user = auth.currentUser
         return user?.let {
             UserProfile(
-                uid = it.uid,
+                userId = it.uid,
                 displayName = it.displayName ?: it.providerData[0]?.displayName ?: "",
                 email =  it.email ?: it.providerData[0]?.email ?: "",
                 photoUrl = (it.photoUrl ?: it.providerData[0]?.photoUrl ?: "").toString()

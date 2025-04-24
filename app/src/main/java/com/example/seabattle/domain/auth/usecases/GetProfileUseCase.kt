@@ -4,7 +4,7 @@ import com.example.seabattle.data.SessionManager
 import com.example.seabattle.domain.model.UserProfile
 
 class GetProfileUseCase (private val sessionManager: SessionManager ) {
-    operator fun invoke(): UserProfile? {
+    operator fun invoke(): UserProfile {
         return sessionManager.getUserProfile()
     }
 }

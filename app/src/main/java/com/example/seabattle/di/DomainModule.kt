@@ -18,5 +18,5 @@ val domainModule = module {
     factory { GetProfileUseCase(get()) }
     // Game use cases
     factory { DiscoverCellUseCase(get()) }
-    factory { StartGameUseCase(get()) }
+    factory { StartGameUseCase(get(), get()) }
 }

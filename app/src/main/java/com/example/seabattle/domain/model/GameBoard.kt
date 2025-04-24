@@ -12,4 +12,13 @@ data class GameBoard(
             })
         }
     }
-)
+){
+
+    fun toMapOfMaps(): Map<String, Map<String, Int>> {
+        return cells.mapIndexed { rowIndex, row ->
+            rowIndex.toString() to row.mapIndexed { colIndex, value ->
+                colIndex.toString() to value
+            }.toMap()
+        }.toMap()
+    }
+}

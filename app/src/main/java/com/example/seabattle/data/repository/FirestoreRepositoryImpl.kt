@@ -37,7 +37,7 @@ class FirestoreRepositoryImpl(
 
     override suspend fun createGame(game: Game): Boolean {
         return try {
-            db.collection("games").document().set(game).await()
+            db.collection("games").document(game.gameId).set(game).await()
             true
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error creating game: ${e.message}")
@@ -61,21 +61,20 @@ class FirestoreRepositoryImpl(
     }
 
 
-    override suspend fun updateGame(gameId: String, game: Game): Boolean {
+    override suspend fun updateGame(game: Game): Boolean {
         return try {
-            val document = db.collection("games").document(gameId).get().await()
+            val document = db.collection("games").document(game.gameId).get().await()
             if (document.exists()) {
                 val newData = mapOf(
-                    "player1BattlePlan" to game.player1BattlePlan,
                     "player1Board" to game.player1Board,
-                    "player2BattlePlan" to game.player2Board,
-                    "actualTurn" to game.actualTurn,
-                    "actualPlayer" to game.actualPlayer,
-                    "turnTimer" to game.turnTimer,
-                    "gameStatus" to game.gameStatus,
-                    "winner" to game.winner
+                    "player2Board" to game.player2Board,
+                    "actualTurn" to game.currentTurn,
+                    "currentPlayer" to game.currentPlayer,
+                    "updatedAt" to game.updatedAt,
+                    "gameFinished" to game.gameFinished,
+                    "winner" to (game.winnerId ?: ""),
                 )
-                db.collection("games").document(gameId).update(newData).await()
+                db.collection("games").document(game.gameId).update(newData).await()
                 true
             } else {
                 false

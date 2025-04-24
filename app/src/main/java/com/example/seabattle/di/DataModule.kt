@@ -1,6 +1,7 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.data.BoardManager
+import com.example.seabattle.data.GameManager
 import com.example.seabattle.domain.auth.repository.AuthRepository
 import com.example.seabattle.data.repository.AuthRepositoryImpl
 import com.example.seabattle.data.repository.FirestoreRepositoryImpl
@@ -22,4 +23,5 @@ val dataModule = module {
     // Managers
     single { SessionManager(get(), get(), get()) }
     single { BoardManager() }
+    single { GameManager(get(), get(), get()) }
 }

@@ -17,7 +17,11 @@ class SessionManager(
         if (authRepository.registerUser(email, password)) {
             authRepository.setUserName(username)
 
-            val userProfile = authRepository.getCurrentUser()
+            val userProfile = authRepository.getAuthUserProfile()
+            if (userProfile == null) {
+                Log.e("SessionManager", "User profile is null after registration")
+                return false
+            }
             uploadUserProfile(userProfile = userProfile)
             securePrefs.saveUserSession(userProfile = userProfile)
 
@@ -28,18 +32,23 @@ class SessionManager(
         }
     }
 
-    private suspend fun uploadUserProfile(userProfile: UserProfile?) {
+    private suspend fun uploadUserProfile(userProfile: UserProfile) {
         // Check if userProfile is null or already exists in Firestore
-        if (userProfile == null || fireStoreRepository.getUserProfile(userId = userProfile.uid) != null) return
+        if (fireStoreRepository.getUserProfile(userId = userProfile.userId) != null) return
+
         fireStoreRepository.createUserProfile(
-            userId = userProfile.uid,
+            userId = userProfile.userId,
             userProfile = userProfile
         )
     }
 
     suspend fun loginUser(loginMethod: LoginMethod) : Boolean{
         authRepository.loginUser(loginMethod)
-        val userProfile = authRepository.getCurrentUser()
+        val userProfile = authRepository.getAuthUserProfile()
+        if (userProfile == null) {
+            Log.e("SessionManager", "User profile is null after login")
+            return false
+        }
         if (loginMethod is LoginMethod.Google) { uploadUserProfile(userProfile) }
         securePrefs.saveUserSession(userProfile)
         return isLoggedIn()
@@ -57,15 +66,12 @@ class SessionManager(
     }
 
 
-    fun getUserProfile() : UserProfile? {
-        if (authRepository.isLoggedIn()) {
-            return UserProfile(
-                uid = securePrefs.getUid(),
-                displayName = securePrefs.getDisplayName(),
-                email = securePrefs.getEmail(),
-                photoUrl = securePrefs.getPhoto()
-            )
-        }
-        return null
+    fun getUserProfile() : UserProfile {
+        return UserProfile(
+            userId = securePrefs.getUid(),
+            displayName = securePrefs.getDisplayName(),
+            email = securePrefs.getEmail(),
+            photoUrl = securePrefs.getPhoto()
+        )
     }
 }
