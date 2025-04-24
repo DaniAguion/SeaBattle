@@ -5,6 +5,6 @@ import com.example.seabattle.domain.model.UserProfile
 
 class GetProfileUseCase (private val sessionManager: SessionManager ) {
     operator fun invoke(): UserProfile {
-        return sessionManager.getUserProfile()
+        return sessionManager.getLocalUserProfile()
     }
 }

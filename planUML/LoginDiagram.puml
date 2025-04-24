@@ -1,26 +1,51 @@
 @startuml
 
-package "Data" {
-  class AuthRepositoryImpl
-  class SecurePrefsData
-  class SessionManager
+
+rectangle "Data" {
+    class SessionManager
+    class FiresStoreRepositoryImpl
+    class AuthRepositoryImpl
+
+    rectangle "Local Storage" {
+        class SecurePrefsData
+    }
+
+    rectangle "Firebase Services" {
+        class FirebaseAuth
+        class FiresStore
+    }
 }
 
-package "Domain" {
-  interface AuthRepository
-  class LoginUserUseCase
+rectangle "Domain" {
+    interface FiresStoreRepository
+    interface AuthRepository
+    class LoginUserUseCase
+    class RegisterUserUseCase
 }
 
-package "UI" {
-  class LoginScreen
-  class LoginViewModel
+rectangle "Presentation" {
+    class WelcomeScreen
+    class googleSignIn
+    class WelcomeViewModel
 }
 
 
-LoginScreen --> LoginViewModel
-LoginViewModel --> LoginUserUseCase
+WelcomeScreen --> WelcomeViewModel
+
+WelcomeViewModel <--> googleSignIn
+WelcomeViewModel --> LoginUserUseCase
+WelcomeViewModel --> RegisterUserUseCase
+
 LoginUserUseCase --> SessionManager
+RegisterUserUseCase --> SessionManager
+
 SessionManager --> SecurePrefsData
-SessionManager --> AuthRepository
-AuthRepository --> AuthRepositoryImpl
+
+SessionManager <-- AuthRepository
+AuthRepository <-- AuthRepositoryImpl
+AuthRepositoryImpl <--> FirebaseAuth
+
+SessionManager <-- FiresStoreRepository
+FiresStoreRepository <-- FiresStoreRepositoryImpl
+FiresStoreRepositoryImpl <--> FiresStore
 @enduml

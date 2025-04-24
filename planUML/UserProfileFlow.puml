@@ -1,0 +1,63 @@
+@startuml
+top to bottom direction
+rectangle "Data" {
+    component "SessionManager" {
+        class getLocalUserProfile
+        class getFireStoreUserProfile
+        class uploadUserProfile
+        class registerUser
+        class loginUser
+    }
+    component "FiresStoreRepositoryImpl" {
+    }
+    component "AuthRepositoryImpl"{
+    }
+    component "Local Storage" {
+        class SecurePrefsData
+    }
+    component "Firebase Services" {
+        class FirebaseAuth
+        class FiresStore
+    }
+}
+
+rectangle "Domain" {
+    component GetProfileUseCase {
+    }
+    component "FiresStoreRepository" {
+        class getUserProfile
+        class createUserProfile
+    }
+    component "AuthRepository" {
+        class getAuthUserProfile
+    }
+}
+
+rectangle "Presentation" {
+    class ProfileViewModel
+    class ProfileScreen
+}
+
+
+ProfileViewModel <--> ProfileScreen
+ProfileViewModel --> GetProfileUseCase
+
+GetProfileUseCase --> getLocalUserProfile
+getLocalUserProfile --> SecurePrefsData
+
+registerUser --> getAuthUserProfile
+loginUser --> getAuthUserProfile
+registerUser --> uploadUserProfile
+loginUser --> uploadUserProfile
+
+
+uploadUserProfile --> createUserProfile
+getFireStoreUserProfile --> getUserProfile
+
+
+FiresStoreRepository <-- FiresStoreRepositoryImpl
+FiresStoreRepositoryImpl <--> FiresStore
+
+AuthRepository <-- AuthRepositoryImpl
+AuthRepositoryImpl <--> FirebaseAuth
+@enduml

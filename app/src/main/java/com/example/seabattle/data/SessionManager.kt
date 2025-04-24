@@ -65,8 +65,13 @@ class SessionManager(
         return authRepository.isLoggedIn()
     }
 
+    // This function is used to get the user profile from Firestore
+    suspend fun getFireStoreUserProfile(userId: String) : UserProfile? {
+        return fireStoreRepository.getUserProfile(userId)
+    }
 
-    fun getUserProfile() : UserProfile {
+    // This function is used to get the user profile for UI display in ProfileScreen
+    fun getLocalUserProfile() : UserProfile {
         return UserProfile(
             userId = securePrefs.getUid(),
             displayName = securePrefs.getDisplayName(),

@@ -15,6 +15,4 @@ data class Game(
     val updatedAt: FieldValue,
     val gameFinished: Boolean,
     val winnerId: Int?,
-    //val player1BattlePlan: List<List<Int>>,
-    //val player2BattlePlan: List<List<Int>>,
 )
