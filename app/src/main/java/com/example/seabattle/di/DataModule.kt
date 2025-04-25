@@ -1,14 +1,14 @@
 package com.example.seabattle.di
 
-import com.example.seabattle.data.BoardManager
+import com.example.seabattle.domain.game.BoardManager
 import com.example.seabattle.data.GameManager
-import com.example.seabattle.domain.auth.repository.AuthRepository
+import com.example.seabattle.domain.auth.AuthRepository
 import com.example.seabattle.data.repository.AuthRepositoryImpl
-import com.example.seabattle.data.repository.FirestoreRepositoryImpl
+import com.example.seabattle.data.firestore.FirestoreRepositoryImpl
 import com.example.seabattle.data.repository.GameRepositoryImpl
-import com.example.seabattle.data.SessionManager
-import com.example.seabattle.domain.firestore.repository.FirestoreRepository
-import com.example.seabattle.domain.game.repository.GameRepository
+import com.example.seabattle.domain.auth.SessionManager
+import com.example.seabattle.domain.firestore.FirestoreRepository
+import com.example.seabattle.domain.game.GameRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.dsl.module

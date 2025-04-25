@@ -1,2 +1,12 @@
-package com.example.seabattle.domain.auth 
+package com.example.seabattle.domain.auth
 
+import com.example.seabattle.domain.model.UserProfile
+
+interface AuthRepository {
+    suspend fun registerUser(email: String, password: String) : Boolean
+    suspend fun loginUser(method: LoginMethod) : Boolean
+    fun logoutUser()
+    fun isLoggedIn() : Boolean
+    fun getAuthUserProfile() : UserProfile?
+    suspend fun setUserName(userName: String)
+}

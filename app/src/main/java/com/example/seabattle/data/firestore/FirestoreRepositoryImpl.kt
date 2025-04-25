@@ -1,18 +1,25 @@
-package com.example.seabattle.data.repository
+package com.example.seabattle.data.firestore
 
 import android.util.Log
-import com.example.seabattle.domain.firestore.repository.FirestoreRepository
+import com.example.seabattle.data.firestore.entities.GameEntity
+import com.example.seabattle.data.firestore.entities.UserProfileEntity
+import com.example.seabattle.data.firestore.mappers.toDomainModel
+import com.example.seabattle.data.firestore.mappers.toEntity
+import com.example.seabattle.domain.firestore.FirestoreRepository
 import com.example.seabattle.domain.model.Game
 import com.example.seabattle.domain.model.UserProfile
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class FirestoreRepositoryImpl(
     private val db: FirebaseFirestore
 ) : FirestoreRepository {
-    override suspend fun createUserProfile(userId: String, userProfile: UserProfile): Boolean {
+
+    override suspend fun createUserProfile(userProfile: UserProfile): Boolean {
         return try {
-            db.collection("users").document(userId).set(userProfile).await()
+            val userProfileEntity = userProfile.toEntity()
+            db.collection("users").document(userProfileEntity.userId).set(userProfileEntity).await()
             true
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error creating user profile: ${e.message}")
@@ -21,23 +28,26 @@ class FirestoreRepositoryImpl(
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile? {
-        return try {
+        try {
             val document = db.collection("users").document(userId).get().await()
             if (document.exists()) {
-                document.toObject(UserProfile::class.java)
-            } else {
-                null
+                val userProfile = document.toObject(UserProfileEntity::class.java)
+                if (userProfile != null) {
+                    return userProfile.toDomainModel()
+                }
             }
+            return null
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error getting user profile: ${e.message}")
-            null
+            return null
         }
     }
 
 
     override suspend fun createGame(game: Game): Boolean {
         return try {
-            db.collection("games").document(game.gameId).set(game).await()
+            val gameEntity = game.toEntity()
+            db.collection("games").document(gameEntity.gameId).set(gameEntity).await()
             true
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error creating game: ${e.message}")
@@ -47,16 +57,18 @@ class FirestoreRepositoryImpl(
 
 
     override suspend fun getGame(gameId: String): Game? {
-        return try {
+        try {
             val document = db.collection("games").document(gameId).get().await()
             if (document.exists()) {
-                document.toObject(Game::class.java)
-            } else {
-                null
+                val gameEntity = document.toObject(GameEntity::class.java)
+                if (gameEntity != null) {
+                    return gameEntity.toDomainModel()
+                }
             }
+            return null
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error getting game: ${e.message}")
-            null
+            return null
         }
     }
 
@@ -70,7 +82,7 @@ class FirestoreRepositoryImpl(
                     "player2Board" to game.player2Board,
                     "actualTurn" to game.currentTurn,
                     "currentPlayer" to game.currentPlayer,
-                    "updatedAt" to game.updatedAt,
+                    "updatedAt" to FieldValue.serverTimestamp(),
                     "gameFinished" to game.gameFinished,
                     "winner" to (game.winnerId ?: ""),
                 )

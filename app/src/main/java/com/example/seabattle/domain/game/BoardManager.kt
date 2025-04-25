@@ -1,4 +1,4 @@
-package com.example.seabattle.data
+package com.example.seabattle.domain.game
 
 import com.example.seabattle.domain.model.ShipDirection
 import com.example.seabattle.domain.model.GameBoard

@@ -3,7 +3,7 @@ package com.example.seabattle.data.repository
 
 import android.util.Log
 import com.example.seabattle.domain.auth.LoginMethod
-import com.example.seabattle.domain.auth.repository.AuthRepository
+import com.example.seabattle.domain.auth.AuthRepository
 import com.example.seabattle.domain.model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider

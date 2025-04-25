@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.auth.usecases
 
-import com.example.seabattle.data.SessionManager
+import com.example.seabattle.domain.auth.SessionManager
 import com.example.seabattle.domain.auth.LoginMethod
 
 

@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.game.usecases
 
-import com.example.seabattle.data.BoardManager
+import com.example.seabattle.domain.game.BoardManager
 import com.example.seabattle.domain.model.GameBoard
 
 class DiscoverCellUseCase(
