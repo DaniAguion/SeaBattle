@@ -3,6 +3,7 @@ package com.example.seabattle.data.firestore.mappers
 import com.example.seabattle.data.firestore.entities.GameEntity
 import com.example.seabattle.domain.model.Game
 
+
 fun GameEntity.toDomainModel(): Game =
     Game(
          gameId = gameId,
@@ -12,9 +13,11 @@ fun GameEntity.toDomainModel(): Game =
          player2Board = player2Board,
          currentTurn = currentTurn,
          currentPlayer = currentPlayer,
+         gameState = gameState,
          gameFinished = gameFinished,
          winnerId = winnerId
     )
+
 
 fun Game.toEntity(): GameEntity =
     GameEntity(
@@ -25,6 +28,7 @@ fun Game.toEntity(): GameEntity =
         player2Board = player2Board,
         currentTurn = currentTurn,
         currentPlayer = currentPlayer,
+        gameState = gameState,
         gameFinished = gameFinished,
         winnerId = winnerId
     )

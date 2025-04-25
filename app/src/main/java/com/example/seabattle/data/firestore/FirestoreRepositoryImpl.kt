@@ -7,6 +7,7 @@ import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.firestore.FirestoreRepository
 import com.example.seabattle.domain.model.Game
 import com.example.seabattle.domain.model.User
+import com.example.seabattle.domain.model.UserBasic
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -54,6 +55,25 @@ class FirestoreRepositoryImpl(
         }
     }
 
+
+    override suspend fun joinGame(gameId: String, player2: UserBasic, gameState: String): Boolean {
+        return try {
+            val document = db.collection("games").document(gameId).get().await()
+            if (document.exists()) {
+                val newData = mapOf(
+                    "player2" to player2,
+                    "gameState" to gameState
+                )
+                db.collection("games").document(gameId).update(newData).await()
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error updating game: ${e.message}")
+            true
+        }
+    }
 
     override suspend fun getGame(gameId: String): Game? {
         try {

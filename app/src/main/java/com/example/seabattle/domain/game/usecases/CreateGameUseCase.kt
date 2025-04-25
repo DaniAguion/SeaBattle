@@ -4,7 +4,7 @@ import com.example.seabattle.domain.game.BoardManager
 import com.example.seabattle.data.GameManager
 import com.example.seabattle.domain.model.GameBoard
 
-class StartGameUseCase(
+class CreateGameUseCase(
     val boardManager: BoardManager,
     val gameManager: GameManager
 ) {
@@ -12,6 +12,7 @@ class StartGameUseCase(
         gameManager.createGame()
     }
 
+    // TO DO: THIS FUNCTION SHOULD BE IN ANOTHER USE CASE
     fun getGameBoard(): GameBoard {
         return boardManager.getGameBoard()
     }

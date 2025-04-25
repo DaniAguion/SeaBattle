@@ -1,12 +1,11 @@
 package com.example.seabattle.data
 
-import com.example.seabattle.data.firestore.entities.GameEntity
 import com.example.seabattle.domain.auth.SessionManager
 import com.example.seabattle.domain.firestore.FirestoreRepository
 import com.example.seabattle.domain.game.BoardManager
 import com.example.seabattle.domain.model.Game
+import com.example.seabattle.domain.model.GameState
 import com.example.seabattle.domain.model.toBasic
-import com.google.firebase.firestore.FieldValue
 import java.util.UUID
 
 class GameManager(
@@ -15,19 +14,24 @@ class GameManager(
     private val sessionManager: SessionManager
 ) {
     suspend fun createGame(): Boolean {
-        val player = sessionManager.getFireStoreUserProfile() ?: return false
-
+        val player1 = sessionManager.getFireStoreUserProfile() ?: return false
         val game = Game(
             gameId = UUID.randomUUID().toString(),
-            player1 = player.toBasic(),
-            player1Board = boardManager.getGameBoard().toMapOfMaps(),
-            player2 = player.toBasic(),
-            player2Board = boardManager.getGameBoard().toMapOfMaps(),
-            currentTurn = 1,
-            currentPlayer = 1,
+            player1 = player1.toBasic(),
+            currentTurn = 0,
             gameFinished = false,
-            winnerId = null,
+            gameState = GameState.WAITING_FOR_PLAYER.name
         )
         return fireStoreRepository.createGame(game)
+    }
+
+
+    suspend fun joinGame(gameId: String): Boolean {
+        val player2 = sessionManager.getFireStoreUserProfile()?.toBasic() ?: return false
+        return fireStoreRepository.joinGame(
+            gameId = gameId,
+            player2 = player2,
+            gameState = GameState.CHECK_READY.name
+        )
     }
 }
