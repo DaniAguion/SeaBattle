@@ -14,13 +14,13 @@ class GameManager(
     private val sessionManager: SessionManager
 ) {
     suspend fun createGame(): Boolean {
-        val player1 = sessionManager.getLocalUserProfile()
+        val player = sessionManager.getFireStoreUserProfile() ?: return false
 
         val game = Game(
             gameId = UUID.randomUUID().toString(),
-            player1 = player1,
+            player1 = player,
             player1Board = boardManager.getGameBoard().toMapOfMaps(),
-            player2 = sessionManager.getLocalUserProfile(),
+            player2 = player,
             player2Board = boardManager.getGameBoard().toMapOfMaps(),
             currentTurn = 1,
             currentPlayer = 1,

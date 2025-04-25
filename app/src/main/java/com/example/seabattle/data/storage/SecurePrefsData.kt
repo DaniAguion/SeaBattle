@@ -1,7 +1,7 @@
 package com.example.seabattle.data.storage
 
 import android.content.SharedPreferences
-import com.example.seabattle.domain.model.UserProfile
+import com.example.seabattle.domain.model.User
 import androidx.core.content.edit
 
 class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
@@ -13,13 +13,13 @@ class SecurePrefsData(private val sharedPrefs: SharedPreferences) {
         private const val KEY_PHOTO = ""
     }
 
-    fun saveUserSession(userProfile : UserProfile?) {
-        if (userProfile == null) return
+    fun saveUserSession(user : User?) {
+        if (user == null) return
         sharedPrefs.edit {
-            putString("key_uid", userProfile.userId)
-            putString("key_name", userProfile.displayName)
-            putString("key_email", userProfile.email)
-            putString("key_photo", userProfile.photoUrl)
+            putString("key_uid", user.userId)
+            putString("key_name", user.displayName)
+            putString("key_email", user.email)
+            putString("key_photo", user.photoUrl)
         }
     }
 

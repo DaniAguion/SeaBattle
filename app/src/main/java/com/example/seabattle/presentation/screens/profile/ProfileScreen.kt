@@ -62,19 +62,19 @@ fun ProfileScreenContent(
             text = "Profile Screen",
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
-        profileUiState.userProfile?.photoUrl?.let {
+        profileUiState.user?.photoUrl?.let {
             if (it.isNotEmpty()){
                 AsyncImage(
-                    model = profileUiState.userProfile.photoUrl,
+                    model = profileUiState.user.photoUrl,
                     contentDescription = "User Profile Picture"
                 )
             }
         }
         Text(
-            text = profileUiState.userProfile?.displayName ?: "No name",
+            text = profileUiState.user?.displayName ?: "No name",
         )
         Text(
-            text = profileUiState.userProfile?.email ?: "No email",
+            text = profileUiState.user?.email ?: "No email",
         )
 
         Spacer(

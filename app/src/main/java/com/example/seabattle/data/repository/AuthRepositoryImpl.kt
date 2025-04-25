@@ -4,7 +4,7 @@ package com.example.seabattle.data.repository
 import android.util.Log
 import com.example.seabattle.domain.auth.LoginMethod
 import com.example.seabattle.domain.auth.AuthRepository
-import com.example.seabattle.domain.model.UserProfile
+import com.example.seabattle.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.userProfileChangeRequest
@@ -60,10 +60,10 @@ class AuthRepositoryImpl(
     }
 
 
-    override fun getAuthUserProfile(): UserProfile? {
+    override fun getAuthUserProfile(): User? {
         val user = auth.currentUser
         return user?.let {
-            UserProfile(
+            User(
                 userId = it.uid,
                 displayName = it.displayName ?: it.providerData[0]?.displayName ?: "",
                 email =  it.email ?: it.providerData[0]?.email ?: "",

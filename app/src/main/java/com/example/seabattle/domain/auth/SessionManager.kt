@@ -3,7 +3,8 @@ package com.example.seabattle.domain.auth
 import android.util.Log
 import com.example.seabattle.data.storage.SecurePrefsData
 import com.example.seabattle.domain.firestore.FirestoreRepository
-import com.example.seabattle.domain.model.UserProfile
+import com.example.seabattle.domain.model.LocalUser
+import com.example.seabattle.domain.model.User
 
 class SessionManager(
     private val securePrefs: SecurePrefsData,
@@ -20,8 +21,8 @@ class SessionManager(
                 Log.e("SessionManager", "User profile is null after registration")
                 return false
             }
-            uploadUserProfile(userProfile = userProfile)
-            securePrefs.saveUserSession(userProfile = userProfile)
+            uploadUserProfile(user = userProfile)
+            securePrefs.saveUserSession(user = userProfile)
 
             return isLoggedIn()
         } else {
@@ -30,11 +31,10 @@ class SessionManager(
         }
     }
 
-    private suspend fun uploadUserProfile(userProfile: UserProfile) {
+    private suspend fun uploadUserProfile(user: User) {
         // Check if userProfile is null or already exists in Firestore
-        if (fireStoreRepository.getUserProfile(userId = userProfile.userId) != null) return
-
-        fireStoreRepository.createUserProfile(userProfile = userProfile)
+        if (fireStoreRepository.getUser(userId = user.userId) != null) return
+        fireStoreRepository.createUser(user = user)
     }
 
     suspend fun loginUser(loginMethod: LoginMethod) : Boolean{
@@ -61,13 +61,14 @@ class SessionManager(
     }
 
     // This function is used to get the user profile from Firestore
-    suspend fun getFireStoreUserProfile(userId: String) : UserProfile? {
-        return fireStoreRepository.getUserProfile(userId)
+    suspend fun getFireStoreUserProfile() : User? {
+        val userId = securePrefs.getUid()
+        return fireStoreRepository.getUser(userId)
     }
 
     // This function is used to get the user profile for UI display in ProfileScreen
-    fun getLocalUserProfile() : UserProfile {
-        return UserProfile(
+    fun getLocalUserProfile() : LocalUser {
+        return LocalUser(
             userId = securePrefs.getUid(),
             displayName = securePrefs.getDisplayName(),
             email = securePrefs.getEmail(),
