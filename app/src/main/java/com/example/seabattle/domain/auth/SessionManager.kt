@@ -3,7 +3,7 @@ package com.example.seabattle.domain.auth
 import android.util.Log
 import com.example.seabattle.data.storage.SecurePrefsData
 import com.example.seabattle.domain.firestore.FirestoreRepository
-import com.example.seabattle.domain.model.LocalUser
+import com.example.seabattle.domain.model.UserLocal
 import com.example.seabattle.domain.model.User
 
 class SessionManager(
@@ -67,8 +67,8 @@ class SessionManager(
     }
 
     // This function is used to get the user profile for UI display in ProfileScreen
-    fun getLocalUserProfile() : LocalUser {
-        return LocalUser(
+    fun getLocalUserProfile() : UserLocal {
+        return UserLocal(
             userId = securePrefs.getUid(),
             displayName = securePrefs.getDisplayName(),
             email = securePrefs.getEmail(),

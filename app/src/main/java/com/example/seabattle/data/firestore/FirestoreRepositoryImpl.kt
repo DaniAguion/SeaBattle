@@ -2,7 +2,6 @@ package com.example.seabattle.data.firestore
 
 import android.util.Log
 import com.example.seabattle.data.firestore.entities.GameEntity
-import com.example.seabattle.data.firestore.entities.UserEntity
 import com.example.seabattle.data.firestore.mappers.toDomainModel
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.firestore.FirestoreRepository
@@ -18,8 +17,7 @@ class FirestoreRepositoryImpl(
 
     override suspend fun createUser(user: User): Boolean {
         return try {
-            val userEntity = user.toEntity()
-            db.collection("users").document(userEntity.userId).set(userEntity).await()
+            db.collection("users").document(user.userId).set(user).await()
             true
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error creating user profile: ${e.message}")

@@ -1,11 +1,10 @@
 package com.example.seabattle.domain.auth.usecases
 
 import com.example.seabattle.domain.auth.SessionManager
-import com.example.seabattle.domain.model.LocalUser
-import com.example.seabattle.domain.model.User
+import com.example.seabattle.domain.model.UserLocal
 
 class GetProfileUseCase (private val sessionManager: SessionManager ) {
-    operator fun invoke(): LocalUser {
+    operator fun invoke(): UserLocal {
         return sessionManager.getLocalUserProfile()
     }
 }
