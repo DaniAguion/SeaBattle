@@ -2,16 +2,16 @@ package com.example.seabattle.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.game.usecases.CreateGameUseCase
+import com.example.seabattle.domain.room.usescases.CreateRoomUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val createGameUseCase: CreateGameUseCase
+    private val createRoomUseCase: CreateRoomUseCase
 ) : ViewModel() {
 
     fun onClickCreateRoom() {
         viewModelScope.launch {
-            createGameUseCase.invoke()
+            createRoomUseCase.invoke()
         }
     }
 

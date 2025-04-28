@@ -7,6 +7,7 @@ import com.example.seabattle.domain.auth.usecases.CheckUserAuthUseCase
 import com.example.seabattle.domain.auth.usecases.GetProfileUseCase
 import com.example.seabattle.domain.auth.usecases.RegisterUserUseCase
 import com.example.seabattle.domain.game.usecases.CreateGameUseCase
+import com.example.seabattle.domain.room.usescases.CreateRoomUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -19,4 +20,5 @@ val domainModule = module {
     // Game use cases
     factory { DiscoverCellUseCase(get()) }
     factory { CreateGameUseCase(get(), get()) }
+    factory { CreateRoomUseCase(get()) }
 }
