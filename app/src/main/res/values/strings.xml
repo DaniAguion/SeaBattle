@@ -31,6 +31,7 @@
     <string name="loading_splash_screen">Checking session..</string>
     <string name="username">Username</string>
     <string name="error_get_rooms">Error getting rooms from server</string>
+    <string name="list_rooms_title">Available rooms</string>
 
     // Unordered strings
 

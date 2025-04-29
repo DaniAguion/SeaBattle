@@ -1,14 +1,24 @@
 package com.example.seabattle.presentation.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +50,9 @@ fun HomeScreen(
         navController = navController,
         roomList = homeUiState.roomList,
         errorList = homeUiState.errorList,
-        onCreateRoomClick = homeViewModel::onClickCreateRoom,
+        loadingList = homeUiState.loadingList,
+        onClickCreateRoom = homeViewModel::onClickCreateRoom,
+        onClickRefresh = homeViewModel::onClickRefresh
     )
 }
 
@@ -51,7 +63,9 @@ fun HomeScreenContent(
     navController: NavHostController,
     roomList : List<Room>,
     errorList : Boolean,
-    onCreateRoomClick: () -> Unit
+    loadingList : Boolean,
+    onClickCreateRoom: () -> Unit,
+    onClickRefresh: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -62,7 +76,7 @@ fun HomeScreenContent(
             text = "Home Screen"
         )
         Button(
-            onClick = { onCreateRoomClick() }
+            onClick = { onClickCreateRoom() }
         ) {
             Text(text = "Create Room")
         }
@@ -74,19 +88,54 @@ fun HomeScreenContent(
         ) {
             Text(text = "Start Game")
         }
-        if (errorList) {
-            Text(
-                text = stringResource(R.string.error_get_rooms),
-                modifier = Modifier.padding(8.dp)
-            )
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(items = roomList, key = { it.roomId }) { room ->
-                    RoomCard(room = room)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+        ){
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ){
+                    Text(
+                        stringResource(R.string.list_rooms_title),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    IconButton(onClick = onClickRefresh) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh Icon",
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.size(8.dp))
+                if (loadingList) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(8.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 2.dp
+                    )
+                } else if (!errorList) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(items = roomList, key = { it.roomId }) { room ->
+                            RoomCard(room = room)
+                        }
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.error_get_rooms),
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
         }
@@ -100,8 +149,10 @@ fun HomeScreenPreview(){
     HomeScreenContent(
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
-        onCreateRoomClick = {  },
+        onClickCreateRoom = {  },
+        onClickRefresh = {  },
         errorList = false,
+        loadingList = false,
         roomList = listOf(
             Room(
                 roomId = "1",

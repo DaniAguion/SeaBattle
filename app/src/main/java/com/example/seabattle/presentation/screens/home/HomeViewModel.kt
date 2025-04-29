@@ -18,19 +18,30 @@ class HomeViewModel(
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            getRoomsUseCase.invoke()
-                .onSuccess { rooms ->
-                    _uiState.value = _uiState.value.copy(roomList = rooms, errorList = false)
-                }.onFailure {
-                    _uiState.value = _uiState.value.copy(errorList = true)
-                }
-        }
+        onClickRefresh()
     }
 
     fun onClickCreateRoom() {
         viewModelScope.launch {
             createRoomUseCase.invoke()
+        }
+    }
+
+    fun onClickRefresh(){
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingList = true)
+            getRoomsUseCase.invoke()
+                .onSuccess { rooms ->
+                    _uiState.value = _uiState.value.copy(
+                        roomList = rooms,
+                        errorList = false,
+                        loadingList = false)
+                }.onFailure {
+                    _uiState.value = _uiState.value.copy(
+                        roomList = emptyList(),
+                        errorList = true,
+                        loadingList = false)
+                }
         }
     }
 
