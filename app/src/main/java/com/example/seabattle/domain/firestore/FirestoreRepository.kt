@@ -10,10 +10,9 @@ interface FirestoreRepository {
     suspend fun createUser(user: User): Boolean
     suspend fun getUser(userId: String): User?
 
-    suspend fun getRoom(roomId: String): Room?
-    suspend fun fetchRooms(): List<Room>
+    suspend fun fetchRooms(): Result<List<Room>>
     suspend fun createRoom(room: Room): Result<Unit>
-    suspend fun updateRoom(room: Room): Boolean
+    suspend fun updateRoom(room: Room): Result<Room?>
     suspend fun deleteRoom(roomId: String): Result<Unit>
 
     suspend fun createGame(game: Game): Boolean

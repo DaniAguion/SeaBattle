@@ -25,4 +25,10 @@ class RoomRepositoryImpl(
         )
         return fireStoreRepository.createRoom(room)
     }
+
+
+    override suspend fun getAllRooms(): Result<List<Room>> {
+        return fireStoreRepository.fetchRooms()
+    }
+
 }

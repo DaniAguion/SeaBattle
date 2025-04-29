@@ -1,5 +1,6 @@
 package com.example.seabattle.data.firestore.mappers
 
+import com.example.seabattle.data.firestore.entities.RoomCreationEntity
 import com.example.seabattle.data.firestore.entities.RoomEntity
 import com.example.seabattle.domain.model.Room
 
@@ -15,8 +16,8 @@ fun RoomEntity.toDomainModel(): Room {
     )
 }
 
-fun Room.toEntity(): RoomEntity {
-    return RoomEntity(
+fun Room.toCreationEntity(): RoomCreationEntity {
+    return RoomCreationEntity(
         roomId = roomId,
         roomName = roomName,
         roomState = roomState,

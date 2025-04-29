@@ -3,6 +3,7 @@ package com.example.seabattle.data.firestore
 import android.util.Log
 import com.example.seabattle.data.firestore.entities.GameEntity
 import com.example.seabattle.data.firestore.entities.RoomEntity
+import com.example.seabattle.data.firestore.mappers.toCreationEntity
 import com.example.seabattle.data.firestore.mappers.toDomainModel
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.firestore.FirestoreRepository
@@ -12,12 +13,14 @@ import com.example.seabattle.domain.model.User
 import com.example.seabattle.domain.model.UserBasic
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class FirestoreRepositoryImpl(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val ioDispatcher: CoroutineDispatcher
 ) : FirestoreRepository {
 
     private val usersCollection = db.collection("users")
@@ -61,7 +64,60 @@ class FirestoreRepositoryImpl(
     // Functions to manage rooms
     //
 
-    override suspend fun getRoom(roomId: String): Room? {
+    override suspend fun fetchRooms():  Result<List<Room>> = withContext(ioDispatcher) {
+        runCatching {
+            val rooms = mutableListOf<Room>()
+            val snapshot = roomsCollection.get().await()
+            for (document in snapshot.documents) {
+                val roomEntity = document.toObject(RoomEntity::class.java)
+                if (roomEntity != null) {
+                    rooms.add(roomEntity.toDomainModel())
+                }
+            }
+            rooms.toList()
+        }
+        .onFailure { e ->
+            Log.e("FirestoreRepository", "Error fetching rooms: ${e.message}")
+            emptyList<Room>()
+        }
+    }
+
+
+    override suspend fun createRoom(room: Room): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val entity = room.toCreationEntity()
+            roomsCollection.document(entity.roomId)
+                .set(entity)
+                .await()
+        }
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
+        }
+    }
+
+
+
+    override suspend fun updateRoom(roomInfo: Room): Result<Room?> = withContext(ioDispatcher) {
+        runCatching {
+            val roomId = roomInfo.roomId
+            val document = roomsCollection.document(roomId).get().await()
+            if (document.exists()) {
+                val newData = mapOf(
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+                roomsCollection.document(roomId).update(newData).await()
+            } else null
+            getRoom(roomId)
+        }
+        .onFailure { e ->
+            Log.e(tag, "Error updating room: ${roomInfo}. ${e.message}")
+            null
+        }
+    }
+
+
+    private suspend fun getRoom(roomId: String): Room? {
         try {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
@@ -78,60 +134,7 @@ class FirestoreRepositoryImpl(
     }
 
 
-    override suspend fun fetchRooms(): List<Room> {
-        return try {
-            val snapshot = roomsCollection.get().await()
-            val rooms = mutableListOf<Room>()
-            for (document in snapshot.documents) {
-                val roomEntity = document.toObject(RoomEntity::class.java)
-                if (roomEntity != null) {
-                    rooms.add(roomEntity.toDomainModel())
-                }
-            }
-            rooms
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error fetching rooms: ${e.message}")
-            emptyList()
-        }
-    }
-
-
-    override suspend fun createRoom(room: Room): Result<Unit> = withContext(Dispatchers.IO) {
-        runCatching {
-            val entity = room.toEntity()
-            roomsCollection.document(entity.roomId)
-                .set(entity)
-                .await()
-        }
-        .map { _ -> }
-        .onFailure { e ->
-            Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
-        }
-    }
-
-
-
-    override suspend fun updateRoom(room: Room): Boolean {
-        return try {
-            val document = roomsCollection.document(room.roomId).get().await()
-            if (document.exists()) {
-                // TO DO: update the room with the new data
-                val newData = mapOf(
-                    "updatedAt" to FieldValue.serverTimestamp()
-                )
-                roomsCollection.document(room.roomId).update(newData).await()
-                true
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error updating room: ${e.message}")
-            false
-        }
-    }
-
-
-    override suspend fun deleteRoom(roomId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun deleteRoom(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             roomsCollection.document(roomId).delete().await()
         }
