@@ -66,7 +66,7 @@ class FirestoreRepositoryImpl(
     override suspend fun fetchRooms():  Result<List<Room>> = withContext(ioDispatcher) {
         runCatching {
             val rooms = mutableListOf<Room>()
-            val snapshot = roomsCollection.get(Source.SERVER).await()
+            val snapshot = roomsCollection.whereEqualTo("numberOfPlayers", 1).get(Source.SERVER).await()
             for (document in snapshot.documents) {
                 val room = document.toObject(Room::class.java)
                 if (room != null) {

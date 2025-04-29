@@ -7,6 +7,6 @@ class GetRoomsUseCase(
     val roomRepository: RoomRepository,
 ) {
     suspend operator fun invoke(): Result<List<Room>> {
-        return roomRepository.getAllRooms()
+        return roomRepository.getAvailableRooms()
     }
 }

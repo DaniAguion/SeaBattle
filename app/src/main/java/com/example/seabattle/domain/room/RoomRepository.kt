@@ -5,5 +5,5 @@ import kotlin.collections.mutableListOf
 
 interface RoomRepository {
     suspend fun createRoom(): Result<Unit>
-    suspend fun getAllRooms(): Result<List<Room>>
+    suspend fun getAvailableRooms(): Result<List<Room>>
 }
