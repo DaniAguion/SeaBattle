@@ -12,6 +12,7 @@ import com.example.seabattle.domain.model.User
 import com.example.seabattle.domain.model.UserBasic
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -65,7 +66,7 @@ class FirestoreRepositoryImpl(
     override suspend fun fetchRooms():  Result<List<Room>> = withContext(ioDispatcher) {
         runCatching {
             val rooms = mutableListOf<Room>()
-            val snapshot = roomsCollection.get().await()
+            val snapshot = roomsCollection.get(Source.SERVER).await()
             for (document in snapshot.documents) {
                 val room = document.toObject(Room::class.java)
                 if (room != null) {

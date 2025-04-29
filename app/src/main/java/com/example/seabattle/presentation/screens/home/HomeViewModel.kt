@@ -21,9 +21,9 @@ class HomeViewModel(
         viewModelScope.launch {
             getRoomsUseCase.invoke()
                 .onSuccess { rooms ->
-                _uiState.value = HomeUiState(roomList = rooms)
+                    _uiState.value = _uiState.value.copy(roomList = rooms, errorList = false)
                 }.onFailure {
-                // Handle error
+                    _uiState.value = _uiState.value.copy(errorList = true)
                 }
         }
     }

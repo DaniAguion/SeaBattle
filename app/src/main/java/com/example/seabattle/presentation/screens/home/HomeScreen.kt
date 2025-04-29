@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -15,9 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.seabattle.R
 import com.example.seabattle.domain.model.Room
 import com.example.seabattle.domain.model.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
@@ -36,15 +39,18 @@ fun HomeScreen(
         modifier = modifier,
         navController = navController,
         roomList = homeUiState.roomList,
+        errorList = homeUiState.errorList,
         onCreateRoomClick = homeViewModel::onClickCreateRoom,
     )
 }
+
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     roomList : List<Room>,
+    errorList : Boolean,
     onCreateRoomClick: () -> Unit
 ) {
     Column(
@@ -68,13 +74,20 @@ fun HomeScreenContent(
         ) {
             Text(text = "Start Game")
         }
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(items = roomList, key = { it.roomId }) { room ->
-                RoomCard(room = room)
+        if (errorList) {
+            Text(
+                text = stringResource(R.string.error_get_rooms),
+                modifier = Modifier.padding(8.dp)
+            )
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(items = roomList, key = { it.roomId }) { room ->
+                    RoomCard(room = room)
+                }
             }
         }
     }
@@ -88,6 +101,7 @@ fun HomeScreenPreview(){
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
         onCreateRoomClick = {  },
+        errorList = false,
         roomList = listOf(
             Room(
                 roomId = "1",

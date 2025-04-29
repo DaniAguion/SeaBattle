@@ -30,6 +30,7 @@
     <string name="error_splash_screen">Error, it wasnt possible to retrieve user information.</string>
     <string name="loading_splash_screen">Checking session..</string>
     <string name="username">Username</string>
+    <string name="error_get_rooms">Error getting rooms from server</string>
 
     // Unordered strings
 
