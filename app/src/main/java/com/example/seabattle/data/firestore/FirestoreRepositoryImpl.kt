@@ -2,7 +2,6 @@ package com.example.seabattle.data.firestore
 
 import android.util.Log
 import com.example.seabattle.data.firestore.entities.GameEntity
-import com.example.seabattle.data.firestore.entities.RoomEntity
 import com.example.seabattle.data.firestore.mappers.toCreationEntity
 import com.example.seabattle.data.firestore.mappers.toDomainModel
 import com.example.seabattle.data.firestore.mappers.toEntity
@@ -14,7 +13,6 @@ import com.example.seabattle.domain.model.UserBasic
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -69,9 +67,9 @@ class FirestoreRepositoryImpl(
             val rooms = mutableListOf<Room>()
             val snapshot = roomsCollection.get().await()
             for (document in snapshot.documents) {
-                val roomEntity = document.toObject(RoomEntity::class.java)
-                if (roomEntity != null) {
-                    rooms.add(roomEntity.toDomainModel())
+                val room = document.toObject(Room::class.java)
+                if (room != null) {
+                    rooms.add(room)
                 }
             }
             rooms.toList()
@@ -85,9 +83,9 @@ class FirestoreRepositoryImpl(
 
     override suspend fun createRoom(room: Room): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val entity = room.toCreationEntity()
-            roomsCollection.document(entity.roomId)
-                .set(entity)
+            val roomEntity = room.toCreationEntity()
+            roomsCollection.document(roomEntity.roomId)
+                .set(roomEntity)
                 .await()
         }
         .map { _ -> }
@@ -121,9 +119,9 @@ class FirestoreRepositoryImpl(
         try {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
-                val roomEntity = document.toObject(RoomEntity::class.java)
-                if (roomEntity != null) {
-                    return roomEntity.toDomainModel()
+                val room = document.toObject(Room::class.java)
+                if (room != null) {
+                    return room
                 }
             }
             return null
