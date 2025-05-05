@@ -9,6 +9,7 @@ import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.DiscoverCellUseCase
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
+import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -21,6 +22,7 @@ val domainModule = module {
     // Game use cases
     factory { DiscoverCellUseCase(get()) }
     factory { CreateGameUseCase(get(), get()) }
-    factory { CreateRoomUseCase(get(), get()) }
     factory { GetRoomsUseCase(get()) }
+    factory { CreateRoomUseCase(get(), get(), get(), get()) }
+    factory { JoinRoomUseCase(get(), get(), get(), get()) }
 }

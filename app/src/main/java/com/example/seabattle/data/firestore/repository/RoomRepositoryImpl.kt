@@ -19,7 +19,8 @@ class RoomRepositoryImpl(
     private val roomsCollection = db.collection("rooms")
     private val tag = "RoomRepository"
 
-    override suspend fun createRoom(room: Room): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun createRoom(room: Room): Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
             val roomDTO = room.toCreationDTO()
             roomsCollection.document(roomDTO.roomId)
@@ -34,7 +35,8 @@ class RoomRepositoryImpl(
 
 
 
-    override suspend fun fetchRooms():  Result<List<Room>> = withContext(ioDispatcher) {
+    override suspend fun fetchRooms():  Result<List<Room>>
+    = withContext(ioDispatcher) {
         runCatching {
             val rooms = mutableListOf<Room>()
             val snapshot =
@@ -54,49 +56,52 @@ class RoomRepositoryImpl(
     }
 
 
-    override suspend fun updateRoom(roomInfo: Room): Result<Room?> = withContext(ioDispatcher) {
+    override suspend fun getRoom(roomId: String): Result<Room?>
+    = withContext(ioDispatcher) {
         runCatching {
-            val roomId = roomInfo.roomId
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
-                val newData = mapOf(
+                val roomEntity = document.toObject(Room::class.java)
+                roomEntity
+            } else {
+                throw Exception("User not found")
+            }
+        }
+        .onFailure { e ->
+            Log.e("FirestoreRepository", "Error fetching rooms: ${e.message}")
+            emptyList<Room>()
+        }
+    }
+
+
+    override suspend fun updateRoom(roomId: String, newData: Map<String, Any>) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            val document = roomsCollection.document(roomId).get().await()
+            if (document.exists()) {
+                val updatedRoom = newData + mapOf(
                     "updatedAt" to FieldValue.serverTimestamp()
                 )
-                roomsCollection.document(roomId).update(newData).await()
-            } else null
-            getRoom(roomId)
+                roomsCollection.document(roomId).update(updatedRoom).await()
+            } else {
+                throw Exception("Room not found")
+            }
         }
-            .onFailure { e ->
-                Log.e(tag, "Error updating room: ${roomInfo}. ${e.message}")
-                null
-            }
-    }
-
-
-    private suspend fun getRoom(roomId: String): Room? {
-        try {
-            val document = roomsCollection.document(roomId).get().await()
-            if (document.exists()) {
-                val room = document.toObject(Room::class.java)
-                if (room != null) {
-                    return room
-                }
-            }
-            return null
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error getting room: ${e.message}")
-            return null
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error updating room: ${roomId}. ${e.message}")
         }
     }
 
 
-    override suspend fun deleteRoom(roomId: String): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun deleteRoom(roomId: String): Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
             roomsCollection.document(roomId).delete().await()
         }
-            .map { _ -> }
-            .onFailure { e ->
-                Log.e(tag, "Error deleting room with Id: ${roomId}. ${e.message}")
-            }
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error deleting room with Id: ${roomId}. ${e.message}")
+        }
     }
 }

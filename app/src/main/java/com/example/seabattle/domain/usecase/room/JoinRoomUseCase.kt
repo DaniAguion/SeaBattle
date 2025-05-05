@@ -1,37 +1,33 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.data.local.SecurePrefsData
-import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.repository.RoomRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
-class CreateRoomUseCase(
+
+class JoinRoomUseCase(
     val roomRepository: RoomRepository,
     val userRepository: UserRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(roomId: String): Result<Unit>  = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
-            val player1 = userRepository.getUser(playerId).getOrThrow()
-            if (player1 == null) {
+            val player2 = userRepository.getUser(playerId).getOrThrow()
+            if (player2 == null) {
                 throw Exception("User not found")
             }
-            val room = Room(
-                roomId = UUID.randomUUID().toString(),
-                roomName = "Room Name Test",
-                roomState = RoomState.WAITING_FOR_PLAYER.name,
-                numberOfPlayers = 1,
-                player1 = player1.toBasic(),
+            val newData = mapOf(
+                "roomState" to RoomState.SECOND_PLAYER_JOINED.name,
+                "numberOfPlayers" to 2,
+                "player2" to player2.toBasic(),
             )
-            roomRepository.createRoom(room).getOrThrow()
+            roomRepository.updateRoom(roomId, newData).getOrThrow()
         }
     }
-
 }

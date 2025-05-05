@@ -19,7 +19,7 @@ fun GameDTO.toEntity(): Game =
     )
 
 
-fun Game.toDTO(): GameDTO =
+fun Game.toCreationDTO(): GameDTO =
     GameDTO(
         gameId = gameId,
         player1 = player1,

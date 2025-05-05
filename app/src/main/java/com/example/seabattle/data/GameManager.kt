@@ -1,7 +1,6 @@
 package com.example.seabattle.data
 
 import com.example.seabattle.data.local.SecurePrefsData
-import com.example.seabattle.domain.services.SessionManager
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.toBasic
@@ -12,8 +11,7 @@ import java.util.UUID
 class GameManager(
     private val userRepository: UserRepository,
     private val securePrefs: SecurePrefsData,
-    private val gameRepository: GameRepository,
-    private val sessionManager: SessionManager
+    private val gameRepository: GameRepository
 ) {
     suspend fun createGame(): Boolean {
         /*

@@ -7,7 +7,6 @@ import com.example.seabattle.data.firebase.AuthRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserRepositoryImpl
 import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
 import com.example.seabattle.data.firestore.repository.RoomRepositoryImpl
-import com.example.seabattle.domain.services.SessionManager
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.RoomRepository
@@ -29,7 +28,6 @@ val dataModule = module {
     single<GameRepository> { GameRepositoryImpl(get()) }
     single<RoomRepository> { RoomRepositoryImpl(get(), get()) }
     // Managers
-    single { SessionManager(get(), get(), get()) }
     single { BoardManager() }
-    single { GameManager(get(), get()) }
+    single { GameManager(get(), get(), get()) }
 }

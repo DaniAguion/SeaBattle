@@ -52,6 +52,7 @@ fun HomeScreen(
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
+        onClickJoinRoom = homeViewModel::onClickJoinRoom,
         onClickRefresh = homeViewModel::onClickRefresh
     )
 }
@@ -65,6 +66,7 @@ fun HomeScreenContent(
     errorList : Boolean,
     loadingList : Boolean,
     onClickCreateRoom: () -> Unit,
+    onClickJoinRoom: (String) -> Unit,
     onClickRefresh: () -> Unit,
 ) {
     Column(
@@ -128,7 +130,7 @@ fun HomeScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(items = roomList, key = { it.roomId }) { room ->
-                            RoomCard(room = room)
+                            RoomCard(room = room, roomClick = onClickJoinRoom)
                         }
                     }
                 } else {
@@ -149,8 +151,9 @@ fun HomeScreenPreview(){
     HomeScreenContent(
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
-        onClickCreateRoom = {  },
-        onClickRefresh = {  },
+        onClickCreateRoom = { },
+        onClickJoinRoom = { },
+        onClickRefresh = { },
         errorList = false,
         loadingList = false,
         roomList = listOf(

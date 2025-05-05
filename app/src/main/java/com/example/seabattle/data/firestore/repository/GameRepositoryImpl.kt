@@ -2,14 +2,13 @@ package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
 import com.example.seabattle.data.firestore.dto.GameDTO
-import com.example.seabattle.data.firestore.mappers.toDTO
+import com.example.seabattle.data.firestore.mappers.toCreationDTO
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 
 class GameRepositoryImpl(
@@ -20,7 +19,7 @@ class GameRepositoryImpl(
 
     override suspend fun createGame(game: Game): Boolean {
         return try {
-            val gameDTO = game.toDTO()
+            val gameDTO = game.toCreationDTO()
             gamesCollection.document(gameDTO.gameId).set(gameDTO).await()
             true
         } catch (e: Exception) {
