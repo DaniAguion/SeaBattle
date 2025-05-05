@@ -15,11 +15,11 @@ data class WelcomeUiState(
     val msgResult: InfoMessages? = null,
 )
 
-enum class InfoMessages(val idString: Int, val color: Color) {
-    LOGIN_SUCCESSFUL(R.string.login_successful, Color.Green),
-    LOGIN_UNSUCCESSFUL(R.string.login_unsuccessful, Color.Red),
-    REGISTER_SUCCESSFUL(R.string.register_successful, Color.Green),
-    REGISTER_UNSUCCESSFUL(R.string.register_unsuccessful, Color.Red)
+enum class InfoMessages {
+    LOGIN_SUCCESSFUL,
+    LOGIN_UNSUCCESSFUL,
+    REGISTER_SUCCESSFUL,
+    REGISTER_UNSUCCESSFUL,
 }
 
 

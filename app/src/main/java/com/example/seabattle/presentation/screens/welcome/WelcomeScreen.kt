@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -260,11 +261,33 @@ fun CommonForm(
     Spacer(
         modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
     )
-    welcomeUiState.msgResult?.let {
-        Text(
-            text = stringResource(it.idString),
-            color = it.color
-        )
+    welcomeUiState.msgResult?.let { msgResult ->
+        when (msgResult) {
+            InfoMessages.LOGIN_SUCCESSFUL -> {
+                Text(
+                    text = stringResource(R.string.login_successful),
+                    color = Color.Green
+                )
+            }
+            InfoMessages.LOGIN_UNSUCCESSFUL -> {
+                Text(
+                    text = stringResource(R.string.login_unsuccessful),
+                    color = Color.Red
+                )
+            }
+            InfoMessages.REGISTER_SUCCESSFUL -> {
+                Text(
+                    text = stringResource(R.string.register_successful),
+                    color = Color.Green
+                )
+            }
+            InfoMessages.REGISTER_UNSUCCESSFUL -> {
+                Text(
+                    text = stringResource(R.string.register_unsuccessful),
+                    color = Color.Red
+                )
+            }
+        }
     }
 }
 
