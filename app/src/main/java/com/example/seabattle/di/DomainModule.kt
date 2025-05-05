@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val domainModule = module {
     // Auth use cases
     factory { LoginUserUseCase(get(), get(), get(), get()) }
-    factory { LogoutUserUseCase(get()) }
+    factory { LogoutUserUseCase(get(), get()) }
     factory { RegisterUserUseCase(get(), get(), get(), get()) }
     factory { CheckUserAuthUseCase(get()) }
     factory { GetProfileUseCase(get()) }

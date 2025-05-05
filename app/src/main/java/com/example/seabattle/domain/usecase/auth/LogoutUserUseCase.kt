@@ -1,10 +1,14 @@
 package com.example.seabattle.domain.usecase.auth
 
-import com.example.seabattle.domain.services.SessionManager
+import com.example.seabattle.data.local.SecurePrefsData
+import com.example.seabattle.domain.repository.AuthRepository
 
-
-class LogoutUserUseCase (private val sessionManager: SessionManager ) {
+class LogoutUserUseCase (
+    private val authRepository: AuthRepository,
+    private val securePrefs: SecurePrefsData,
+) {
     operator fun invoke() {
-        sessionManager.logoutUser()
+        authRepository.logoutUser()
+        securePrefs.clearSession()
     }
 }

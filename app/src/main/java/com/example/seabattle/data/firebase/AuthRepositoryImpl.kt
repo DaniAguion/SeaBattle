@@ -56,6 +56,20 @@ class AuthRepositoryImpl(
     }
 
 
+    override suspend fun setUserName(userName: String) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val user = auth.currentUser
+            if (user == null) {
+                throw IllegalStateException("User is null")
+            }
+            val profileUpdates = userProfileChangeRequest {
+                displayName = userName
+            }
+            user.updateProfile(profileUpdates).await()
+        }.map{ _ -> Unit}
+    }
+
+
     override fun logoutUser() {
         auth.signOut()
     }
@@ -77,19 +91,5 @@ class AuthRepositoryImpl(
             )
         }
         return null
-    }
-
-
-    override suspend fun setUserName(userName: String) : Result<Unit> = withContext(ioDispatcher) {
-        runCatching {
-            val user = auth.currentUser
-            if (user == null) {
-                throw IllegalStateException("User is null")
-            }
-            val profileUpdates = userProfileChangeRequest {
-                displayName = userName
-            }
-             user.updateProfile(profileUpdates).await()
-        }.map{ _ -> Unit}
     }
 }

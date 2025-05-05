@@ -13,18 +13,8 @@ class SessionManager(
     private val authRepository: AuthRepository,
     private val fireStoreRepository: UserRepository
 ) {
-    private suspend fun uploadUserProfile(user: User) {
-        // Check if userProfile is null or already exists in Firestore
-    }
 
-    fun logoutUser(){
-        authRepository.logoutUser()
-        securePrefs.clearSession()
-    }
 
-    fun isLoggedIn() : Boolean {
-        return authRepository.isLoggedIn()
-    }
 
     // This function is used to get the user profile from Firestore
     suspend fun getFireStoreUserProfile() : User? {
@@ -33,13 +23,4 @@ class SessionManager(
         return User()
     }
 
-    // This function is used to get the user profile for UI display in ProfileScreen
-    fun getLocalUserProfile() : UserLocal {
-        return UserLocal(
-            userId = securePrefs.getUid(),
-            displayName = securePrefs.getDisplayName(),
-            email = securePrefs.getEmail(),
-            photoUrl = securePrefs.getPhoto()
-        )
-    }
 }

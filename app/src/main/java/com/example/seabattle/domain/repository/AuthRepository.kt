@@ -6,8 +6,8 @@ import com.example.seabattle.domain.entity.User
 interface AuthRepository {
     suspend fun registerUser(email: String, password: String) : Result<Boolean>
     suspend fun loginUser(method: LoginMethod) : Result<Boolean>
+    suspend fun setUserName(userName: String) : Result<Unit>
     fun logoutUser()
     fun isLoggedIn() : Boolean
     fun getAuthUserProfile() : User?
-    suspend fun setUserName(userName: String) : Result<Unit>
 }

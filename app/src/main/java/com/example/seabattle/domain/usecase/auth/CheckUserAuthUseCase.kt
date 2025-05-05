@@ -1,9 +1,9 @@
 package com.example.seabattle.domain.usecase.auth
 
-import com.example.seabattle.domain.services.SessionManager
+import com.example.seabattle.domain.repository.AuthRepository
 
-class CheckUserAuthUseCase (private val sessionManager: SessionManager ) {
+class CheckUserAuthUseCase ( private val authRepository: AuthRepository ) {
     operator fun invoke(): Boolean {
-        return sessionManager.isLoggedIn()
+        return authRepository.isLoggedIn()
     }
 }
