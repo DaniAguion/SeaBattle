@@ -69,9 +69,13 @@ class WelcomeViewModel(
                     password = _uiState.value.password
                 )
             )
-            val loginResult = if (tryResult) InfoMessages.LOGIN_SUCCESSFUL else InfoMessages.LOGIN_UNSUCCESSFUL
-            _uiState.value = _uiState.value.copy(msgResult = loginResult)
-            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
+            if (tryResult.isSuccess) {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = true)
+            } else {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = false)
+            }
         }
     }
 
@@ -113,9 +117,13 @@ class WelcomeViewModel(
                     googleIdToken = googleIdToken
                 )
             )
-            val loginResult = if (tryResult) InfoMessages.LOGIN_SUCCESSFUL else InfoMessages.LOGIN_UNSUCCESSFUL
-            _uiState.value = _uiState.value.copy(msgResult = loginResult)
-            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
+            if (tryResult.isSuccess) {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = true)
+            } else {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = false)
+            }
         }
     }
 }

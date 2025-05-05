@@ -18,7 +18,8 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
 
 
-    override suspend fun registerUser(email: String, password: String) : Result<Boolean> = withContext(ioDispatcher) {
+    override suspend fun registerUser(email: String, password: String) : Result<Boolean>
+    = withContext(ioDispatcher) {
         runCatching {
             auth.createUserWithEmailAndPassword(email, password).await()
         }
@@ -32,27 +33,25 @@ class AuthRepositoryImpl(
 
 
 
-    override suspend fun loginUser(method: LoginMethod) : Boolean {
-        when (method) {
-            is LoginMethod.EmailPassword -> {
-                try {
-                    val authResult = auth.signInWithEmailAndPassword(method.email, method.password).await()
-                    return (authResult.user != null)
-                } catch (e: Exception) {
-                    Log.e("AuthRepository", "Login with email and password failed", e)
-                    return false
+    override suspend fun loginUser(method: LoginMethod) : Result<Boolean>
+    = withContext(ioDispatcher) {
+        runCatching {
+            when (method) {
+                is LoginMethod.EmailPassword -> {
+                    auth.signInWithEmailAndPassword(method.email, method.password).await()
                 }
-            }
-            is LoginMethod.Google -> {
-                try {
+
+                is LoginMethod.Google -> {
                     val credential = GoogleAuthProvider.getCredential(method.googleIdToken, null)
-                    val authResult = auth.signInWithCredential(credential).await()
-                    return (authResult.user != null)
-                } catch (e: Exception) {
-                    Log.e("AuthRepository", "Google login failed", e)
-                    return false
+                    auth.signInWithCredential(credential).await()
                 }
             }
+        }
+        .map { authResult ->
+            authResult.user != null
+        }
+        .onFailure { e ->
+            Log.e("AuthRepository", "Login failed", e)
         }
     }
 

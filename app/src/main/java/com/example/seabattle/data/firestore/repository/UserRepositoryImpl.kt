@@ -14,10 +14,11 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     private val usersCollection = db.collection("users")
-
     private val tag = "UserRepository"
 
-    override suspend fun createUser(user: User): Result<Unit> = withContext(ioDispatcher) {
+
+    override suspend fun createUser(user: User) : Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
             usersCollection.document(user.userId).set(user).await()
         }
@@ -27,20 +28,20 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getUser(userId: String): User? {
-        try {
+
+    override suspend fun getUser(userId: String) : Result<User?>
+    = withContext(ioDispatcher) {
+        runCatching {
             val document = usersCollection.document(userId).get().await()
             if (document.exists()) {
                 val userEntity = document.toObject(User::class.java)
-                if (userEntity != null) {
-                    Log.d(tag, "User profile retrieved: ${userEntity.displayName}")
-                    return userEntity
-                }
+                userEntity
+            } else {
+                throw Exception("User not found")
             }
-            return null
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error getting user profile: ${e.message}")
-            return null
+        }
+        .onFailure { e ->
+            Log.e(tag, "Error creating user profile: ${e.message}")
         }
     }
 }

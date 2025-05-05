@@ -15,8 +15,8 @@ class RegisterUserUseCase (
     suspend operator fun invoke(
         username: String,
         email: String,
-        password: String
-    ): Result<Boolean> = withContext(ioDispatcher) {
+        password: String ): Result<Boolean>
+    = withContext(ioDispatcher) {
         runCatching {
             val registered = authRepository.registerUser(email, password).getOrThrow()
             if (!registered) return@runCatching false

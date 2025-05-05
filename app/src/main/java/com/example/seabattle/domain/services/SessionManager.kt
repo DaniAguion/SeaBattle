@@ -15,28 +15,12 @@ class SessionManager(
 ) {
     private suspend fun uploadUserProfile(user: User) {
         // Check if userProfile is null or already exists in Firestore
-        if (fireStoreRepository.getUser(userId = user.userId) != null) return
-        fireStoreRepository.createUser(user = user)
     }
-
-    suspend fun loginUser(loginMethod: LoginMethod) : Boolean{
-        authRepository.loginUser(loginMethod)
-        val userProfile = authRepository.getAuthUserProfile()
-        if (userProfile == null) {
-            Log.e("SessionManager", "User profile is null after login")
-            return false
-        }
-        if (loginMethod is LoginMethod.Google) { uploadUserProfile(userProfile) }
-        securePrefs.saveUserSession(userProfile)
-        return isLoggedIn()
-    }
-
 
     fun logoutUser(){
         authRepository.logoutUser()
         securePrefs.clearSession()
     }
-
 
     fun isLoggedIn() : Boolean {
         return authRepository.isLoggedIn()
@@ -45,7 +29,8 @@ class SessionManager(
     // This function is used to get the user profile from Firestore
     suspend fun getFireStoreUserProfile() : User? {
         val userId = securePrefs.getUid()
-        return fireStoreRepository.getUser(userId)
+        //return fireStoreRepository.getUser(userId)
+        return User()
     }
 
     // This function is used to get the user profile for UI display in ProfileScreen
