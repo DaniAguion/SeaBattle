@@ -31,8 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.domain.model.Room
-import com.example.seabattle.domain.model.UserBasic
+import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import com.example.seabattle.presentation.resources.RoomCard
 import org.koin.androidx.compose.koinViewModel

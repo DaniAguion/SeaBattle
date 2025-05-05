@@ -3,9 +3,9 @@ package com.example.seabattle.presentation.screens.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.auth.usecases.CheckUserAuthUseCase
-import com.example.seabattle.domain.auth.usecases.GetProfileUseCase
-import com.example.seabattle.domain.auth.usecases.LogoutUserUseCase
+import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
+import com.example.seabattle.domain.usecase.auth.GetProfileUseCase
+import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

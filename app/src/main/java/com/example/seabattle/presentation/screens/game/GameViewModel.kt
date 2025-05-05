@@ -2,8 +2,8 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.game.usecases.DiscoverCellUseCase
-import com.example.seabattle.domain.game.usecases.CreateGameUseCase
+import com.example.seabattle.domain.usecase.game.DiscoverCellUseCase
+import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

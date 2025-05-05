@@ -13,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.seabattle.domain.model.Room
+import com.example.seabattle.domain.entity.Room
 
 @Composable
 fun RoomCard(room: Room, modifier: Modifier = Modifier) {

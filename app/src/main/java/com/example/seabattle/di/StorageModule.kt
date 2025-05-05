@@ -2,7 +2,7 @@ package com.example.seabattle.di
 
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.example.seabattle.data.storage.SecurePrefsData
+import com.example.seabattle.data.local.SecurePrefsData
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

@@ -4,16 +4,15 @@ package com.example.seabattle.presentation.screens.welcome
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.auth.LoginMethod
-import com.example.seabattle.domain.auth.usecases.LoginUserUseCase
-import com.example.seabattle.domain.auth.usecases.RegisterUserUseCase
+import com.example.seabattle.domain.entity.LoginMethod
+import com.example.seabattle.domain.usecase.auth.LoginUserUseCase
+import com.example.seabattle.domain.usecase.auth.RegisterUserUseCase
 import com.example.seabattle.presentation.screens.welcome.validation.Validator
 import com.example.seabattle.presentation.screens.welcome.validation.Validator.validateNewPassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
 
 
 class WelcomeViewModel(
@@ -95,9 +94,13 @@ class WelcomeViewModel(
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
-            val registerResult = if (tryResult) InfoMessages.REGISTER_SUCCESSFUL else InfoMessages.REGISTER_UNSUCCESSFUL
-            _uiState.value = _uiState.value.copy(msgResult = registerResult)
-            _uiState.value = _uiState.value.copy(isLoggedIn = tryResult)
+            if (tryResult.isSuccess) {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_SUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = true)
+            } else {
+                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
+                _uiState.value = _uiState.value.copy(isLoggedIn = false)
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.seabattle.presentation.resources
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import com.example.seabattle.R
@@ -19,7 +18,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.content.ContextCompat.getColor
-import com.example.seabattle.domain.model.GameBoard
+import com.example.seabattle.domain.entity.GameBoard
 
 
 @Composable

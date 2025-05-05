@@ -1,10 +1,10 @@
 package com.example.seabattle.data.firestore.mappers
 
-import com.example.seabattle.data.firestore.entities.GameEntity
-import com.example.seabattle.domain.model.Game
+import com.example.seabattle.data.firestore.dto.GameDTO
+import com.example.seabattle.domain.entity.Game
 
 
-fun GameEntity.toDomainModel(): Game =
+fun GameDTO.toEntity(): Game =
     Game(
          gameId = gameId,
          player1 = player1,
@@ -19,8 +19,8 @@ fun GameEntity.toDomainModel(): Game =
     )
 
 
-fun Game.toEntity(): GameEntity =
-    GameEntity(
+fun Game.toDTO(): GameDTO =
+    GameDTO(
         gameId = gameId,
         player1 = player1,
         player1Board = player1Board,

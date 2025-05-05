@@ -1,10 +1,10 @@
 package com.example.seabattle.data.firestore.mappers
 
-import com.example.seabattle.data.firestore.entities.RoomCreationEntity
-import com.example.seabattle.domain.model.Room
+import com.example.seabattle.data.firestore.dto.RoomCreationDTO
+import com.example.seabattle.domain.entity.Room
 
-fun Room.toCreationEntity(): RoomCreationEntity {
-    return RoomCreationEntity(
+fun Room.toCreationDTO(): RoomCreationDTO {
+    return RoomCreationDTO(
         roomId = roomId,
         roomName = roomName,
         roomState = roomState,
