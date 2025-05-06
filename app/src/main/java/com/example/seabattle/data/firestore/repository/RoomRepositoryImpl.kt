@@ -1,7 +1,9 @@
 package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
-import com.example.seabattle.data.firestore.mappers.toCreationDTO
+import com.example.seabattle.data.firestore.dto.RoomDtoRd
+import com.example.seabattle.data.firestore.mappers.toDto
+import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
@@ -26,9 +28,9 @@ class RoomRepositoryImpl(
 
     override suspend fun createRoom(room: Room): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val roomDTO = room.toCreationDTO()
-            roomsCollection.document(roomDTO.roomId)
-                .set(roomDTO)
+            val roomDto = room.toDto()
+            roomsCollection.document(roomDto.roomId)
+                .set(roomDto)
                 .await()
         }
             .map { _ -> }
@@ -48,7 +50,7 @@ class RoomRepositoryImpl(
                 }
 
                 val rooms = snapshot?.documents?.mapNotNull { document ->
-                    document.toObject(Room::class.java)
+                    document.toObject(RoomDtoRd::class.java)?.toEntity()
                 } ?: emptyList()
 
                 trySend(Result.success(rooms))
@@ -86,7 +88,7 @@ class RoomRepositoryImpl(
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
-                val roomEntity = document.toObject(Room::class.java)
+                val roomEntity = document.toObject(RoomDtoRd::class.java)?.toEntity()
                 roomEntity
             } else {
                 throw Exception("User not found")

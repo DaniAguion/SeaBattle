@@ -1,6 +1,9 @@
 package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
+import com.example.seabattle.data.firestore.dto.UserDto
+import com.example.seabattle.data.firestore.mappers.toDto
+import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.entity.User
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,7 +23,8 @@ class UserRepositoryImpl(
     override suspend fun createUser(user: User) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
-            usersCollection.document(user.userId).set(user).await()
+            val userDto = user.toDto()
+            usersCollection.document(user.userId).set(userDto).await()
         }
         .map { _ -> }
         .onFailure { e ->
@@ -34,7 +38,7 @@ class UserRepositoryImpl(
         runCatching {
             val document = usersCollection.document(userId).get().await()
             if (document.exists()) {
-                val userEntity = document.toObject(User::class.java)
+                val userEntity = document.toObject(UserDto::class.java)?.toEntity()
                 userEntity
             } else {
                 throw Exception("User not found")

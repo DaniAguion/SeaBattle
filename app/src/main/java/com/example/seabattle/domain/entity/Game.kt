@@ -1,5 +1,7 @@
 package com.example.seabattle.domain.entity
 
+import java.util.Date
+
 data class Game(
     val gameId: String,
     val player1: UserBasic,
@@ -11,6 +13,8 @@ data class Game(
     val gameState: String? = null,
     val gameFinished: Boolean = false,
     val winnerId: Int? = null,
+    val createdAt: Date? = null,
+    val updatedAt: Date? = null
 )
 
 enum class GameState {

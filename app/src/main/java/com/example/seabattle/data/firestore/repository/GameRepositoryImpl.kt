@@ -1,8 +1,8 @@
 package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
-import com.example.seabattle.data.firestore.dto.GameDTO
-import com.example.seabattle.data.firestore.mappers.toCreationDTO
+import com.example.seabattle.data.firestore.dto.GameDtoRd
+import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.UserBasic
@@ -19,7 +19,7 @@ class GameRepositoryImpl(
 
     override suspend fun createGame(game: Game): Boolean {
         return try {
-            val gameDTO = game.toCreationDTO()
+            val gameDTO = game.toDto()
             gamesCollection.document(gameDTO.gameId).set(gameDTO).await()
             true
         } catch (e: Exception) {
@@ -53,9 +53,9 @@ class GameRepositoryImpl(
         try {
             val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
-                val gameDTO = document.toObject(GameDTO::class.java)
-                if (gameDTO != null) {
-                    return gameDTO.toEntity()
+                val gameDto = document.toObject(GameDtoRd::class.java)
+                if (gameDto != null) {
+                    return gameDto.toEntity()
                 }
             }
             return null

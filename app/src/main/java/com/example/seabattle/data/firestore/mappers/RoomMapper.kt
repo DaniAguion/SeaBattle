@@ -1,12 +1,14 @@
 package com.example.seabattle.data.firestore.mappers
 
-import com.example.seabattle.data.firestore.dto.RoomCreationDTO
+import com.example.seabattle.data.firestore.dto.RoomDtoRd
+import com.example.seabattle.data.firestore.dto.RoomDtoWr
 import com.example.seabattle.domain.entity.Room
-import com.google.firebase.firestore.FieldValue
 
-// This function maps a Room object to a creationDTO object.
-fun Room.toCreationDTO(): RoomCreationDTO {
-    return RoomCreationDTO(
+
+// This function maps a Room object to a create a new Room in server.
+// The createdAt and updatedAt fields are initialized as server timestamps.
+fun Room.toDto(): RoomDtoWr {
+    return RoomDtoWr(
         roomId = roomId,
         roomName = roomName,
         roomState = roomState,
@@ -14,7 +16,21 @@ fun Room.toCreationDTO(): RoomCreationDTO {
         player1 = player1,
         player2 = player2,
         gameId = gameId,
-        createdAt = FieldValue.serverTimestamp(),
-        updatedAt = FieldValue.serverTimestamp()
     )
 }
+
+// This function is used to read a Room object from the server.
+fun RoomDtoRd.toEntity(): Room {
+    return Room(
+        roomId = roomId,
+        roomName = roomName,
+        roomState = roomState,
+        numberOfPlayers = numberOfPlayers,
+        player1 = player1,
+        player2 = player2,
+        gameId = gameId,
+        createdAt = createdAt,
+        updatedAt = updatedAt
+    )
+}
+

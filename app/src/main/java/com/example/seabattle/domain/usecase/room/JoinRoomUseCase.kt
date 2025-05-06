@@ -22,9 +22,17 @@ class JoinRoomUseCase(
             if (player2 == null) {
                 throw Exception("User not found")
             }
-            val room = roomRepository.getRoom(roomId).getOrThrow()
 
-            if (room == null || room.roomState != RoomState.WAITING_FOR_PLAYER.name) {
+            val room = roomRepository.getRoom(roomId).getOrThrow()
+            if (room == null) {
+                throw Exception("Room not found")
+            }
+
+            if (
+                room.player1.userId == player2.userId ||
+                room.numberOfPlayers == 2 ||
+                room.roomState != RoomState.WAITING_FOR_PLAYER.name
+            ) {
                 throw Exception("Room not available")
             }
 
