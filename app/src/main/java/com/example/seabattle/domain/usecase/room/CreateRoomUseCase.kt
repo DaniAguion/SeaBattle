@@ -38,7 +38,7 @@ class CreateRoomUseCase(
                 throw Exception("Room not found")
             } else {
                 session.setCurrentRoom(createdRoom)
-                createdRoom
+                return@runCatching createdRoom
             }
         }
     }

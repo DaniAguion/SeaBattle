@@ -45,11 +45,13 @@ class JoinRoomUseCase(
                 "player2" to player2.toBasic(),
             )
 
-            val updateTry = roomRepository.updateRoom(roomId, newData).getOrThrow()
+            roomRepository.updateRoom(roomId, newData).getOrThrow()
             val newRoom = roomRepository.getRoom(roomId).getOrThrow()
 
             if (newRoom != null) {
-                session.setCurrentRoom(newRoom)
+                return@runCatching session.setCurrentRoom(newRoom)
+            } else {
+                throw Exception("Room not found after update")
             }
         }
     }
