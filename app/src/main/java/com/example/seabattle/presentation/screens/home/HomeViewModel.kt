@@ -54,6 +54,9 @@ class HomeViewModel(
             createRoomUseCase.invoke()
                 .onSuccess { room ->
                     waitRoomUseCase.invoke(room.roomId)
+                        .onSuccess { waitFinished ->
+                            println("Game started for player 1")
+                        }
                 }
         }
     }
@@ -64,6 +67,9 @@ class HomeViewModel(
             joinRoomUseCase.invoke(roomId)
                 .onSuccess { room ->
                     waitRoomUseCase.invoke(roomId)
+                        .onSuccess { waitFinished ->
+                            println("Game started for player 2")
+                        }
                 }
         }
     }
