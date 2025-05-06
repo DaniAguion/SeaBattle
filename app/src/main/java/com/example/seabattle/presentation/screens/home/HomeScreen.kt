@@ -53,7 +53,6 @@ fun HomeScreen(
         loadingList = homeUiState.loadingList,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
         onClickJoinRoom = homeViewModel::onClickJoinRoom,
-        onClickRefresh = homeViewModel::onClickRefresh
     )
 }
 
@@ -67,7 +66,6 @@ fun HomeScreenContent(
     loadingList : Boolean,
     onClickCreateRoom: () -> Unit,
     onClickJoinRoom: (String) -> Unit,
-    onClickRefresh: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -107,12 +105,6 @@ fun HomeScreenContent(
                         stringResource(R.string.list_rooms_title),
                         style = MaterialTheme.typography.titleLarge,
                     )
-                    IconButton(onClick = onClickRefresh) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh Icon",
-                        )
-                    }
                 }
                 Spacer(modifier = Modifier.size(8.dp))
                 if (loadingList) {
@@ -153,7 +145,6 @@ fun HomeScreenPreview(){
         navController = NavHostController(context = LocalContext.current),
         onClickCreateRoom = { },
         onClickJoinRoom = { },
-        onClickRefresh = { },
         errorList = false,
         loadingList = false,
         roomList = listOf(

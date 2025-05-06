@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
 class HomeViewModel(
     private val createRoomUseCase: CreateRoomUseCase,
     private val getRoomsUseCase: GetRoomsUseCase,
@@ -19,31 +20,36 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState(roomList = emptyList()))
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+
     init {
-        onClickRefresh()
-    }
+        _uiState.value = _uiState.value.copy(loadingList = true)
 
-    fun onClickCreateRoom() {
         viewModelScope.launch {
-            createRoomUseCase.invoke()
-        }
-    }
-
-    fun onClickRefresh(){
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingList = true)
             getRoomsUseCase.invoke()
+            . collect { result ->
+                result
                 .onSuccess { rooms ->
                     _uiState.value = _uiState.value.copy(
                         roomList = rooms,
                         errorList = false,
-                        loadingList = false)
-                }.onFailure {
+                        loadingList = false
+                    )
+                }
+                .onFailure { throwable ->
                     _uiState.value = _uiState.value.copy(
                         roomList = emptyList(),
                         errorList = true,
-                        loadingList = false)
+                        loadingList = false
+                    )
                 }
+            }
+        }
+    }
+
+
+    fun onClickCreateRoom() {
+        viewModelScope.launch {
+            createRoomUseCase.invoke()
         }
     }
 
