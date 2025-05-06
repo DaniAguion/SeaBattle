@@ -1,5 +1,6 @@
 package com.example.seabattle.di
 
+import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.usecase.auth.LoginUserUseCase
 import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
 import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
@@ -14,6 +15,7 @@ import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
+    single { Session() }
     // Auth use cases
     factory { LoginUserUseCase(get(), get(), get(), get()) }
     factory { LogoutUserUseCase(get(), get()) }
@@ -24,7 +26,7 @@ val domainModule = module {
     factory { DiscoverCellUseCase(get()) }
     factory { CreateGameUseCase(get(), get()) }
     factory { GetRoomsUseCase(get()) }
-    factory { CreateRoomUseCase(get(), get(), get(), get()) }
-    factory { JoinRoomUseCase(get(), get(), get(), get()) }
-    factory { WaitRoomUseCase(get(), get(), get()) }
+    factory { CreateRoomUseCase(get(), get(), get(), get(), get()) }
+    factory { JoinRoomUseCase(get(), get(), get(), get(), get()) }
+    factory { WaitRoomUseCase(get(), get(), get(), get()) }
 }

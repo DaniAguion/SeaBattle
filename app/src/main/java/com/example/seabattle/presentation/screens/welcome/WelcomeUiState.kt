@@ -1,7 +1,5 @@
 package com.example.seabattle.presentation.screens.welcome
 
-import androidx.compose.ui.graphics.Color
-import com.example.seabattle.R
 import com.example.seabattle.presentation.screens.welcome.validation.ValidationError
 
 data class WelcomeUiState(

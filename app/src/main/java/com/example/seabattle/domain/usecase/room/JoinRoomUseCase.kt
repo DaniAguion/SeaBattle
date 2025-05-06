@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.data.local.SecurePrefsData
+import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.repository.RoomRepository
@@ -14,10 +15,12 @@ class JoinRoomUseCase(
     val userRepository: UserRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
+    val session: Session,
 ) {
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
+            println("Player ID: $playerId")
             val player2 = userRepository.getUser(playerId).getOrThrow()
             if (player2 == null) {
                 throw Exception("User not found")
@@ -41,7 +44,13 @@ class JoinRoomUseCase(
                 "numberOfPlayers" to 2,
                 "player2" to player2.toBasic(),
             )
-            roomRepository.updateRoom(roomId, newData).getOrThrow()
+
+            val updateTry = roomRepository.updateRoom(roomId, newData).getOrThrow()
+            val newRoom = roomRepository.getRoom(roomId).getOrThrow()
+
+            if (newRoom != null) {
+                session.setCurrentRoom(newRoom)
+            }
         }
     }
 }

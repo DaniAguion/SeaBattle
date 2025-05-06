@@ -25,6 +25,7 @@ import com.example.seabattle.presentation.screens.battleplan.BattlePlanScreen
 import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
 import com.example.seabattle.presentation.screens.profile.ProfileScreen
+import com.example.seabattle.presentation.screens.room.RoomScreen
 import com.example.seabattle.presentation.screens.welcome.WelcomeScreen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import com.example.seabattle.presentation.screens.splash.SplashScreen
@@ -36,7 +37,7 @@ enum class SeaBattleScreen(val title: String) {
     Home(title = "Home"),
     Profile(title = "Profile"),
     BattlePlan(title = "Battle Plan"),
-    Play(title = "Play"),
+    Room(title = "Room"),
     Game(title = "Game")
 }
 
@@ -92,8 +93,11 @@ fun SeaBattleApp() {
                     navController = navController
                 )
             }
-            composable(route = SeaBattleScreen.Play.title) {
-                // TO DO: Implement Waiting Screen
+            composable(route = SeaBattleScreen.Room.title) {
+                RoomScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
+                )
             }
             composable(route = SeaBattleScreen.Game.title) {
                 GameScreen(

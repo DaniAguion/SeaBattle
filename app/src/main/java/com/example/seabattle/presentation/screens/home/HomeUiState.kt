@@ -5,6 +5,7 @@ import com.example.seabattle.domain.entity.Room
 data class HomeUiState (
     val roomList: List<Room>,
     val errorList: Boolean = false,
-    val loadingList: Boolean = true
+    val loadingList: Boolean = true,
+    val hasJoined: Boolean = false,
 )
 

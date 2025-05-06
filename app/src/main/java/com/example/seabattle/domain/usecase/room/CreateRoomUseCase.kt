@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.data.local.SecurePrefsData
+import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.toBasic
@@ -15,6 +16,7 @@ class CreateRoomUseCase(
     val userRepository: UserRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
+    val session: Session,
 ) {
     suspend operator fun invoke(): Result<Room> = withContext(ioDispatcher) {
         runCatching {
@@ -32,7 +34,12 @@ class CreateRoomUseCase(
             )
             roomRepository.createRoom(room).getOrThrow()
             val createdRoom = roomRepository.getRoom(room.roomId).getOrThrow()
-            createdRoom ?: throw Exception("Room not found")
+            if (createdRoom == null) {
+                throw Exception("Room not found")
+            } else {
+                session.setCurrentRoom(createdRoom)
+                createdRoom
+            }
         }
     }
 }

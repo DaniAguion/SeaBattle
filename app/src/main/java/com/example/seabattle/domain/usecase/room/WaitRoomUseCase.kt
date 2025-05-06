@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.data.local.SecurePrefsData
+import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,6 +13,7 @@ class WaitRoomUseCase(
     val roomRepository: RoomRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
+    val session: Session,
 ) {
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
@@ -19,6 +21,7 @@ class WaitRoomUseCase(
             val flowCollector = roomRepository.getRoomUpdate(roomId)
             .map { result -> result.getOrThrow() }
             .first { room ->
+                session.setCurrentRoom(room)
                 when (playerId) {
                     room.player1.userId -> {
                         if ((room.player2 != null) && (room.roomState == RoomState.SECOND_PLAYER_JOINED.name)) {

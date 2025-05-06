@@ -5,28 +5,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -34,6 +31,7 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.TabItem
 import com.example.seabattle.presentation.resources.RoomCard
 import org.koin.androidx.compose.koinViewModel
 
@@ -51,6 +49,7 @@ fun HomeScreen(
         roomList = homeUiState.roomList,
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
+        hasJoined = homeUiState.hasJoined,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
         onClickJoinRoom = homeViewModel::onClickJoinRoom,
     )
@@ -64,29 +63,51 @@ fun HomeScreenContent(
     roomList : List<Room>,
     errorList : Boolean,
     loadingList : Boolean,
+    hasJoined: Boolean,
     onClickCreateRoom: () -> Unit,
     onClickJoinRoom: (String) -> Unit,
 ) {
+    LaunchedEffect(key1 = hasJoined) {
+        if (hasJoined) {
+            navController.navigate(SeaBattleScreen.Room.title)
+        }
+    }
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Home Screen"
-        )
-        Button(
-            onClick = { onClickCreateRoom() }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Create Room")
+            Text(
+                text = "Welcome!",
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                modifier = Modifier.padding(4.dp),
+
+            )
+            Text(
+                text = "Join a room or create a new one to start playing",
+                textAlign = TextAlign.Center,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                modifier = Modifier.padding(4.dp),
+
+            )
         }
         Button(
             onClick = {
-                navController.navigate(SeaBattleScreen.Game.title) {
-                }
+                onClickCreateRoom()
             }
         ) {
-            Text(text = "Start Game")
+            Text(
+                text = "Create room",
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                modifier = Modifier.padding(8.dp)
+            )
         }
         Box(
             modifier = Modifier
@@ -104,9 +125,9 @@ fun HomeScreenContent(
                     Text(
                         stringResource(R.string.list_rooms_title),
                         style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
-                Spacer(modifier = Modifier.size(8.dp))
                 if (loadingList) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -122,7 +143,10 @@ fun HomeScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(items = roomList, key = { it.roomId }) { room ->
-                            RoomCard(room = room, roomClick = onClickJoinRoom)
+                            RoomCard(
+                                room = room,
+                                roomClick = onClickJoinRoom
+                            )
                         }
                     }
                 } else {
@@ -147,6 +171,7 @@ fun HomeScreenPreview(){
         onClickJoinRoom = { },
         errorList = false,
         loadingList = false,
+        hasJoined = false,
         roomList = listOf(
             Room(
                 roomId = "1",
