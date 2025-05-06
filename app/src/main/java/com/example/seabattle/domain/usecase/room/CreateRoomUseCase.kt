@@ -16,7 +16,7 @@ class CreateRoomUseCase(
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(): Result<Room> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
             val player1 = userRepository.getUser(playerId).getOrThrow()
@@ -31,7 +31,8 @@ class CreateRoomUseCase(
                 player1 = player1.toBasic(),
             )
             roomRepository.createRoom(room).getOrThrow()
+            val createdRoom = roomRepository.getRoom(room.roomId).getOrThrow()
+            createdRoom ?: throw Exception("Room not found")
         }
     }
-
 }

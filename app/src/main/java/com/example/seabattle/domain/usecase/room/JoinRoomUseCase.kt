@@ -15,13 +15,19 @@ class JoinRoomUseCase(
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(roomId: String): Result<Unit>  = withContext(ioDispatcher) {
+    suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
             val player2 = userRepository.getUser(playerId).getOrThrow()
             if (player2 == null) {
                 throw Exception("User not found")
             }
+            val room = roomRepository.getRoom(roomId).getOrThrow()
+
+            if (room == null || room.roomState != RoomState.WAITING_FOR_PLAYER.name) {
+                throw Exception("Room not available")
+            }
+
             val newData = mapOf(
                 "roomState" to RoomState.SECOND_PLAYER_JOINED.name,
                 "numberOfPlayers" to 2,

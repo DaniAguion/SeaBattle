@@ -6,17 +6,13 @@ import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenSource
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.SnapshotListenOptions
-import com.google.firebase.firestore.Source
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -43,11 +39,6 @@ class RoomRepositoryImpl(
 
 
     override fun fetchRooms(): Flow<Result<List<Room>>> = callbackFlow {
-        val options = SnapshotListenOptions.Builder()
-            .setMetadataChanges(MetadataChanges.INCLUDE)
-            .setSource(ListenSource.DEFAULT)
-            .build()
-
         val listener = roomsCollection
             .whereEqualTo("numberOfPlayers", 1)
             .addSnapshotListener { snapshot, error ->
@@ -66,6 +57,28 @@ class RoomRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
+    override fun getRoomUpdate(roomId: String): Flow<Result<Room>>
+    = callbackFlow {
+        val options = SnapshotListenOptions.Builder()
+            .setMetadataChanges(MetadataChanges.INCLUDE)
+            .build()
+
+        val listener = roomsCollection
+            .document(roomId)
+            .addSnapshotListener(options) { snapshot, error ->
+                if (error != null) {
+                    trySend(Result.failure(error))
+                    return@addSnapshotListener
+                }
+                val room = snapshot?.toObject(Room::class.java)
+                if (room == null) {
+                    trySend(Result.failure(Exception("Room not found")))
+                    return@addSnapshotListener
+                }
+                trySend(Result.success(room))
+            }
+        awaitClose { listener.remove() }
+    }.flowOn(ioDispatcher)
 
 
     override suspend fun getRoom(roomId: String): Result<Room?>

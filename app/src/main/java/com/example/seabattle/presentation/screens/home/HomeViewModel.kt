@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
 import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
+import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val createRoomUseCase: CreateRoomUseCase,
     private val getRoomsUseCase: GetRoomsUseCase,
-    private val joinRoomUseCase: JoinRoomUseCase
+    private val joinRoomUseCase: JoinRoomUseCase,
+    private val waitRoomUseCase: WaitRoomUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(roomList = emptyList()))
@@ -50,6 +52,9 @@ class HomeViewModel(
     fun onClickCreateRoom() {
         viewModelScope.launch {
             createRoomUseCase.invoke()
+                .onSuccess { room ->
+                    waitRoomUseCase.invoke(room.roomId)
+                }
         }
     }
 
@@ -57,6 +62,9 @@ class HomeViewModel(
     fun onClickJoinRoom(roomId: String) {
         viewModelScope.launch {
             joinRoomUseCase.invoke(roomId)
+                .onSuccess { room ->
+                    waitRoomUseCase.invoke(roomId)
+                }
         }
     }
 }
