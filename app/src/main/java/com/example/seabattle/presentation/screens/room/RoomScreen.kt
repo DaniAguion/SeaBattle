@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
@@ -45,7 +46,7 @@ fun RoomScreenContent(
     room: Room?
 ) {
     LaunchedEffect(key1 = room) {
-        if (room!= null && room.roomState == "GAME_CREATED") {
+        if (room!= null && room.roomState == RoomState.GAME_CREATED.name) {
             navController.navigate(SeaBattleScreen.Game.title)
         }
     }

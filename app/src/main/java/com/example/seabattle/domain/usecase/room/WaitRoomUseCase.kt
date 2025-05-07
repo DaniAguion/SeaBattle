@@ -30,12 +30,11 @@ class WaitRoomUseCase(
                 when (playerId) {
                     room.player1.userId -> {
                         if (room.player2 != null) {
-                            if ((room.roomState == RoomState.SECOND_PLAYER_JOINED.name)) {
+                            if (room.roomState == RoomState.SECOND_PLAYER_JOINED.name) {
                                 val newData = mapOf(
                                     "roomState" to RoomState.CREATING_GAME.name,
                                 )
                                 roomRepository.updateRoom(roomId, newData).getOrThrow()
-                                false
 
                             } else if (room.roomState == RoomState.CREATING_GAME.name) {
                                 val game = Game(
@@ -46,27 +45,41 @@ class WaitRoomUseCase(
                                 )
 
                                 gameRepository.createGame(game).getOrThrow()
+                                session.setCurrentGame(game)
 
                                 val newData = mapOf(
                                     "roomState" to RoomState.GAME_CREATED.name,
                                     "gameId" to game.gameId,
                                 )
                                 roomRepository.updateRoom(roomId, newData).getOrThrow()
-                                true
+
+                            } else if (room.roomState == RoomState.GAME_STARTED.name) {
+                                session.setCurrentRoom(room)
                             }
                         }
-                        false
+                        return@first false
                     }
 
                     room.player2?.userId -> {
-                        if (room.roomState == RoomState.GAME_CREATED.name && room.gameId != null) {
-                            roomRepository.deleteRoom(roomId).getOrThrow()
-                            true
-                        } else {
-                            false
-                        }
-                    }
+                        if (room.roomState == RoomState.GAME_CREATED.name) {
+                            if (room.gameId == null) {
+                                throw IllegalStateException("Game ID is null")
+                            }
 
+                            val game = gameRepository.getGame(room.gameId).getOrThrow()
+                            session.setCurrentGame(game)
+
+                            val newData = mapOf(
+                                "roomState" to RoomState.GAME_STARTED.name
+                            )
+                            roomRepository.updateRoom(roomId, newData).getOrThrow()
+
+                        } else if (room.roomState == RoomState.GAME_STARTED.name) {
+                            session.setCurrentRoom(room)
+                            return@first true
+                        }
+                        return@first false
+                    }
                     else -> throw IllegalStateException("User doesn't belong to this room")
                 }
             }

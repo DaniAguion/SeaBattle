@@ -101,7 +101,8 @@ fun SeaBattleApp() {
             }
             composable(route = SeaBattleScreen.Game.title) {
                 GameScreen(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
                 )
             }
         }

@@ -34,12 +34,8 @@ class CreateRoomUseCase(
             )
             roomRepository.createRoom(room).getOrThrow()
             val createdRoom = roomRepository.getRoom(room.roomId).getOrThrow()
-            if (createdRoom == null) {
-                throw Exception("Room not found")
-            } else {
-                session.setCurrentRoom(createdRoom)
-                return@runCatching createdRoom
-            }
+            session.setCurrentRoom(createdRoom)
+            return@runCatching createdRoom
         }
     }
 }

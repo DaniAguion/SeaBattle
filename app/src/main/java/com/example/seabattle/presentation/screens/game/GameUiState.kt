@@ -1,7 +1,7 @@
 package com.example.seabattle.presentation.screens.game
 
-import com.example.seabattle.domain.entity.GameBoard
+import com.example.seabattle.domain.entity.Game
 
 data class GameUiState (
-    val gameBoard: GameBoard
+    val game: Game? = null,
 )

@@ -20,16 +20,12 @@ class JoinRoomUseCase(
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
-            println("Player ID: $playerId")
             val player2 = userRepository.getUser(playerId).getOrThrow()
             if (player2 == null) {
                 throw Exception("User not found")
             }
 
             val room = roomRepository.getRoom(roomId).getOrThrow()
-            if (room == null) {
-                throw Exception("Room not found")
-            }
 
             if (
                 room.player1.userId == player2.userId ||
@@ -47,12 +43,7 @@ class JoinRoomUseCase(
 
             roomRepository.updateRoom(roomId, newData).getOrThrow()
             val newRoom = roomRepository.getRoom(roomId).getOrThrow()
-
-            if (newRoom != null) {
-                return@runCatching session.setCurrentRoom(newRoom)
-            } else {
-                throw Exception("Room not found after update")
-            }
+            return@runCatching session.setCurrentRoom(newRoom)
         }
     }
 }

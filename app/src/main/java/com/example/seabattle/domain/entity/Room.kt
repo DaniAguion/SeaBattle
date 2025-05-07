@@ -19,4 +19,5 @@ enum class RoomState {
     SECOND_PLAYER_JOINED,
     CREATING_GAME,
     GAME_CREATED,
+    GAME_STARTED
 }

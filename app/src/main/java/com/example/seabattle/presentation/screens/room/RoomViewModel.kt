@@ -4,14 +4,12 @@ package com.example.seabattle.presentation.screens.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.invoke
 
 
 class RoomViewModel(

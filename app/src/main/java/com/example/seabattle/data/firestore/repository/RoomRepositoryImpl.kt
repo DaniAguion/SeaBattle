@@ -83,19 +83,22 @@ class RoomRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-    override suspend fun getRoom(roomId: String) : Result<Room?>
+    override suspend fun getRoom(roomId: String) : Result<Room>
     = withContext(ioDispatcher) {
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
                 val roomEntity = document.toObject(RoomDtoRd::class.java)?.toEntity()
-                roomEntity
+                if (roomEntity == null) {
+                    throw Exception("Room not found")
+                }
+                return@runCatching roomEntity
             } else {
-                throw Exception("User not found")
+                throw Exception("Document not found")
             }
         }
         .onFailure { e ->
-            Log.e("FirestoreRepository", "Error fetching rooms: ${e.message}")
+            Log.e(tag, "Error fetching room: ${e.message}")
             emptyList<Room>()
         }
     }

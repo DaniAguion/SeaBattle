@@ -5,6 +5,7 @@ import com.example.seabattle.data.firestore.dto.GameDtoRd
 import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
@@ -12,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.onFailure
 
 class GameRepositoryImpl(
     private val db: FirebaseFirestore,
@@ -54,19 +56,23 @@ class GameRepositoryImpl(
     }
 
 
-    override suspend fun getGame(gameId: String): Game? {
-        try {
+    override suspend fun getGame(gameId: String): Result<Game>
+    = withContext(ioDispatcher) {
+        runCatching {
             val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
-                val gameDto = document.toObject(GameDtoRd::class.java)
-                if (gameDto != null) {
-                    return gameDto.toEntity()
+                val gameEntity = document.toObject(GameDtoRd::class.java)?.toEntity()
+                if (gameEntity == null) {
+                    throw Exception("Game not found")
                 }
+                return@runCatching gameEntity
+            } else {
+                throw Exception("Document not found")
             }
-            return null
-        } catch (e: Exception) {
-            Log.e(tag, "Error getting game: ${e.message}")
-            return null
+        }
+        .onFailure { e ->
+            Log.e(tag, "Error fetching game: ${e.message}")
+            emptyList<Room>()
         }
     }
 
