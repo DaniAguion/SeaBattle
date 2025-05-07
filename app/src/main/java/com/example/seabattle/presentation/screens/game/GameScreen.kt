@@ -19,20 +19,16 @@ fun GameScreen(
     modifier: Modifier,
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
-    val gameUiState by gameViewModel.uiState.collectAsState()
+    //val gameUiState by gameViewModel.uiState.collectAsState()
 
     GameScreenContent(
-        modifier = modifier,
-        gameBoard = gameUiState.gameBoard,
-        onCellClick = gameViewModel::onCellClick
+        modifier = modifier
     )
 }
 
 @Composable
 fun GameScreenContent(
-    modifier: Modifier,
-    gameBoard: GameBoard,
-    onCellClick: (Int, Int) -> Unit
+    modifier: Modifier
 ) {
     Column(
         modifier = modifier,
@@ -42,14 +38,16 @@ fun GameScreenContent(
         Text(
             text = "Game Screen"
         )
+        /*
         Board(
             gameBoard = gameBoard,
             onCellClick = onCellClick,
         )
+        */
     }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview(){
@@ -59,3 +57,4 @@ fun GameScreenPreview(){
         onCellClick = { x, y -> }
     )
 }
+*/

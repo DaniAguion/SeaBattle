@@ -7,16 +7,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.UserBasic
+import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -28,17 +31,25 @@ fun RoomScreen(
 ) {
     val roomUiState by roomViewModel.uiState.collectAsState()
 
-    ProfileScreenContent(
+    RoomScreenContent(
         modifier = modifier,
-        roomUiState = roomUiState
+        navController = navController,
+        room = roomUiState.room
     )
 }
 
 @Composable
-fun ProfileScreenContent(
+fun RoomScreenContent(
     modifier: Modifier = Modifier,
-    roomUiState: RoomUiState = RoomUiState()
+    navController: NavHostController,
+    room: Room?
 ) {
+    LaunchedEffect(key1 = room) {
+        if (room!= null && room.roomState == "GAME_CREATED") {
+            navController.navigate(SeaBattleScreen.Game.title)
+        }
+    }
+
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -50,22 +61,22 @@ fun ProfileScreenContent(
             text = "Room Screen",
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
-        if (roomUiState.room != null) {
+        if (room != null) {
             Text(
-                text = "Room ID: ${roomUiState.room.roomName}",
+                text = "Room ID: ${room.roomName}",
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             )
             Text(
-                text = "State: ${roomUiState.room.roomState}",
+                text = "State: ${room.roomState}",
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             )
             Text(
-                text = "Player 1: ${roomUiState.room.player1.displayName}",
+                text = "Player 1: ${room.player1.displayName}",
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             )
-            if (roomUiState.room.player2 != null) {
+            if (room.player2 != null) {
                 Text(
-                    text = "Player 2: ${roomUiState.room.player2.displayName}",
+                    text = "Player 2: ${room.player2.displayName}",
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
@@ -76,17 +87,16 @@ fun ProfileScreenContent(
 
 @Preview (showBackground = true)
 @Composable
-fun ProfilePreview(){
-    ProfileScreenContent(
+fun RoomPreview(){
+    RoomScreenContent(
         modifier = Modifier.fillMaxSize(),
-        roomUiState = RoomUiState(
-            room = Room(
+        navController = NavHostController(context = LocalContext.current),
+        room = Room(
                 roomId = "roomId",
                 player1 = UserBasic("userId", "displayName"),
                 player2 = null,
                 roomName = "roomName",
-                roomState = "roomState"
-            )
+                roomState = "WAITING_FOR_PLAYER"
         )
     )
 }

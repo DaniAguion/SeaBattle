@@ -9,22 +9,27 @@ import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class GameRepositoryImpl(
     private val db: FirebaseFirestore,
+    private val ioDispatcher: CoroutineDispatcher
 ) : GameRepository {
     private val gamesCollection = db.collection("games")
     private val tag = "GameRepository"
 
-    override suspend fun createGame(game: Game): Boolean {
-        return try {
-            val gameDTO = game.toDto()
-            gamesCollection.document(gameDTO.gameId).set(gameDTO).await()
-            true
-        } catch (e: Exception) {
-            Log.e(tag, "Error creating game: ${e.message}")
-            false
+    override suspend fun createGame(game: Game) : Result<Unit>  = withContext(ioDispatcher) {
+        runCatching {
+            val gameDto = game.toDto()
+            gamesCollection.document(gameDto.gameId)
+                .set(gameDto)
+                .await()
+        }
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error creating game with Id: ${game.gameId}. ${e.message}")
         }
     }
 

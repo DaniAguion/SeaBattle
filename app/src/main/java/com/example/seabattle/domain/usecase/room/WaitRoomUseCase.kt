@@ -2,15 +2,20 @@ package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.data.local.SecurePrefsData
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class WaitRoomUseCase(
     val roomRepository: RoomRepository,
+    val gameRepository: GameRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
@@ -24,19 +29,37 @@ class WaitRoomUseCase(
                 session.setCurrentRoom(room)
                 when (playerId) {
                     room.player1.userId -> {
-                        if ((room.player2 != null) && (room.roomState == RoomState.SECOND_PLAYER_JOINED.name)) {
-                            val newData = mapOf(
-                                "roomState" to RoomState.STARTING_GAME.name
-                            )
-                            roomRepository.updateRoom(roomId, newData).getOrThrow()
-                            true
-                        } else {
-                            false
+                        if (room.player2 != null) {
+                            if ((room.roomState == RoomState.SECOND_PLAYER_JOINED.name)) {
+                                val newData = mapOf(
+                                    "roomState" to RoomState.CREATING_GAME.name,
+                                )
+                                roomRepository.updateRoom(roomId, newData).getOrThrow()
+                                false
+
+                            } else if (room.roomState == RoomState.CREATING_GAME.name) {
+                                val game = Game(
+                                    gameId = UUID.randomUUID().toString(),
+                                    player1 = room.player1,
+                                    player2 = room.player2,
+                                    gameState = GameState.INITIAL.name,
+                                )
+
+                                gameRepository.createGame(game).getOrThrow()
+
+                                val newData = mapOf(
+                                    "roomState" to RoomState.GAME_CREATED.name,
+                                    "gameId" to game.gameId,
+                                )
+                                roomRepository.updateRoom(roomId, newData).getOrThrow()
+                                true
+                            }
                         }
+                        false
                     }
 
                     room.player2?.userId -> {
-                        if (room.roomState == RoomState.STARTING_GAME.name) {
+                        if (room.roomState == RoomState.GAME_CREATED.name && room.gameId != null) {
                             roomRepository.deleteRoom(roomId).getOrThrow()
                             true
                         } else {

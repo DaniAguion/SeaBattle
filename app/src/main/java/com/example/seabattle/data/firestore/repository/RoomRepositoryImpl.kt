@@ -26,7 +26,7 @@ class RoomRepositoryImpl(
     private val roomsCollection = db.collection("rooms")
     private val tag = "RoomRepository"
 
-    override suspend fun createRoom(room: Room): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun createRoom(room: Room) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val roomDto = room.toDto()
             roomsCollection.document(roomDto.roomId)
@@ -40,7 +40,7 @@ class RoomRepositoryImpl(
     }
 
 
-    override fun fetchRooms(): Flow<Result<List<Room>>> = callbackFlow {
+    override fun fetchRooms() : Flow<Result<List<Room>>> = callbackFlow {
         val listener = roomsCollection
             .whereEqualTo("numberOfPlayers", 1)
             .addSnapshotListener { snapshot, error ->
@@ -59,7 +59,7 @@ class RoomRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-    override fun getRoomUpdate(roomId: String): Flow<Result<Room>>
+    override fun getRoomUpdate(roomId: String) : Flow<Result<Room>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
             .setMetadataChanges(MetadataChanges.INCLUDE)
@@ -83,7 +83,7 @@ class RoomRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-    override suspend fun getRoom(roomId: String): Result<Room?>
+    override suspend fun getRoom(roomId: String) : Result<Room?>
     = withContext(ioDispatcher) {
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
@@ -121,7 +121,7 @@ class RoomRepositoryImpl(
     }
 
 
-    override suspend fun deleteRoom(roomId: String): Result<Unit>
+    override suspend fun deleteRoom(roomId: String) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             roomsCollection.document(roomId).delete().await()

@@ -4,12 +4,14 @@ package com.example.seabattle.presentation.screens.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import okhttp3.internal.concurrent.Task
+import kotlin.invoke
 
 
 class RoomViewModel(
@@ -24,12 +26,16 @@ class RoomViewModel(
             session.currentRoom.collect { room ->
                 if (room != null) {
                     _uiState.value = RoomUiState(room = room)
-
-                    waitRoomUseCase.invoke(room.roomId)
-                        .onSuccess { waitFinished ->
-                            println("Game started for player 1")
-                        }
                 }
+            }
+        }
+        viewModelScope.launch {
+            session.currentRoom.first { room ->
+                if (room != null) {
+                    waitRoomUseCase.invoke(room.roomId)
+                        .onSuccess { return@first true }
+                }
+                false
             }
         }
     }
