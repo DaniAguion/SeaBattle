@@ -37,24 +37,26 @@ class WaitRoomUseCase(
                                 roomRepository.updateRoom(roomId, newData).getOrThrow()
 
                             } else if (room.roomState == RoomState.CREATING_GAME.name) {
-                                val game = Game(
-                                    gameId = UUID.randomUUID().toString(),
-                                    player1 = room.player1,
-                                    player2 = room.player2,
-                                    gameState = GameState.INITIAL.name,
-                                )
+                                if (session.getCurrentGame() == null) {
+                                    val game = Game(
+                                        gameId = UUID.randomUUID().toString(),
+                                        player1 = room.player1,
+                                        player2 = room.player2,
+                                        gameState = GameState.INITIAL.name,
+                                    )
 
-                                gameRepository.createGame(game).getOrThrow()
-                                session.setCurrentGame(game)
+                                    gameRepository.createGame(game).getOrThrow()
+                                    session.setCurrentGame(game)
 
-                                val newData = mapOf(
-                                    "roomState" to RoomState.GAME_CREATED.name,
-                                    "gameId" to game.gameId,
-                                )
-                                roomRepository.updateRoom(roomId, newData).getOrThrow()
-
+                                    val newData = mapOf(
+                                        "roomState" to RoomState.GAME_CREATED.name,
+                                        "gameId" to game.gameId,
+                                    )
+                                    roomRepository.updateRoom(roomId, newData).getOrThrow()
+                                }
                             } else if (room.roomState == RoomState.GAME_STARTED.name) {
                                 session.setCurrentRoom(room)
+                                return@first true
                             }
                         }
                         return@first false

@@ -14,6 +14,10 @@ class Session {
         _currentRoom.value = room
     }
 
+    fun getCurrentRoom() : Room? {
+        return _currentRoom.value
+    }
+
     fun clearCurrentRoom() {
         _currentRoom.value = null
     }
@@ -24,6 +28,10 @@ class Session {
 
     fun setCurrentGame(game: Game) {
         _currentGame.value = game
+    }
+
+    fun getCurrentGame() : Game? {
+        return _currentGame.value
     }
 
     fun clearCurrentGame() {

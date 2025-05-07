@@ -18,7 +18,6 @@ class GameViewModel(
     init{
         viewModelScope.launch {
             session.currentGame.collect { game ->
-                println("GameViewModel: currentGame: $game")
                 if (game != null) {
                     _uiState.value = GameUiState(game = game)
                 }

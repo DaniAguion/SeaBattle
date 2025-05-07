@@ -4,6 +4,7 @@ package com.example.seabattle.presentation.screens.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class RoomViewModel(
     private val waitRoomUseCase: WaitRoomUseCase,
+    private val closeRoomUseCase: CloseRoomUseCase,
     private val session: Session,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<RoomUiState>(RoomUiState())
@@ -35,6 +37,12 @@ class RoomViewModel(
                 }
                 false
             }
+        }
+    }
+
+    fun onUserLeave(){
+        viewModelScope.launch {
+            closeRoomUseCase.invoke()
         }
     }
 }
