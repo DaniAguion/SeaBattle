@@ -97,10 +97,6 @@ class RoomRepositoryImpl(
                 throw Exception("Document not found")
             }
         }
-        .onFailure { e ->
-            Log.e(tag, "Error fetching room: ${e.message}")
-            emptyList<Room>()
-        }
     }
 
 

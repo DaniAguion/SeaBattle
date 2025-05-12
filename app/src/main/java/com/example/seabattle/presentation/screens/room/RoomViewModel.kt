@@ -44,7 +44,14 @@ class RoomViewModel(
 
     fun onUserLeave(){
         viewModelScope.launch {
+            _uiState.value = RoomUiState(actionFailed = false)
             closeRoomUseCase.invoke()
+                .onSuccess {
+                    _uiState.value = RoomUiState(room = null)
+                }
+                .onFailure {
+                    _uiState.value = RoomUiState(actionFailed = true)
+                }
         }
     }
 }

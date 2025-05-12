@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,6 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
-import com.example.seabattle.presentation.TabItem
 import com.example.seabattle.presentation.resources.RoomCard
 import org.koin.androidx.compose.koinViewModel
 
@@ -50,6 +50,7 @@ fun HomeScreen(
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
         hasJoined = homeUiState.hasJoined,
+        actionFailed = homeUiState.actionFailed,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
         onClickJoinRoom = homeViewModel::onClickJoinRoom,
     )
@@ -64,6 +65,7 @@ fun HomeScreenContent(
     errorList : Boolean,
     loadingList : Boolean,
     hasJoined: Boolean,
+    actionFailed: Boolean,
     onClickCreateRoom: () -> Unit,
     onClickJoinRoom: (String) -> Unit,
 ) {
@@ -157,6 +159,16 @@ fun HomeScreenContent(
                 }
             }
         }
+        if (actionFailed) {
+            val context = LocalContext.current
+            LaunchedEffect(key1 = actionFailed) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_action),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }
 
@@ -172,6 +184,7 @@ fun HomeScreenPreview(){
         errorList = false,
         loadingList = false,
         hasJoined = false,
+        actionFailed = false,
         roomList = listOf(
             Room(
                 roomId = "1",

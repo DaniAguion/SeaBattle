@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.acos
 
 
 class HomeViewModel(
     private val createRoomUseCase: CreateRoomUseCase,
     private val getRoomsUseCase: GetRoomsUseCase,
-    private val joinRoomUseCase: JoinRoomUseCase,
-    private val waitRoomUseCase: WaitRoomUseCase,
+    private val joinRoomUseCase: JoinRoomUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(roomList = emptyList()))
@@ -24,7 +24,10 @@ class HomeViewModel(
 
 
     init {
-        _uiState.value = _uiState.value.copy(loadingList = true)
+        _uiState.value = _uiState.value.copy(
+            actionFailed = false,
+            loadingList = true
+        )
 
         viewModelScope.launch {
             getRoomsUseCase.invoke()
@@ -51,10 +54,16 @@ class HomeViewModel(
 
     fun onClickCreateRoom() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(actionFailed = false)
             createRoomUseCase.invoke()
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(
                         hasJoined = true
+                    )
+                }
+                .onFailure {
+                    _uiState.value = _uiState.value.copy(
+                        actionFailed = true
                     )
                 }
         }
@@ -63,10 +72,16 @@ class HomeViewModel(
 
     fun onClickJoinRoom(roomId: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(actionFailed = false)
             joinRoomUseCase.invoke(roomId)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(
                         hasJoined = true
+                    )
+                }
+                .onFailure {
+                    _uiState.value = _uiState.value.copy(
+                        actionFailed = true
                     )
                 }
         }

@@ -15,8 +15,12 @@ class CloseRoomUseCase(
         runCatching {
             val roomId = session.getCurrentRoom()?.roomId
             if (roomId != null){
-                val room = roomRepository.getRoom(roomId).getOrThrow()
-                if(room.numberOfPlayers <= 1 || room.roomState == RoomState.GAME_STARTED.name) {
+                val room = roomRepository.getRoom(roomId).getOrNull()
+                if (room == null) {
+                    session.clearCurrentRoom()
+                    return@runCatching
+                }
+                if(room.roomState == RoomState.WAITING_FOR_PLAYER.name || room.roomState == RoomState.GAME_STARTED.name) {
                     roomRepository.deleteRoom(roomId).getOrThrow()
                     session.clearCurrentRoom()
                 }
