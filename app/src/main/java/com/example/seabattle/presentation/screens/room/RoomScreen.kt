@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -15,8 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
@@ -67,16 +69,14 @@ fun RoomScreenContent(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "Room Screen",
+            text = "Waiting Room",
+            fontSize = 20.sp,
+            fontWeight = SemiBold,
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         if (room != null) {
             Text(
-                text = "Room ID: ${room.roomName}",
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-            )
-            Text(
-                text = "State: ${room.roomState}",
+                text = "Room Name: ${room.roomName}",
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             )
             Text(
@@ -88,6 +88,19 @@ fun RoomScreenContent(
                     text = "Player 2: ${room.player2.displayName}",
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
                 )
+            } else {
+                Text(
+                    text = "Waiting for player 2...",
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+                )
+                Button(
+                    onClick = {
+                        navController.navigate(SeaBattleScreen.Home.title)
+                    },
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    Text(text = "Exit Room")
+                }
             }
         }
     }

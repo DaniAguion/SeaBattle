@@ -20,6 +20,9 @@ class WaitRoomUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
+    // This function waits for the room to be updated and performs actions based on the room state.
+    // It checks the player's ID and updates the room state accordingly.
+
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()

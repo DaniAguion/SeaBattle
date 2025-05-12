@@ -2,7 +2,6 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -12,14 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameBoard
-import com.example.seabattle.domain.entity.Room
-import com.example.seabattle.presentation.resources.Board
-import com.example.seabattle.presentation.screens.room.RoomViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

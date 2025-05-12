@@ -1,6 +1,5 @@
 package com.example.seabattle.presentation.screens.room
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
@@ -22,6 +21,7 @@ class RoomViewModel(
     var uiState: StateFlow<RoomUiState> = _uiState.asStateFlow()
 
     init {
+        // Observe the current room from the session and update the UI state
         viewModelScope.launch {
             session.currentRoom.collect { room ->
                 if (room != null) {
@@ -29,6 +29,8 @@ class RoomViewModel(
                 }
             }
         }
+
+        // Observe the current room and execute the waitRoomUseCase until success
         viewModelScope.launch {
             session.currentRoom.first { room ->
                 if (room != null) {
