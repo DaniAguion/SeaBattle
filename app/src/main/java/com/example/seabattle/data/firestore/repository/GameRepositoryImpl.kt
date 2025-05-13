@@ -36,26 +36,6 @@ class GameRepositoryImpl(
     }
 
 
-    override suspend fun joinGame(gameId: String, player2: UserBasic, gameState: String): Boolean {
-        return try {
-            val document = gamesCollection.document(gameId).get().await()
-            if (document.exists()) {
-                val newData = mapOf(
-                    "player2" to player2,
-                    "gameState" to gameState
-                )
-                gamesCollection.document(gameId).update(newData).await()
-                true
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            Log.e(tag, "Error updating game: ${e.message}")
-            true
-        }
-    }
-
-
     override suspend fun getGame(gameId: String): Result<Game>
     = withContext(ioDispatcher) {
         runCatching {
@@ -77,27 +57,22 @@ class GameRepositoryImpl(
     }
 
 
-    override suspend fun updateGame(game: Game): Boolean {
-        return try {
-            val document = gamesCollection.document(game.gameId).get().await()
+    override suspend fun updateGame(gameId: String, newData: Map<String, Any>) : Result<Unit>
+            = withContext(ioDispatcher) {
+        runCatching {
+            val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
-                val newData = mapOf(
-                    "player1Board" to game.player1Board,
-                    "player2Board" to game.player2Board,
-                    "actualTurn" to game.currentTurn,
-                    "currentPlayer" to game.currentPlayer,
-                    "updatedAt" to FieldValue.serverTimestamp(),
-                    "gameFinished" to game.gameFinished,
-                    "winner" to (game.winnerId ?: ""),
+                val updatedGame = newData + mapOf(
+                    "updatedAt" to FieldValue.serverTimestamp()
                 )
-                db.collection("games").document(game.gameId).update(newData).await()
-                true
+                gamesCollection.document(gameId).update(updatedGame).await()
             } else {
-                false
+                throw Exception("Game not found")
             }
-        } catch (e: Exception) {
-            Log.e(tag, "Error updating game: ${e.message}")
-            true
+        }
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error updating game: ${gameId}. ${e.message}")
         }
     }
 }

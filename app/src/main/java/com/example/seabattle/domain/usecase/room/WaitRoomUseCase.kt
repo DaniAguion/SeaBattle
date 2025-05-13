@@ -45,7 +45,7 @@ class WaitRoomUseCase(
                                         gameId = UUID.randomUUID().toString(),
                                         player1 = room.player1,
                                         player2 = room.player2,
-                                        gameState = GameState.INITIAL.name,
+                                        gameState = GameState.CHECK_READY.name,
                                     )
 
                                     gameRepository.createGame(game).getOrThrow()

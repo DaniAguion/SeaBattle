@@ -6,7 +6,6 @@ import com.example.seabattle.domain.entity.UserBasic
 
 interface GameRepository {
     suspend fun createGame(game: Game) : Result<Unit>
-    suspend fun joinGame(gameId: String, player2: UserBasic, gameState: String) : Boolean
     suspend fun getGame(gameId: String) : Result<Game>
-    suspend fun updateGame(game: Game) : Boolean
+    suspend fun updateGame(gameId: String, newData: Map<String, Any>) : Result<Unit>
 }

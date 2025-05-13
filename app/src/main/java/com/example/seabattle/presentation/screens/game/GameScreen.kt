@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,14 +43,16 @@ fun GameScreen(
 
     GameScreenContent(
         modifier = modifier,
-        game = gameUiState.game
+        game = gameUiState.game,
+        onClickReady = gameViewModel::onClickReady
     )
 }
 
 @Composable
 fun GameScreenContent(
     modifier: Modifier,
-    game: Game?
+    game: Game?,
+    onClickReady: () -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier
@@ -61,7 +64,9 @@ fun GameScreenContent(
         // Players
         item {
             Row(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_big)),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
@@ -71,6 +76,64 @@ fun GameScreenContent(
                 CardPlayer(
                     player = game?.player2
                 )
+            }
+        }
+
+        // Screen waiting for players to be ready
+
+        if (game?.gameState == GameState.CHECK_READY.name) {
+            item {
+                Text(
+                    text = "Confirm when you are ready!",
+                    fontSize = 20.sp,
+                    fontWeight = SemiBold,
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                )
+                Button(
+                    onClick = onClickReady,
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                        .sizeIn(minWidth = 150.dp)
+                ) {
+                    Text(text = "Ready")
+                }
+            }
+            item {
+                if (game.player1Ready) {
+                    Text(
+                        text = "${game.player1.displayName} is ready",
+                        fontSize = 16.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_small))
+                    )
+                } else {
+                    Text(
+                        text = "Waiting for ${game.player1.displayName} to be ready...",
+                        fontSize = 16.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_small))
+                    )
+                }
+                if (game.player2Ready) {
+                    Text(
+                        text = "${game.player2.displayName} is ready",
+                        fontSize = 16.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_small))
+                    )
+                } else {
+                    Text(
+                        text = "Waiting for ${game.player2.displayName} to be ready...",
+                        fontSize = 16.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_small))
+                    )
+                }
             }
         }
     }
@@ -130,7 +193,7 @@ fun GameScreenPreview(){
             player1Board = GameBoard().toMapOfMaps(),
             player2 = UserBasic("userId", "PedroPablo80"),
             player2Board = GameBoard().toMapOfMaps(),
-            gameState = GameState.IN_PROGRESS.name
+            gameState = GameState.CHECK_READY.name
         )
     )
 }

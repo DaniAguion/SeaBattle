@@ -7,8 +7,10 @@ import java.util.Date
 data class GameDtoWr(
     val gameId: String = "",
     val player1: UserBasic = UserBasic(),
+    val player1Ready: Boolean = false,
     val player1Board: Map<String, Map<String, Int>>? = null,
     val player2: UserBasic = UserBasic(),
+    val player2Ready: Boolean = false,
     val player2Board: Map<String, Map<String, Int>>? = null,
     val currentTurn: Int = 0,
     val currentPlayer: String? = null,
@@ -23,9 +25,11 @@ data class GameDtoWr(
 data class GameDtoRd(
     val gameId: String = "",
     val player1: UserBasic = UserBasic(),
+    val player1Ready: Boolean = false,
     val player1Board: Map<String, Map<String, Int>>? = null,
     val player2: UserBasic = UserBasic(),
     val player2Board: Map<String, Map<String, Int>>? = null,
+    val player2Ready: Boolean = false,
     val currentTurn: Int = 0,
     val currentPlayer: String? = null,
     val gameState: String? = null,

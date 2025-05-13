@@ -68,7 +68,8 @@ fun RoomScreen(
     RoomScreenContent(
         modifier = modifier,
         navController = navController,
-        room = roomUiState.room
+        room = roomUiState.room,
+        onUserLeave = roomViewModel::onUserLeave
     )
 }
 
@@ -76,7 +77,8 @@ fun RoomScreen(
 fun RoomScreenContent(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    room: Room?
+    room: Room?,
+    onUserLeave: () -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier
@@ -123,6 +125,7 @@ fun RoomScreenContent(
                 )
                 Button(
                     onClick = {
+                        onUserLeave()
                         navController.navigate(SeaBattleScreen.Home.title)
                     },
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
