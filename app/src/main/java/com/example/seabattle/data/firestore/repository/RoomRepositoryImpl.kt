@@ -33,10 +33,10 @@ class RoomRepositoryImpl(
                 .set(roomDto)
                 .await()
         }
-            .map { _ -> }
-            .onFailure { e ->
-                Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
-            }
+        .map { _ -> }
+        .onFailure { e ->
+            Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
+        }
     }
 
 

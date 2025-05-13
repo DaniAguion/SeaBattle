@@ -234,7 +234,7 @@ fun CommonForm(
             ),
             modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
 
-            )
+        )
         OutlinedTextField(
             value = welcomeUiState.password,
             onValueChange = onPasswordUpdate,

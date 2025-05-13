@@ -1,6 +1,6 @@
 package com.example.seabattle.presentation.screens.welcome
 
-import com.example.seabattle.presentation.screens.welcome.validation.ValidationError
+import com.example.seabattle.presentation.validation.ValidationError
 
 data class WelcomeUiState(
     val isLoggedIn: Boolean = false,

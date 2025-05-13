@@ -5,12 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
 import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
-import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
+import com.example.seabattle.presentation.validation.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.acos
 
 
 class HomeViewModel(
@@ -52,10 +51,21 @@ class HomeViewModel(
     }
 
 
-    fun onClickCreateRoom() {
+    fun onRoomNameUpdate(roomName: String) {
+        val validationResult = Validator.validateRoomName(roomName)
+        _uiState.value = _uiState.value.copy(roomNameError = validationResult)
+        _uiState.value = _uiState.value.copy(roomName = roomName)
+    }
+
+
+    fun onClickCreateRoom(roomName: String) {
+        if (uiState.value.roomNameError != null){
+            return
+        }
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(actionFailed = false)
-            createRoomUseCase.invoke()
+            createRoomUseCase.invoke(roomName = roomName)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(
                         hasJoined = true

@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.welcome.validation
+package com.example.seabattle.presentation.validation
 
 import com.example.seabattle.R
 
@@ -10,4 +10,6 @@ sealed class ValidationError(val idString: Int) {
     object EmptyPassword : ValidationError(R.string.error_empty_password)
     object PasswordShort : ValidationError(R.string.error_short_password)
     object PasswordWeak : ValidationError(R.string.weak_password)
+    object EmptyRoomName : ValidationError(R.string.error_empty_roomname)
+    object RoomNameShort : ValidationError(R.string.error_invalid_roomname)
 }

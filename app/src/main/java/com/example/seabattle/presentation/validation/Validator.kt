@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.welcome.validation
+package com.example.seabattle.presentation.validation
 
 object Validator {
 
@@ -26,5 +26,11 @@ object Validator {
             return if (strongRegex.matches(password)) null else ValidationError.PasswordWeak
         }
         return validatePassword(password)
+    }
+
+    fun validateRoomName(roomName: String): ValidationError? {
+        if (roomName.isBlank()) return ValidationError.EmptyRoomName
+        if (roomName.length < 4) return ValidationError.RoomNameShort
+        return null
     }
 }

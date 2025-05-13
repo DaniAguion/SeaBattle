@@ -33,6 +33,11 @@
     <string name="error_get_rooms">Error getting rooms from server</string>
     <string name="list_rooms_title">Available rooms</string>
     <string name="error_action">Action has failed</string>
+    <string name="create_room_title">Create a new room</string>
+    <string name="roomName">Room Name</string>
+    <string name="error_room_name">Room Name is too short</string>
+    <string name="error_invalid_roomname">Room Name too short\n</string>
+    <string name="error_empty_roomname">Please, name the new room.</string>
 
     // Unordered strings
 

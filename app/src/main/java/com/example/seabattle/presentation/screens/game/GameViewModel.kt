@@ -25,6 +25,14 @@ class GameViewModel(
         }
     }
 
+
+    fun onReadyClick() {
+        viewModelScope.launch {
+            //TO DO: implement ready click
+        }
+    }
+
+
     fun onCellClick(x: Int, y: Int) {
         //_uiState.value = _uiState.value.copy(gameBoard = discoverCellUseCase(x, y))
     }

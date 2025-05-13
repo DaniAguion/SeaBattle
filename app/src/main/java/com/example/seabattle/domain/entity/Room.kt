@@ -4,7 +4,7 @@ import java.util.Date
 
 data class Room(
     val roomId: String = "",
-    val roomName: String = "",
+    val roomName: String = "Unnamed room",
     val roomState: String = "",
     val numberOfPlayers: Int = 0,
     val player1: UserBasic = UserBasic(),

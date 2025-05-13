@@ -18,7 +18,7 @@ class CreateRoomUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
-    suspend operator fun invoke(): Result<Room> = withContext(ioDispatcher) {
+    suspend operator fun invoke(roomName: String): Result<Room> = withContext(ioDispatcher) {
         runCatching {
             val playerId = securePrefs.getUid()
             val player1 = userRepository.getUser(playerId).getOrThrow()
@@ -27,7 +27,7 @@ class CreateRoomUseCase(
             }
             val room = Room(
                 roomId = UUID.randomUUID().toString(),
-                roomName = "Room Name Test",
+                roomName = roomName,
                 roomState = RoomState.WAITING_FOR_PLAYER.name,
                 numberOfPlayers = 1,
                 player1 = player1.toBasic(),
