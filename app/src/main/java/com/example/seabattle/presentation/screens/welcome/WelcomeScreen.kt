@@ -2,12 +2,14 @@ package com.example.seabattle.presentation.screens.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,6 +52,8 @@ fun WelcomeScreen(
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
     val localContext = LocalContext.current
 
+
+    // Navigate to Home screen if user is already logged in
     LaunchedEffect(key1 = welcomeUiState.isLoggedIn) {
         if (welcomeUiState.isLoggedIn) {
             navController.navigate(TabItem.Home.title)
@@ -86,121 +90,129 @@ fun WelcomeScreenContent(
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
 
-    Column(
-        modifier = modifier
-            .padding(dimensionResource(R.dimen.padding_medium))
-            .fillMaxSize(),
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            text = stringResource(R.string.welcome_page_title),
-            fontSize = 32.sp,
-            style = MaterialTheme.typography.displayLarge
-        )
-        Text(
-            text = stringResource(R.string.welcome_page_desc),
-            fontSize = 20.sp,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
-        )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
-        )
+        // Header
+        item {
+            Text(
+                text = stringResource(R.string.welcome_page_title),
+                fontSize = 32.sp,
+                style = MaterialTheme.typography.displayLarge
+            )
+            Text(
+                text = stringResource(R.string.welcome_page_desc),
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
+            )
+        }
 
-        HorizontalPager(state = pagerState) { page ->
-            when(page) {
-                0 -> {
-                    Column(
-                        modifier = Modifier
-                            .height(350.dp)
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        CommonForm(
-                            welcomeUiState = welcomeUiState,
-                            onEmailUpdate = onEmailUpdate,
-                            onPasswordUpdate = onPasswordUpdate
-                        )
-                        Button(
-                            onClick = onLoginButtonClicked,
-                            Modifier.widthIn(min = 250.dp)
+        //Forms to login and register
+        item{
+            HorizontalPager(state = pagerState) { page ->
+                when (page) {
+                    0 -> {
+                        Column(
+                            modifier = Modifier
+                                .height(350.dp)
+                                .padding(dimensionResource(R.dimen.padding_medium))
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            Text(stringResource(R.string.submit))
+                            CommonForm(
+                                welcomeUiState = welcomeUiState,
+                                onEmailUpdate = onEmailUpdate,
+                                onPasswordUpdate = onPasswordUpdate
+                            )
+                            Button(
+                                onClick = onLoginButtonClicked,
+                                Modifier.widthIn(min = 250.dp)
+                            ) {
+                                Text(stringResource(R.string.submit))
+                            }
                         }
                     }
-                }
-                1 -> {
-                    Column(
-                        modifier = Modifier
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        OutlinedTextField(
-                            value = welcomeUiState.username,
-                            onValueChange = onUsernameUpdate,
-                            label = { Text(stringResource(R.string.username)) },
-                            singleLine = true,
-                            isError = welcomeUiState.usernameError != null,
-                            supportingText = {
-                                welcomeUiState.usernameError?.let {
-                                    Text(
-                                        text = stringResource(it.idString),
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(
-                                autoCorrectEnabled = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done
-                            ),
-                            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
-                        )
-                        CommonForm(
-                            welcomeUiState = welcomeUiState,
-                            onEmailUpdate = onEmailUpdate,
-                            onPasswordUpdate = onPasswordUpdate
-                        )
-                        Button(
-                            onClick = onRegisterButtonClicked,
-                            Modifier.widthIn(min = 250.dp)
+
+                    1 -> {
+                        Column(
+                            modifier = Modifier
+                                .padding(dimensionResource(R.dimen.padding_medium))
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            Text(stringResource(R.string.submit))
+                            OutlinedTextField(
+                                value = welcomeUiState.username,
+                                onValueChange = onUsernameUpdate,
+                                label = { Text(stringResource(R.string.username)) },
+                                singleLine = true,
+                                isError = welcomeUiState.usernameError != null,
+                                supportingText = {
+                                    welcomeUiState.usernameError?.let {
+                                        Text(
+                                            text = stringResource(it.idString),
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    autoCorrectEnabled = false,
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Done
+                                ),
+                                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                            )
+                            CommonForm(
+                                welcomeUiState = welcomeUiState,
+                                onEmailUpdate = onEmailUpdate,
+                                onPasswordUpdate = onPasswordUpdate
+                            )
+                            Button(
+                                onClick = onRegisterButtonClicked,
+                                Modifier.widthIn(min = 250.dp)
+                            ) {
+                                Text(stringResource(R.string.submit))
+                            }
                         }
                     }
                 }
             }
-        }
-
-        TabRow(selectedTabIndex = pagerState.currentPage) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    text = { Text(text = title) },
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
+            TabRow(selectedTabIndex = pagerState.currentPage) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(text = title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.padding_big))
-        )
-        Button(
-            onClick = onGoogleButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text(stringResource(R.string.access_with_google))
+
+        // Google button
+        item {
+            Button(
+                onClick = onGoogleButtonClicked,
+                modifier = Modifier
+                    .padding(dimensionResource(R.dimen.padding_big))
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small)),
+            ) {
+                Text(stringResource(R.string.access_with_google))
+            }
         }
     }
 }
+
 
 @Composable
 fun CommonForm(

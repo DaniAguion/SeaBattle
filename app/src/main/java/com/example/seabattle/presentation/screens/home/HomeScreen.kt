@@ -1,7 +1,6 @@
 package com.example.seabattle.presentation.screens.home
 
 import android.content.Context
-import android.text.BoringLayout
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -89,12 +88,14 @@ fun HomeScreenContent(
     onClickCreateRoom: (String) -> Unit,
     onClickJoinRoom: (String) -> Unit,
 ) {
+    // Navigate to Room screen when the user has joined a room
     LaunchedEffect(key1 = hasJoined) {
         if (hasJoined) {
             navController.navigate(SeaBattleScreen.Room.title)
         }
     }
 
+    // Show error message when action failed
     LaunchedEffect(key1 = actionFailed) {
         if (actionFailed) {
             Toast.makeText(
