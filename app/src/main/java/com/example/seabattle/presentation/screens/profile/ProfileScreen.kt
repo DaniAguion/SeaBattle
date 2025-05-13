@@ -2,12 +2,15 @@ package com.example.seabattle.presentation.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,9 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
+import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.entity.UserLocal
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -40,7 +46,7 @@ fun ProfileScreen(
     }
     ProfileScreenContent(
         modifier = modifier,
-        profileUiState = profileUiState,
+        userProfile = profileUiState.user,
         onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked
     )
 }
@@ -48,43 +54,51 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
-    profileUiState: ProfileUiState = ProfileUiState(),
+    userProfile: UserLocal,
     onLogoutButtonClicked: () -> Unit = {},
 ) {
-    Column(
-        modifier = modifier
-            .padding(dimensionResource(R.dimen.padding_medium))
-            .fillMaxSize(),
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            text = "Profile Screen",
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-        )
-        profileUiState.user?.photoUrl?.let {
-            if (it.isNotEmpty()){
+        // Header
+        item {
+            Text(
+                text = "Profile Screen",
+                fontSize = 32.sp,
+                style = MaterialTheme.typography.displayLarge,
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            )
+        }
+
+        // Profile Info
+        item {
+            userProfile.photoUrl.isNotEmpty().let {
                 AsyncImage(
-                    model = profileUiState.user.photoUrl,
+                    model = userProfile.photoUrl,
                     contentDescription = "User Profile Picture"
                 )
             }
+            Text(
+                text = userProfile.displayName,
+            )
+            Text(
+                text = userProfile.email,
+            )
         }
-        Text(
-            text = profileUiState.user?.displayName ?: "No name",
-        )
-        Text(
-            text = profileUiState.user?.email ?: "No email",
-        )
 
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.padding_medium))
-        )
-        Button(
-            onClick = onLogoutButtonClicked,
-            Modifier.widthIn(min = 250.dp)
-        ) {
-            Text("SignOut")
+        // Sign Out Button
+        item {
+            Button(
+                onClick = onLogoutButtonClicked,
+                modifier = Modifier
+                    .widthIn(min = 250.dp)
+                    .padding(dimensionResource(R.dimen.padding_big))
+            ) {
+                Text("SignOut")
+            }
         }
     }
 }
@@ -95,5 +109,11 @@ fun ProfileScreenContent(
 fun ProfilePreview(){
     ProfileScreenContent(
         modifier = Modifier.fillMaxSize(),
+        userProfile = UserLocal(
+            userId = "1",
+            displayName = "John Doe",
+            email = "@example.com",
+        ),
+        onLogoutButtonClicked = {}
     )
 }

@@ -1,10 +1,11 @@
 package com.example.seabattle.presentation.screens.room
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +40,15 @@ fun RoomScreen(
 ) {
     val roomUiState by roomViewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val activity = LocalActivity.current
 
     // Added to make sure the room is deleted if user closes the app
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {
-                roomViewModel.onUserLeave()
+                if (activity?.isChangingConfigurations == false) {
+                    roomViewModel.onUserLeave()
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -53,9 +57,11 @@ fun RoomScreen(
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            roomViewModel.onUserLeave()
+    // Observe the room state and navigate to the game screen if the game was created
+    LaunchedEffect(key1 = roomUiState.room) {
+        val room = roomUiState.room
+        if (room!= null && room.roomState == RoomState.GAME_CREATED.name) {
+            navController.navigate(SeaBattleScreen.Game.title)
         }
     }
 
@@ -72,40 +78,45 @@ fun RoomScreenContent(
     navController: NavHostController,
     room: Room?
 ) {
-    LaunchedEffect(key1 = room) {
-        if (room!= null && room.roomState == RoomState.GAME_CREATED.name) {
-            navController.navigate(SeaBattleScreen.Game.title)
-        }
-    }
-
-    Column(
+    LazyColumn(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            text = "Waiting Room",
-            fontSize = 20.sp,
-            fontWeight = SemiBold,
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-        )
-        if (room != null) {
+
+        // Header
+        item{
             Text(
-                text = "Room Name: ${room.roomName}",
+                text = "Waiting Room",
+                fontSize = 20.sp,
+                fontWeight = SemiBold,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             )
-            Text(
-                text = "Player 1: ${room.player1.displayName}",
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-            )
-            if (room.player2 != null) {
+        }
+
+        item{
+            if (room != null) {
                 Text(
-                    text = "Player 2: ${room.player2.displayName}",
+                    text = "Room Name: ${room.roomName}",
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
                 )
-            } else {
+                Text(
+                    text = "Player 1: ${room.player1.displayName}",
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                )
+                if (room.player2 != null) {
+                    Text(
+                        text = "Player 2: ${room.player2.displayName}",
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+            }
+        }
+
+        item{
+            if (room != null && room.player2 == null) {
                 Text(
                     text = "Waiting for player 2...",
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
