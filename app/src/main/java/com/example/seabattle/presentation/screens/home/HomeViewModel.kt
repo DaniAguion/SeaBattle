@@ -1,11 +1,13 @@
 package com.example.seabattle.presentation.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
 import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
 import com.example.seabattle.presentation.validation.Validator
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,14 +23,15 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState(roomList = emptyList()))
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    // Active listener use get the updated room list
+    private var getRoomsJob: Job? = null
 
     init {
         _uiState.value = _uiState.value.copy(
             actionFailed = false,
             loadingList = true
         )
-
-        viewModelScope.launch {
+        getRoomsJob = viewModelScope.launch {
             getRoomsUseCase.invoke()
             . collect { result ->
                 result
@@ -50,7 +53,6 @@ class HomeViewModel(
         }
     }
 
-
     fun onRoomNameUpdate(roomName: String) {
         val validationResult = Validator.validateRoomName(roomName)
         _uiState.value = _uiState.value.copy(roomNameError = validationResult)
@@ -63,7 +65,6 @@ class HomeViewModel(
         if (uiState.value.roomNameError != null){
             return
         }
-
         viewModelScope.launch {
             createRoomUseCase.invoke(roomName = roomName)
                 .onSuccess {
@@ -91,5 +92,10 @@ class HomeViewModel(
 
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(actionFailed = false)
+    }
+
+    fun stopListening() {
+        getRoomsJob?.cancel()
+        getRoomsJob = null
     }
 }

@@ -7,7 +7,8 @@ import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
 import com.example.seabattle.domain.usecase.auth.GetProfileUseCase
 import com.example.seabattle.domain.usecase.auth.RegisterUserUseCase
 import com.example.seabattle.domain.usecase.game.DiscoverCellUseCase
-import com.example.seabattle.domain.usecase.game.GameReadyUseCase
+import com.example.seabattle.domain.usecase.game.ListenGameUseCase
+import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
@@ -30,6 +31,7 @@ val domainModule = module {
     factory { WaitRoomUseCase(get(), get(), get(), get(), get()) }
     factory { CloseRoomUseCase(get(), get(), get())}
     // Game Use cases
-    factory { GameReadyUseCase(get(), get(), get(), get())}
+    factory { UserReadyUseCase(get(), get(), get(), get())}
+    factory { ListenGameUseCase(get(), get(), get(), get())}
     factory { DiscoverCellUseCase(get()) }
 }

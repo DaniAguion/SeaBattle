@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,6 +41,13 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
+
+    // Stop listeners when the screen is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            gameViewModel.stopListening()
+        }
+    }
 
     GameScreenContent(
         modifier = modifier,

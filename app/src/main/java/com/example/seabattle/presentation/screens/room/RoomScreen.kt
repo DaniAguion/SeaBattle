@@ -42,7 +42,15 @@ fun RoomScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val activity = LocalActivity.current
 
-    // Added to make sure the room is deleted if user closes the app
+
+    // Stop listeners when the screen is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            roomViewModel.stopListening()
+        }
+    }
+
+    // If the user leaves the room, the room will be closed
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {

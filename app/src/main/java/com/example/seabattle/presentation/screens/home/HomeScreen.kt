@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,6 +52,13 @@ fun HomeScreen(
 ) {
     val homeUiState by homeViewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    // Stop listeners when the screen is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            homeViewModel.stopListening()
+        }
+    }
 
     HomeScreenContent(
         modifier = modifier,

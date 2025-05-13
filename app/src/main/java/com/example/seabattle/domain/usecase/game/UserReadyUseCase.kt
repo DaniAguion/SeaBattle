@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 
-class GameReadyUseCase(
+class UserReadyUseCase(
     val gameRepository: GameRepository,
     val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,

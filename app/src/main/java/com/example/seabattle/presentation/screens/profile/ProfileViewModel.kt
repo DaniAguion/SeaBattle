@@ -22,7 +22,6 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(user = getProfileUseCase())
-            Log.d("ProfileViewModel", "User profile: ${_uiState.value.user}")
         }
     }
 

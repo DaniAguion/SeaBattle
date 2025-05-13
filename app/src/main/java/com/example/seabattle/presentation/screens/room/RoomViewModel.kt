@@ -1,10 +1,12 @@
 package com.example.seabattle.presentation.screens.room
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,9 +22,13 @@ class RoomViewModel(
     private val _uiState = MutableStateFlow<RoomUiState>(RoomUiState())
     var uiState: StateFlow<RoomUiState> = _uiState.asStateFlow()
 
+    // Listeners use to observe the room updates
+    private var updateUIJob: Job? = null
+    private var waitRoomJob: Job? = null
+
     init {
         // Observe the current room from the session and update the UI state
-        viewModelScope.launch {
+        updateUIJob = viewModelScope.launch {
             session.currentRoom.collect { room ->
                 if (room != null) {
                     _uiState.value = RoomUiState(room = room)
@@ -30,8 +36,9 @@ class RoomViewModel(
             }
         }
 
+
         // Observe the current room and execute the waitRoomUseCase until success
-        viewModelScope.launch {
+        waitRoomJob = viewModelScope.launch {
             session.currentRoom.first { room ->
                 if (room != null) {
                     waitRoomUseCase.invoke(room.roomId)
@@ -42,6 +49,8 @@ class RoomViewModel(
         }
     }
 
+
+    // Function to close the room when the user leaves
     fun onUserLeave(){
         viewModelScope.launch {
             _uiState.value = RoomUiState(actionFailed = false)
@@ -53,5 +62,13 @@ class RoomViewModel(
                     _uiState.value = RoomUiState(actionFailed = true)
                 }
         }
+    }
+
+
+    fun stopListening() {
+        updateUIJob?.cancel()
+        updateUIJob = null
+        waitRoomJob?.cancel()
+        waitRoomJob = null
     }
 }
