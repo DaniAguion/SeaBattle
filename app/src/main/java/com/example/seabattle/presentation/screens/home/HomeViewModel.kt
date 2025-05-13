@@ -65,17 +65,12 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(actionFailed = false)
             createRoomUseCase.invoke(roomName = roomName)
                 .onSuccess {
-                    _uiState.value = _uiState.value.copy(
-                        hasJoined = true
-                    )
+                    _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
                 .onFailure {
-                    _uiState.value = _uiState.value.copy(
-                        actionFailed = true
-                    )
+                    _uiState.value = _uiState.value.copy(actionFailed = true)
                 }
         }
     }
@@ -83,18 +78,18 @@ class HomeViewModel(
 
     fun onClickJoinRoom(roomId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(actionFailed = false)
             joinRoomUseCase.invoke(roomId)
                 .onSuccess {
-                    _uiState.value = _uiState.value.copy(
-                        hasJoined = true
-                    )
+                    _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
                 .onFailure {
-                    _uiState.value = _uiState.value.copy(
-                        actionFailed = true
-                    )
+                    _uiState.value = _uiState.value.copy(actionFailed = true)
                 }
         }
+    }
+
+
+    fun onErrorShown(){
+        _uiState.value = _uiState.value.copy(actionFailed = false)
     }
 }

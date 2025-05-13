@@ -38,6 +38,7 @@
     <string name="error_room_name">Room Name is too short</string>
     <string name="error_invalid_roomname">Room Name too short\n</string>
     <string name="error_empty_roomname">Please, name the new room.</string>
+    <string name="create_room">Create Room</string>
 
     // Unordered strings
 

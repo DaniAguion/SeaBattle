@@ -1,15 +1,13 @@
 package com.example.seabattle.presentation.screens.home
 
 import android.content.Context
+import android.text.BoringLayout
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -66,6 +64,7 @@ fun HomeScreen(
         loadingList = homeUiState.loadingList,
         hasJoined = homeUiState.hasJoined,
         actionFailed = homeUiState.actionFailed,
+        onErrorShown = homeViewModel::onErrorShown,
         onRoomNameUpdate = homeViewModel::onRoomNameUpdate,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
         onClickJoinRoom = homeViewModel::onClickJoinRoom,
@@ -86,6 +85,7 @@ fun HomeScreenContent(
     hasJoined: Boolean,
     actionFailed: Boolean,
     onRoomNameUpdate: (String) -> Unit,
+    onErrorShown: () -> Unit,
     onClickCreateRoom: (String) -> Unit,
     onClickJoinRoom: (String) -> Unit,
 ) {
@@ -95,142 +95,144 @@ fun HomeScreenContent(
         }
     }
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
+    LaunchedEffect(key1 = actionFailed) {
+        if (actionFailed) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.error_action),
+                Toast.LENGTH_SHORT
+            ).show()
+            onErrorShown()
+        }
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Welcome!",
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            modifier = Modifier
-                .padding(top = 24.dp, bottom = 4.dp)
-                .padding(horizontal = 24.dp)
-
-        )
-        Text(
-            text = "Join a room or create a new one to start playing",
-            textAlign = TextAlign.Center,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            modifier = Modifier
-                .padding(bottom = 4.dp)
-                .padding(horizontal = 24.dp)
-        )
-        Column(
-            modifier = Modifier
-                .height(280.dp)
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+        // Header
+        item {
             Text(
-                stringResource(R.string.create_room_title),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(8.dp)
+                text = "Welcome!",
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 14.dp)
             )
-
-            Card(
-                modifier = modifier.padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Column(
-                    modifier = modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    OutlinedTextField(
-                        value = roomName,
-                        onValueChange = onRoomNameUpdate,
-                        label = { Text(stringResource(R.string.roomName)) },
-                        singleLine = true,
-                        isError = roomNameError != null,
-                        supportingText = {
-                            roomNameError?.let {
-                                Text(
-                                    text = stringResource(R.string.error_room_name),
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            autoCorrectEnabled = false,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
-                    )
-                    Button(
-                        onClick = {
-                            onClickCreateRoom(roomName)
-                        }
-                    ) {
-                        Text(
-                            text = "Create room",
-                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                            modifier = Modifier.padding(4.dp)
-                        )
-                    }
-                }
-            }
+            Text(
+                text = "Join a room or create a new one to start playing",
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+            )
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
-        ){
+
+
+        // Create Room
+        item {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ){
-                    Text(
-                        stringResource(R.string.list_rooms_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-                if (loadingList) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(8.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 2.dp
-                    )
-                } else if (!errorList) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    stringResource(R.string.create_room_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        items(items = roomList, key = { it.roomId }) { room ->
-                            RoomCard(
-                                room = room,
-                                roomClick = onClickJoinRoom
+                        OutlinedTextField(
+                            value = roomName,
+                            onValueChange = onRoomNameUpdate,
+                            label = { Text(stringResource(R.string.roomName)) },
+                            singleLine = true,
+                            isError = roomNameError != null,
+                            supportingText = {
+                                roomNameError?.let {
+                                    Text(
+                                        text = stringResource(R.string.error_room_name),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                autoCorrectEnabled = false,
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Button(
+                            onClick = { onClickCreateRoom(roomName) },
+                            modifier = Modifier
+                                .padding(top = dimensionResource(R.dimen.padding_small))
+                        ) {
+                            Text(
+                                text = stringResource(R.string.create_room),
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                modifier = Modifier.padding(4.dp)
                             )
                         }
                     }
-                } else {
-                    Text(
-                        text = stringResource(R.string.error_get_rooms),
-                        modifier = Modifier.padding(8.dp)
-                    )
                 }
             }
         }
 
-        LaunchedEffect(key1 = actionFailed) {
-            if (actionFailed) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.error_action),
-                    Toast.LENGTH_SHORT
-                ).show()
+
+
+        // Rooms List Header
+        item {
+            Text(
+                stringResource(R.string.list_rooms_title),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+
+        // Rooms List Header
+        when {
+            loadingList -> {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+            !errorList -> {
+                items(items = roomList, key = { it.roomId }) { room ->
+                    RoomCard(
+                        room = room,
+                        roomClick = onClickJoinRoom,
+                        modifier = Modifier
+                    )
+                }
+            }
+            else -> {
+                item {
+                    Text(
+                        text = stringResource(R.string.error_get_rooms),
+                        modifier = Modifier.padding(8.dp),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
 
@@ -277,6 +279,7 @@ fun HomeScreenPreview(){
         ),
         onClickCreateRoom = { },
         onClickJoinRoom = { },
+        onErrorShown = { },
         onRoomNameUpdate = { },
     )
 }
