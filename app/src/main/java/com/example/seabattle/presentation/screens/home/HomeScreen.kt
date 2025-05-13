@@ -225,11 +225,13 @@ fun HomeScreenContent(
         }
 
         LaunchedEffect(key1 = actionFailed) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.error_action),
-                Toast.LENGTH_SHORT
-            ).show()
+            if (actionFailed) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_action),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
     }

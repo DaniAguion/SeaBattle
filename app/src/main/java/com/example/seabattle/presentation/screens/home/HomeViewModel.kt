@@ -59,6 +59,7 @@ class HomeViewModel(
 
 
     fun onClickCreateRoom(roomName: String) {
+        onRoomNameUpdate(roomName = roomName)
         if (uiState.value.roomNameError != null){
             return
         }
