@@ -31,7 +31,6 @@ class Session(private val securePrefs: SecurePrefsData) {
     fun setCurrentUser(user: User?) {
         _currentUser.value = user
         if (user != null) {
-            println("Session setting user: $user")
             securePrefs.saveUserSession(user)
         } else {
             securePrefs.clearUserSession()

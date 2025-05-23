@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.room
 
-import com.example.seabattle.data.local.SecurePrefsData
+
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -16,7 +16,6 @@ import java.util.UUID
 class WaitRoomUseCase(
     val roomRepository: RoomRepository,
     val gameRepository: GameRepository,
-    val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {

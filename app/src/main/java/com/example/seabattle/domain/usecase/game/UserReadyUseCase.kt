@@ -1,6 +1,5 @@
 package com.example.seabattle.domain.usecase.game
 
-import com.example.seabattle.data.local.SecurePrefsData
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
