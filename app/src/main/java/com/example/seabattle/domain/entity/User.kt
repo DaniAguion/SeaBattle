@@ -5,10 +5,7 @@ data class User(
     val displayName: String = "",
     val email: String = "",
     val photoUrl: String = "",
-    val score: Int = 0,
-    val online: Boolean = false,
-    val lookingForGame: Boolean = false,
-    val inGame: Boolean = false,
+    val score: Int = 0
 )
 
 // Basic version of User to attach to Game class
@@ -26,11 +23,4 @@ fun User.toBasic(): UserBasic {
     )
 }
 
-// Lightweight version of User to retrieve user from local storage
-data class UserLocal(
-    val userId: String = "",
-    val displayName: String = "",
-    val email: String = "",
-    val photoUrl: String = "",
-)
 

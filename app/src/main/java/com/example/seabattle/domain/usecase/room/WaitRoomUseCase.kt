@@ -25,7 +25,7 @@ class WaitRoomUseCase(
 
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val playerId = securePrefs.getUid()
+            val playerId = session.getCurrentUserId()
             val flowCollector = roomRepository.getRoomUpdate(roomId)
             .map { result -> result.getOrThrow() }
             .first { room ->

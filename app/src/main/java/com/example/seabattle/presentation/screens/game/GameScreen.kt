@@ -2,6 +2,7 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,6 +63,13 @@ fun GameScreenContent(
     game: Game?,
     onClickReady: () -> Unit = {},
 ) {
+    if (game == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Loading game data...")
+        }
+        return
+    }
+
     LazyColumn(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -69,44 +77,23 @@ fun GameScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Players
         item {
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimensionResource(R.dimen.padding_big)),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                CardPlayer(
-                    player = game?.player1
-                )
-                CardPlayer(
-                    player = game?.player2
-                )
-            }
+            PlayersInfoHeader(
+                modifier = modifier,
+                player1 = game.player1,
+                player2 = game.player2
+            )
         }
 
         // Screen waiting for players to be ready
-
-        if (game?.gameState == GameState.CHECK_READY.name) {
+        if (game.gameState == GameState.CHECK_READY.name) {
             item {
-                Text(
-                    text = "Confirm when you are ready!",
-                    fontSize = 20.sp,
-                    fontWeight = SemiBold,
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                ReadyCheckSection(
+                    game = game,
+                    onClickReady = onClickReady
                 )
-                Button(
-                    onClick = onClickReady,
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
-                        .sizeIn(minWidth = 150.dp)
-                ) {
-                    Text(text = "Ready")
-                }
             }
+            /*
             item {
                 if (game.player1Ready) {
                     Text(
@@ -143,15 +130,32 @@ fun GameScreenContent(
                     )
                 }
             }
+           */
         }
     }
 }
 
+@Composable
+fun PlayersInfoHeader(
+    modifier: Modifier,
+    player1: UserBasic,
+    player2: UserBasic
+) {
+    Row(
+        modifier = modifier
+            .padding(bottom = dimensionResource(R.dimen.padding_big)),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        CardPlayer(player = player1)
+        CardPlayer(player = player2)
+    }
+}
 
 
 @Composable
 fun CardPlayer(
-    player: UserBasic?,
+    player: UserBasic,
 ){
     Card {
         Row(
@@ -162,7 +166,7 @@ fun CardPlayer(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ){
-            if (player?.photoUrl.isNullOrEmpty()) {
+            if (player.photoUrl.isEmpty()) {
                 Image(
                     painter = painterResource(id = R.drawable.account_box_40px),
                     contentDescription = "User photo",
@@ -173,12 +177,13 @@ fun CardPlayer(
                     model = player.photoUrl,
                     contentDescription = "User photo",
                     modifier = Modifier.size(40.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(id = R.drawable.account_box_40px),
                 )
             }
 
             Text(
-                text = "${player?.displayName}",
+                text = player.displayName,
                 fontSize = 16.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier
@@ -187,6 +192,30 @@ fun CardPlayer(
         }
     }
 }
+
+
+@Composable
+fun ReadyCheckSection(
+    game: Game,
+    onClickReady: () -> Unit = {},
+) {
+    Text(
+        text = "Confirm when you are ready!",
+        fontSize = 20.sp,
+        fontWeight = SemiBold,
+        modifier = Modifier
+            .padding(dimensionResource(R.dimen.padding_small))
+    )
+    Button(
+        onClick = onClickReady,
+        modifier = Modifier
+            .padding(dimensionResource(R.dimen.padding_small))
+            .sizeIn(minWidth = 150.dp)
+    ) {
+        Text(text = "Ready")
+    }
+}
+
 
 
 

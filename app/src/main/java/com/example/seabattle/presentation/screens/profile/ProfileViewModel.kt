@@ -1,11 +1,13 @@
 package com.example.seabattle.presentation.screens.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
-import com.example.seabattle.domain.usecase.auth.GetProfileUseCase
 import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
+import com.example.seabattle.presentation.screens.room.RoomUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,16 +16,25 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val logoutUseCase: LogoutUserUseCase,
     private val checkAuthUseCase: CheckUserAuthUseCase,
-    private val getProfileUseCase: GetProfileUseCase,
+    private val session: Session
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState())
     var uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
+    // Listeners use to observe the room updates
+    private var updateUIJob: Job? = null
+
     init {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(user = getProfileUseCase())
+        // Observe the current room from the session and update the UI state
+        updateUIJob = viewModelScope.launch {
+            session.currentUser.collect { user ->
+                if (user != null) {
+                    _uiState.value = ProfileUiState(user = user)
+                }
+            }
         }
     }
+
 
     fun onLogoutButtonClicked() {
         viewModelScope.launch {
@@ -31,5 +42,11 @@ class ProfileViewModel(
         }
         val isLogged = checkAuthUseCase()
         _uiState.value = _uiState.value.copy(userLoggedIn = isLogged)
+    }
+
+
+    fun stopListening() {
+        updateUIJob?.cancel()
+        updateUIJob = null
     }
 }

@@ -1,8 +1,8 @@
 package com.example.seabattle.presentation.screens.profile
 
-import com.example.seabattle.domain.entity.UserLocal
+import com.example.seabattle.domain.entity.User
 
 data class ProfileUiState(
     val userLoggedIn: Boolean = true,
-    val user: UserLocal = UserLocal()
+    val user: User = User()
 )

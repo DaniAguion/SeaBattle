@@ -11,10 +11,7 @@ fun User.toDto(): UserDto =
         displayName = displayName,
         email = email,
         photoUrl = photoUrl,
-        score = score,
-        online = online,
-        lookingForGame = lookingForGame,
-        inGame = inGame,
+        score = score
     )
 
 
@@ -24,8 +21,5 @@ fun UserDto.toEntity(): User =
         displayName = displayName,
         email = email,
         photoUrl = photoUrl,
-        score = score,
-        online = online,
-        lookingForGame = lookingForGame,
-        inGame = inGame,
+        score = score
     )

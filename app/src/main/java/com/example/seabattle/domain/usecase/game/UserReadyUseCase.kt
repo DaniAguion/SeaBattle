@@ -10,13 +10,12 @@ import kotlinx.coroutines.withContext
 
 class UserReadyUseCase(
     val gameRepository: GameRepository,
-    val securePrefs: SecurePrefsData,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val playerId = securePrefs.getUid()
+            val playerId = session.getCurrentUserId()
             val game = session.getCurrentGame() ?: throw Exception("Game not found")
             var newData : Map<String, Any>
 

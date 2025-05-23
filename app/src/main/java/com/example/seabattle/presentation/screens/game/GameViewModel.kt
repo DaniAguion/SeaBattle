@@ -21,7 +21,7 @@ class GameViewModel(
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    // Listeners use to observe the room updates
+    // Listeners used to observe the room updates
     private var updateUIJob: Job? = null
     private var waitGameJob: Job? = null
 

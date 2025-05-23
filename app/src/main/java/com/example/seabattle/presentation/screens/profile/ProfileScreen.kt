@@ -1,11 +1,8 @@
 package com.example.seabattle.presentation.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,7 +24,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.User
-import com.example.seabattle.domain.entity.UserLocal
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -39,6 +36,13 @@ fun ProfileScreen(
 ) {
     val profileUiState by profileViewModel.uiState.collectAsState()
 
+    // Stop listeners when the screen is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            profileViewModel.stopListening()
+        }
+    }
+
     LaunchedEffect(key1 = profileUiState.userLoggedIn) {
         if (!profileUiState.userLoggedIn) {
             navController.navigate(SeaBattleScreen.Welcome.title)
@@ -46,7 +50,7 @@ fun ProfileScreen(
     }
     ProfileScreenContent(
         modifier = modifier,
-        userProfile = profileUiState.user,
+        user = profileUiState.user,
         onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked
     )
 }
@@ -54,7 +58,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
-    userProfile: UserLocal,
+    user: User,
     onLogoutButtonClicked: () -> Unit = {},
 ) {
     LazyColumn(
@@ -75,17 +79,17 @@ fun ProfileScreenContent(
 
         // Profile Info
         item {
-            userProfile.photoUrl.isNotEmpty().let {
+            user.photoUrl.isNotEmpty().let {
                 AsyncImage(
-                    model = userProfile.photoUrl,
+                    model = user.photoUrl,
                     contentDescription = "User Profile Picture"
                 )
             }
             Text(
-                text = userProfile.displayName,
+                text = user.displayName,
             )
             Text(
-                text = userProfile.email,
+                text = user.email,
             )
         }
 
@@ -109,10 +113,12 @@ fun ProfileScreenContent(
 fun ProfilePreview(){
     ProfileScreenContent(
         modifier = Modifier.fillMaxSize(),
-        userProfile = UserLocal(
+        user = User(
             userId = "1",
             displayName = "John Doe",
             email = "@example.com",
+            photoUrl = "",
+            score = 100
         ),
         onLogoutButtonClicked = {}
     )
