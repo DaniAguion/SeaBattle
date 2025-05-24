@@ -7,7 +7,7 @@ import com.example.seabattle.domain.entity.Room
 
 // This function maps a Room object to a create a new Room in server.
 // The createdAt and updatedAt fields are initialized as server timestamps.
-fun Room.toDto(): RoomDtoWr {
+fun Room.toRoomDto(): RoomDtoWr {
     return RoomDtoWr(
         roomId = roomId,
         roomName = roomName,
@@ -20,7 +20,7 @@ fun Room.toDto(): RoomDtoWr {
 }
 
 // This function is used to read a Room object from the server.
-fun RoomDtoRd.toEntity(): Room {
+fun RoomDtoRd.toRoomEntity(): Room {
     return Room(
         roomId = roomId,
         roomName = roomName,

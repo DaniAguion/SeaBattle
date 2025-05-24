@@ -7,7 +7,7 @@ import com.example.seabattle.domain.entity.Game
 
 // This function maps a Game object to a create a new Game in server.
 // The createdAt and updatedAt fields are initialized as server timestamps.
-fun Game.toDto(): GameDtoWr =
+fun Game.toGameDto(): GameDtoWr =
     GameDtoWr(
         gameId = gameId,
         player1 = player1,
@@ -25,7 +25,7 @@ fun Game.toDto(): GameDtoWr =
 
 
 // This function is used to read a Game object from the server.
-fun GameDtoRd.toEntity(): Game =
+fun GameDtoRd.toGameEntity(): Game =
     Game(
         gameId = gameId,
         player1 = player1,

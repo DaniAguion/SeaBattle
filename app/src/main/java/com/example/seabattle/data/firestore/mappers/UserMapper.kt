@@ -5,7 +5,7 @@ import com.example.seabattle.domain.entity.User
 
 
 
-fun User.toDto(): UserDto =
+fun User.toUserDto(): UserDto =
     UserDto(
         userId = userId,
         displayName = displayName,
@@ -15,7 +15,7 @@ fun User.toDto(): UserDto =
     )
 
 
-fun UserDto.toEntity(): User =
+fun UserDto.toUserEntity(): User =
     User(
         userId = userId,
         displayName = displayName,

@@ -32,6 +32,7 @@ class GameViewModel(
             }
         }
 
+
         // Observe the current game
         waitGameJob = viewModelScope.launch {
             session.currentGame.first { game ->
@@ -48,6 +49,17 @@ class GameViewModel(
     fun onClickReady() {
         viewModelScope.launch {
             userReadyUseCase.invoke()
+        }
+    }
+
+    fun enableReadyButton() : Boolean {
+        val userId = session.getCurrentUserId()
+        if (userId == uiState.value.game?.player1?.userId && uiState.value.game?.player1Ready == true) {
+            return false
+        } else if (userId == uiState.value.game?.player2?.userId && uiState.value.game?.player2Ready == true) {
+            return false
+        } else {
+            return true
         }
     }
 

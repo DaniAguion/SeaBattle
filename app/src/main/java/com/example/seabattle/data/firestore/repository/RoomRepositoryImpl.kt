@@ -2,8 +2,8 @@ package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
 import com.example.seabattle.data.firestore.dto.RoomDtoRd
-import com.example.seabattle.data.firestore.mappers.toDto
-import com.example.seabattle.data.firestore.mappers.toEntity
+import com.example.seabattle.data.firestore.mappers.toRoomDto
+import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
@@ -28,7 +28,7 @@ class RoomRepositoryImpl(
 
     override suspend fun createRoom(room: Room) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val roomDto = room.toDto()
+            val roomDto = room.toRoomDto()
             roomsCollection.document(roomDto.roomId)
                 .set(roomDto)
                 .await()
@@ -50,7 +50,7 @@ class RoomRepositoryImpl(
                 }
 
                 val rooms = snapshot?.documents?.mapNotNull { document ->
-                    document.toObject(RoomDtoRd::class.java)?.toEntity()
+                    document.toObject(RoomDtoRd::class.java)?.toRoomEntity()
                 } ?: emptyList()
 
                 trySend(Result.success(rooms))
@@ -72,12 +72,12 @@ class RoomRepositoryImpl(
                     trySend(Result.failure(error))
                     return@addSnapshotListener
                 }
-                val room = snapshot?.toObject(Room::class.java)
-                if (room == null) {
+                val roomEntity = snapshot?.toObject(RoomDtoRd::class.java)?.toRoomEntity()
+                if (roomEntity == null) {
                     trySend(Result.failure(Exception("Room not found")))
                     return@addSnapshotListener
                 }
-                trySend(Result.success(room))
+                trySend(Result.success(roomEntity))
             }
         awaitClose { listener.remove() }
     }.flowOn(ioDispatcher)
@@ -88,7 +88,7 @@ class RoomRepositoryImpl(
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
-                val roomEntity = document.toObject(RoomDtoRd::class.java)?.toEntity()
+                val roomEntity = document.toObject(RoomDtoRd::class.java)?.toRoomEntity()
                 if (roomEntity == null) {
                     throw Exception("Room not found")
                 }

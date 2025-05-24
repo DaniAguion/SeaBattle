@@ -83,6 +83,9 @@ class Session(private val securePrefs: SecurePrefsData) {
     fun getCurrentGame() : Game? {
         return _currentGame.value
     }
+    fun getCurrentGameId(): String {
+        return _currentGame.value?.gameId ?: ""
+    }
 
     fun clearCurrentGame() {
         _currentGame.value = null

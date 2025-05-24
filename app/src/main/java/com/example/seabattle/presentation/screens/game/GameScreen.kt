@@ -53,7 +53,8 @@ fun GameScreen(
     GameScreenContent(
         modifier = modifier,
         game = gameUiState.game,
-        onClickReady = gameViewModel::onClickReady
+        onClickReady = gameViewModel::onClickReady,
+        enableReadyButton = gameViewModel::enableReadyButton
     )
 }
 
@@ -62,6 +63,7 @@ fun GameScreenContent(
     modifier: Modifier,
     game: Game?,
     onClickReady: () -> Unit = {},
+    enableReadyButton: () -> Boolean = { true }
 ) {
     if (game == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -90,7 +92,8 @@ fun GameScreenContent(
             item {
                 ReadyCheckSection(
                     game = game,
-                    onClickReady = onClickReady
+                    onClickReady = onClickReady,
+                    enableReadyButton = enableReadyButton()
                 )
             }
             /*
@@ -198,6 +201,7 @@ fun CardPlayer(
 fun ReadyCheckSection(
     game: Game,
     onClickReady: () -> Unit = {},
+    enableReadyButton : Boolean = true
 ) {
     Text(
         text = "Confirm when you are ready!",
@@ -208,6 +212,7 @@ fun ReadyCheckSection(
     )
     Button(
         onClick = onClickReady,
+        enabled = enableReadyButton,
         modifier = Modifier
             .padding(dimensionResource(R.dimen.padding_small))
             .sizeIn(minWidth = 150.dp)

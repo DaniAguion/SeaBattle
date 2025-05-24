@@ -16,10 +16,12 @@ class CloseRoomUseCase(
             val roomId = session.getCurrentRoom()?.roomId
             if (roomId != null){
                 val room = roomRepository.getRoom(roomId).getOrNull()
+                // If the room doesn't exist in Firestore, it means it has been deleted by another user
                 if (room == null) {
                     session.clearCurrentRoom()
                     return@runCatching
                 }
+                // If the room is in WAITING_FOR_PLAYER or GAME_STARTED state, delete it
                 if(room.roomState == RoomState.WAITING_FOR_PLAYER.name || room.roomState == RoomState.GAME_STARTED.name) {
                     roomRepository.deleteRoom(roomId).getOrThrow()
                     session.clearCurrentRoom()
