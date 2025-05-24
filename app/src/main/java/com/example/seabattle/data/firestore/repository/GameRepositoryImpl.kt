@@ -8,6 +8,7 @@ import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenSource
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.SnapshotListenOptions
 import kotlinx.coroutines.CoroutineDispatcher
@@ -41,12 +42,18 @@ class GameRepositoryImpl(
                     trySend(Result.failure(error))
                     return@addSnapshotListener
                 }
-                val gameEntity = snapshot?.toObject(GameDtoRd::class.java)?.toGameEntity()
-                if (gameEntity == null) {
+                if (snapshot == null || !snapshot.exists()) {
                     trySend(Result.failure(Exception("Game not found")))
                     return@addSnapshotListener
                 }
-                trySend(Result.success(gameEntity))
+                if (!snapshot.metadata.isFromCache()) {
+                    val gameEntity = snapshot.toObject(GameDtoRd::class.java)?.toGameEntity()
+                    if (gameEntity == null) {
+                        trySend(Result.failure(Exception("Game not found")))
+                        return@addSnapshotListener
+                    }
+                    trySend(Result.success(gameEntity))
+                }
             }
         awaitClose { listener.remove() }
     }.flowOn(ioDispatcher)
