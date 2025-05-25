@@ -19,7 +19,8 @@ class ListenGameUseCase(
                 throw IllegalStateException("Game is not set")
             }
 
-            val flowCollector = gameRepository.listenGameUpdates(gameId)
+            // Listen to game updates and update the session's current game
+            gameRepository.listenGameUpdates(gameId)
                 .map { result -> result.getOrThrow() }
                 .collect { game ->
                     session.setCurrentGame(game)

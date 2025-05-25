@@ -75,12 +75,16 @@ class GameRepositoryImpl(
                 val gameDto = snapshot.toObject(GameDtoRd::class.java)
                     ?: throw Exception("Game data is corrupted")
 
+                var newData: Map<String, Any> = mapOf(
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+
                 when (userId) {
                     gameDto.player1.userId -> {
-                        gameDto.player1Ready = true
+                        newData = newData + mapOf( "player1Ready" to true )
                     }
                     gameDto.player2.userId -> {
-                        gameDto.player2Ready = true
+                        newData = newData + mapOf( "player2Ready" to true )
                     }
                     else -> throw Exception("User does not belong to this game")
                 }
@@ -88,10 +92,10 @@ class GameRepositoryImpl(
 
 
                 if (gameDto.player1Ready && gameDto.player2Ready) {
-                    gameDto.gameState = GameState.IN_PROGRESS.name
+                    newData = newData + mapOf( "gameState" to GameState.IN_PROGRESS.name )
                 }
 
-                transaction.set(document, gameDto)
+                transaction.update(document, newData)
                 return@runTransaction Unit
             }.await()
         }
