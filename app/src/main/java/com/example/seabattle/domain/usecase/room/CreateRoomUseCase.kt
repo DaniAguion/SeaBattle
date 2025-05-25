@@ -16,24 +16,30 @@ class CreateRoomUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
-    suspend operator fun invoke(roomName: String): Result<Room> = withContext(ioDispatcher) {
+    suspend operator fun invoke(roomName: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val playerId = session.getCurrentUserId()
-            val player1 = userRepository.getUser(playerId).getOrThrow()
-            if (player1 == null) {
+            val userId = session.getCurrentUserId()
+            val user = userRepository.getUser(userId).getOrThrow()
+
+            if (user == null) {
                 throw Exception("User not found")
             }
+
             val room = Room(
                 roomId = UUID.randomUUID().toString(),
                 roomName = roomName,
                 roomState = RoomState.WAITING_FOR_PLAYER.name,
                 numberOfPlayers = 1,
-                player1 = player1.toBasic(),
+                player1 = user.toBasic(),
             )
+
+            // Create the room in the repository
             roomRepository.createRoom(room).getOrThrow()
+
+            // Fetch the updated room and set it in the session
             val createdRoom = roomRepository.getRoom(room.roomId).getOrThrow()
             session.setCurrentRoom(createdRoom)
-            return@runCatching createdRoom
+            return@runCatching
         }
     }
 }

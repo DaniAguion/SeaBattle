@@ -1,6 +1,5 @@
 package com.example.seabattle.presentation.screens.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase

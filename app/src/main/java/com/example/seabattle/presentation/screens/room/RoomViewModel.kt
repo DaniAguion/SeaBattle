@@ -1,11 +1,10 @@
 package com.example.seabattle.presentation.screens.room
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
-import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
+import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 
 
 class RoomViewModel(
-    private val waitRoomUseCase: WaitRoomUseCase,
+    private val listenRoomUseCase: ListenRoomUseCase,
     private val closeRoomUseCase: CloseRoomUseCase,
     private val session: Session,
 ) : ViewModel() {
@@ -23,28 +22,29 @@ class RoomViewModel(
     var uiState: StateFlow<RoomUiState> = _uiState.asStateFlow()
 
     // Listeners use to observe the room updates
+    private var listenRoomJob: Job? = null
     private var updateUIJob: Job? = null
-    private var waitRoomJob: Job? = null
+
 
     init {
+        // Observe the current room and listen for updates
+        listenRoomJob = viewModelScope.launch {
+            session.currentRoom.first { room ->
+                if (room != null) {
+                    listenRoomUseCase.invoke(room.roomId)
+                        .onSuccess { return@first true }
+                }
+                false
+            }
+        }
+
+
         // Observe the current room from the session and update the UI state
         updateUIJob = viewModelScope.launch {
             session.currentRoom.collect { room ->
                 if (room != null) {
                     _uiState.value = RoomUiState(room = room)
                 }
-            }
-        }
-
-
-        // Observe the current room and execute the waitRoomUseCase until success
-        waitRoomJob = viewModelScope.launch {
-            session.currentRoom.first { room ->
-                if (room != null) {
-                    waitRoomUseCase.invoke(room.roomId)
-                        .onSuccess { return@first true }
-                }
-                false
             }
         }
     }
@@ -66,9 +66,9 @@ class RoomViewModel(
 
 
     fun stopListening() {
+        listenRoomJob?.cancel()
+        listenRoomJob = null
         updateUIJob?.cancel()
         updateUIJob = null
-        waitRoomJob?.cancel()
-        waitRoomJob = null
     }
 }

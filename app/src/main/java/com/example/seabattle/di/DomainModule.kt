@@ -12,6 +12,7 @@ import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
 import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
+import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import org.koin.dsl.module
 
@@ -25,6 +26,7 @@ val domainModule = module {
     // Room Use cases
     factory { GetRoomsUseCase(get()) }
     factory { CreateRoomUseCase(get(), get(), get(), get()) }
+    factory { ListenRoomUseCase(get(), get(), get())}
     factory { JoinRoomUseCase(get(), get(), get(), get()) }
     factory { WaitRoomUseCase(get(), get(), get(), get()) }
     factory { CloseRoomUseCase(get(), get(), get())}

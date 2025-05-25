@@ -22,25 +22,27 @@ class GameViewModel(
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
     // Listeners used to observe the room updates
+    private var listenGameJob: Job? = null
     private var updateUIJob: Job? = null
-    private var waitGameJob: Job? = null
+
 
     init{
-        updateUIJob = viewModelScope.launch {
-            session.currentGame.collect { game ->
-                _uiState.value = GameUiState(game = game)
-            }
-        }
-
-
         // Observe the current game
-        waitGameJob = viewModelScope.launch {
+        listenGameJob = viewModelScope.launch {
             session.currentGame.first { game ->
                 if (game != null) {
                     listenGameUseCase.invoke(game.gameId)
                         .onSuccess { return@first true }
                 }
                 false
+            }
+        }
+
+
+        // Observe the current game from the session and update the UI state
+        updateUIJob = viewModelScope.launch {
+            session.currentGame.collect { game ->
+                _uiState.value = GameUiState(game = game)
             }
         }
     }
@@ -69,9 +71,9 @@ class GameViewModel(
     }
 
     fun stopListening() {
+        listenGameJob?.cancel()
+        listenGameJob = null
         updateUIJob?.cancel()
         updateUIJob = null
-        waitGameJob?.cancel()
-        waitGameJob = null
     }
 }

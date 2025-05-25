@@ -79,7 +79,7 @@ class GameRepositoryImpl(
                     "updatedAt" to FieldValue.serverTimestamp()
                 )
 
-                when (userId) {
+                when(userId) {
                     gameDto.player1.userId -> {
                         newData = newData + mapOf( "player1Ready" to true )
                     }

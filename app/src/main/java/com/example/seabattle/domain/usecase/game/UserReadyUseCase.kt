@@ -13,14 +13,14 @@ class UserReadyUseCase(
 ) {
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val playerId = session.getCurrentUserId()
+            val userId = session.getCurrentUserId()
             val gameId = session.getCurrentGameId()
 
-            if (playerId.isEmpty() || gameId.isEmpty()) {
+            if (userId.isEmpty() || gameId.isEmpty()) {
                 throw IllegalStateException("User is not logged in or game is not set")
             }
 
-            gameRepository.updateUserReady(gameId, playerId).getOrThrow()
+            gameRepository.updateUserReady(gameId, userId).getOrThrow()
         }
     }
 }

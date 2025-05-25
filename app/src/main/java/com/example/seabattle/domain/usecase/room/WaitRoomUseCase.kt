@@ -25,21 +25,17 @@ class WaitRoomUseCase(
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val playerId = session.getCurrentUserId()
-
-            val flowCollector = roomRepository.getRoomUpdate(roomId)
+            /*
+            val flowCollector = roomRepository.listenRoomUpdate(roomId)
             .map { result -> result.getOrThrow() }
             .first { room ->
                 session.setCurrentRoom(room)
                 when (playerId) {
                     room.player1.userId -> {
+                        // If the first player is waiting for the second player to join
                         if (room.player2 != null) {
                             if (room.roomState == RoomState.SECOND_PLAYER_JOINED.name) {
-                                val newData = mapOf(
-                                    "roomState" to RoomState.CREATING_GAME.name,
-                                )
-                                roomRepository.updateRoom(roomId, newData).getOrThrow()
 
-                            } else if (room.roomState == RoomState.CREATING_GAME.name) {
                                 if (session.getCurrentGame() == null) {
                                     val game = Game(
                                         gameId = UUID.randomUUID().toString(),
@@ -88,6 +84,7 @@ class WaitRoomUseCase(
                     else -> throw IllegalStateException("User doesn't belong to this room")
                 }
             }
+            */
         }
     }
 }

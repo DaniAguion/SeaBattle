@@ -5,6 +5,9 @@ import com.example.seabattle.data.firestore.dto.RoomDtoRd
 import com.example.seabattle.data.firestore.mappers.toRoomDto
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,20 +29,8 @@ class RoomRepositoryImpl(
     private val roomsCollection = db.collection("rooms")
     private val tag = "RoomRepository"
 
-    override suspend fun createRoom(room: Room) : Result<Unit> = withContext(ioDispatcher) {
-        runCatching {
-            val roomDto = room.toRoomDto()
-            roomsCollection.document(roomDto.roomId)
-                .set(roomDto)
-                .await()
-        }
-        .map { _ -> }
-        .onFailure { e ->
-            Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
-        }
-    }
 
-
+    // Function to fetch all rooms with only one player
     override fun fetchRooms() : Flow<Result<List<Room>>> = callbackFlow {
         val listener = roomsCollection
             .whereEqualTo("numberOfPlayers", 1)
@@ -59,7 +50,9 @@ class RoomRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-    override fun getRoomUpdate(roomId: String) : Flow<Result<Room>>
+
+    // Function to listen for updates on a specific room
+    override fun listenRoomUpdates(roomId: String) : Flow<Result<Room>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
             .setMetadataChanges(MetadataChanges.INCLUDE)
@@ -72,17 +65,78 @@ class RoomRepositoryImpl(
                     trySend(Result.failure(error))
                     return@addSnapshotListener
                 }
-                val roomEntity = snapshot?.toObject(RoomDtoRd::class.java)?.toRoomEntity()
-                if (roomEntity == null) {
+                if (snapshot == null || !snapshot.exists()) {
                     trySend(Result.failure(Exception("Room not found")))
                     return@addSnapshotListener
                 }
-                trySend(Result.success(roomEntity))
+                if (!snapshot.metadata.isFromCache()) {
+                    val roomEntity = snapshot.toObject(RoomDtoRd::class.java)?.toRoomEntity()
+                    if (roomEntity == null) {
+                        trySend(Result.failure(Exception("Room not found")))
+                        return@addSnapshotListener
+                    }
+                    trySend(Result.success(roomEntity))
+                }
             }
         awaitClose { listener.remove() }
     }.flowOn(ioDispatcher)
 
 
+
+    // Function to create a new room
+    override suspend fun createRoom(room: Room) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val roomDto = room.toRoomDto()
+            roomsCollection.document(roomDto.roomId)
+                .set(roomDto)
+                .await()
+        }
+            .map { _ -> }
+            .onFailure { e ->
+                Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
+            }
+    }
+
+
+
+    // Function to use by the second player to join an existing room
+    override suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = roomsCollection.document(roomId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Room not found")
+                }
+
+                val roomDto = snapshot.toObject(RoomDtoRd::class.java)
+                    ?: throw Exception("Room data is corrupted")
+
+                // Check if the room conditions are met for the second player to join
+                if (roomDto.player1.userId == user.userId || roomDto.numberOfPlayers == 2 ||
+                    roomDto.roomState != RoomState.WAITING_FOR_PLAYER.name) {
+                    throw Exception("Room not available")
+                }
+
+                // Update the room state and add the second player
+                val newData = mapOf(
+                    "roomState" to RoomState.SECOND_PLAYER_JOINED.name,
+                    "numberOfPlayers" to 2,
+                    "player2" to user.toBasic(),
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+
+                transaction.update(document, newData)
+                return@runTransaction Unit
+            }.await()
+        }
+    }
+
+
+
+    // Function to get the room details by roomId
     override suspend fun getRoom(roomId: String) : Result<Room>
     = withContext(ioDispatcher) {
         runCatching {
@@ -128,6 +182,44 @@ class RoomRepositoryImpl(
         .map { _ -> }
         .onFailure { e ->
             Log.e(tag, "Error deleting room with Id: ${roomId}. ${e.message}")
+        }
+    }
+
+
+    override suspend fun updateRoomState(roomId: String, userId: String) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = roomsCollection.document(roomId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Room not found")
+                }
+
+                val roomDto = snapshot.toObject(RoomDtoRd::class.java)
+                    ?: throw Exception("Room data is corrupted")
+
+                var newData: Map<String, Any> = mapOf(
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+
+                when (userId) {
+                    roomDto.player1.userId -> {
+                        if (roomDto.roomState == RoomState.SECOND_PLAYER_JOINED.name) {
+                            // TO DO
+                        }
+                    }
+                    roomDto.player2?.userId -> {
+
+                    }
+                    else -> throw Exception("User does not belong to this game")
+                }
+
+
+                transaction.update(document, newData)
+                return@runTransaction Unit
+            }.await()
         }
     }
 }
