@@ -5,6 +5,7 @@ import com.example.seabattle.data.firestore.dto.GameDtoRd
 import com.example.seabattle.data.firestore.mappers.toGameDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,7 +30,7 @@ class GameRepositoryImpl(
 
 
 
-    override fun getGameUpdate(gameId: String) : Flow<Result<Game>>
+    override fun listenGameUpdates(gameId: String) : Flow<Result<Game>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
             .setMetadataChanges(MetadataChanges.INCLUDE)
@@ -60,8 +61,45 @@ class GameRepositoryImpl(
 
 
 
-    override suspend fun getGame(gameId: String): Result<Game>
-            = withContext(ioDispatcher) {
+    override suspend fun updateUserReady(gameId: String, userId: String) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = gamesCollection.document(gameId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Game not found")
+                }
+
+                val gameDto = snapshot.toObject(GameDtoRd::class.java)
+                    ?: throw Exception("Game data is corrupted")
+
+                when (userId) {
+                    gameDto.player1.userId -> {
+                        gameDto.player1Ready = true
+                    }
+                    gameDto.player2.userId -> {
+                        gameDto.player2Ready = true
+                    }
+                    else -> throw Exception("User does not belong to this game")
+                }
+
+
+
+                if (gameDto.player1Ready && gameDto.player2Ready) {
+                    gameDto.gameState = GameState.IN_PROGRESS.name
+                }
+
+                transaction.set(document, gameDto)
+                return@runTransaction Unit
+            }.await()
+        }
+    }
+
+
+
+    override suspend fun getGame(gameId: String): Result<Game> = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
@@ -74,10 +112,10 @@ class GameRepositoryImpl(
                 throw Exception("Document not found")
             }
         }
-            .onFailure { e ->
-                Log.e(tag, "Error fetching game: ${e.message}")
-                emptyList<Game>()
-            }
+        .onFailure { e ->
+            Log.e(tag, "Error fetching game: ${e.message}")
+            emptyList<Game>()
+        }
     }
 
 
