@@ -1,5 +1,6 @@
 package com.example.seabattle.domain.repository
 
+import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.User
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +12,6 @@ interface RoomRepository {
     suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
     suspend fun getRoom(roomId: String) : Result<Room>
     suspend fun deleteRoom(roomId: String) : Result<Unit>
-    suspend fun updateRoom(roomId: String, newData: Map<String, Any>) : Result<Unit>
-    suspend fun updateRoomState(roomId: String, userId: String) : Result<Unit>
+    suspend fun createGame(game: Game) : Result<Unit>
+    suspend fun joinGame(gameId: String, roomId: String) : Result<Game>
 }

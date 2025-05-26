@@ -18,5 +18,5 @@ enum class RoomState {
     WAITING_FOR_PLAYER,
     SECOND_PLAYER_JOINED,
     GAME_CREATED,
-    GAME_STARTED
+    GAME_STARTING
 }

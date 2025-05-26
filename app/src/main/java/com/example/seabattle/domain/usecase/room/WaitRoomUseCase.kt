@@ -8,83 +8,74 @@ import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
+
 class WaitRoomUseCase(
     val roomRepository: RoomRepository,
-    val gameRepository: GameRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
-    // This function waits for the room to be updated and performs actions based on the room state.
-    // It checks the player's ID and updates the room state accordingly.
-
-    suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
+    // This function will be executed when the user is in the waiting room, each time room state is updated.
+    // Its purpose is to handle the logic to transition from the waiting room to a game.
+    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val playerId = session.getCurrentUserId()
-            /*
-            val flowCollector = roomRepository.listenRoomUpdate(roomId)
-            .map { result -> result.getOrThrow() }
-            .first { room ->
-                session.setCurrentRoom(room)
-                when (playerId) {
-                    room.player1.userId -> {
-                        // If the first player is waiting for the second player to join
-                        if (room.player2 != null) {
-                            if (room.roomState == RoomState.SECOND_PLAYER_JOINED.name) {
+            val userId = session.getCurrentUserId()
+            val room = session.getCurrentRoom()
 
-                                if (session.getCurrentGame() == null) {
-                                    val game = Game(
-                                        gameId = UUID.randomUUID().toString(),
-                                        player1 = room.player1,
-                                        player2 = room.player2,
-                                        gameState = GameState.CHECK_READY.name,
-                                    )
+            if (room == null){
+                throw Exception("Room is not set")
+            }
 
-                                    gameRepository.createGame(game).getOrThrow()
-                                    session.setCurrentGame(game)
+            val roomId = room.roomId
 
-                                    val newData = mapOf(
-                                        "roomState" to RoomState.GAME_CREATED.name,
-                                        "gameId" to game.gameId,
-                                    )
-                                    roomRepository.updateRoom(roomId, newData).getOrThrow()
-                                }
-                            } else if (room.roomState == RoomState.GAME_STARTED.name) {
-                                session.setCurrentRoom(room)
-                                return@first true
-                            }
-                        }
-                        return@first false
+            when(room.roomState) {
+                RoomState.WAITING_FOR_PLAYER.name -> {
+                    return@runCatching
+                }
+                RoomState.SECOND_PLAYER_JOINED.name -> {
+                    // If the second player has joined the room, the first player will create a game.
+                    if (room.player2 == null) {
+                        throw Exception("Player 2 is not set")
                     }
-
-                    room.player2?.userId -> {
-                        if (room.roomState == RoomState.GAME_CREATED.name) {
-                            if (room.gameId == null) {
-                                throw IllegalStateException("Game ID is null")
-                            }
-
-                            val game = gameRepository.getGame(room.gameId).getOrThrow()
-                            session.setCurrentGame(game)
-
-                            val newData = mapOf(
-                                "roomState" to RoomState.GAME_STARTED.name
-                            )
-                            roomRepository.updateRoom(roomId, newData).getOrThrow()
-
-                        } else if (room.roomState == RoomState.GAME_STARTED.name) {
-                            session.setCurrentRoom(room)
-                            return@first true
-                        }
-                        return@first false
+                    if (userId == room.player1.userId) {
+                        val game = Game(
+                            gameId = UUID.randomUUID().toString(),
+                            player1 = room.player1,
+                            player2 = room.player2,
+                            gameState = GameState.CHECK_READY.name,
+                        )
+                        // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
+                        roomRepository.createGame(game).getOrThrow()
+                        session.setCurrentGame(game)
                     }
-                    else -> throw IllegalStateException("User doesn't belong to this room")
+                }
+                RoomState.GAME_CREATED.name -> {
+                    // If the first player has created a game, the second player will join the game.
+                    if (room.player2 == null) {
+                        throw Exception("Player 2 is not set")
+                    }
+                    if (userId == room.player2.userId) {
+                        val gameId = room.gameId
+                        if (gameId.isNullOrEmpty()) {
+                            throw Exception("Game ID is not set")
+                        }
+                        // Update the room state to GAME_STARTED.
+                        val game = roomRepository.joinGame(gameId, roomId).getOrThrow()
+                        session.setCurrentGame(game)
+                    }
+                }
+                RoomState.GAME_STARTING.name -> {
+                    // Delete the room if it wasn't deleted yet and clear the room from the session.
+                    val room = roomRepository.getRoom(roomId).getOrNull()
+                    if (room != null) {
+                        roomRepository.deleteRoom(roomId).getOrThrow()
+                    }
+                    session.clearCurrentRoom()
                 }
             }
-            */
+
         }
     }
 }

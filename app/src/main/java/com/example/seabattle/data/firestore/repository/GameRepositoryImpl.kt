@@ -89,8 +89,6 @@ class GameRepositoryImpl(
                     else -> throw Exception("User does not belong to this game")
                 }
 
-
-
                 if (gameDto.player1Ready && gameDto.player2Ready) {
                     newData = newData + mapOf( "gameState" to GameState.IN_PROGRESS.name )
                 }
