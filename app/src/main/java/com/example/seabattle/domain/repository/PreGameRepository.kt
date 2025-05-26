@@ -5,7 +5,7 @@ import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.User
 import kotlinx.coroutines.flow.Flow
 
-interface RoomRepository {
+interface PreGameRepository {
     fun fetchRooms() : Flow<Result<List<Room>>>
     fun listenRoomUpdates(roomId: String) : Flow<Result<Room>>
     suspend fun createRoom(roomId: String, roomName: String, user: User) : Result<Unit>

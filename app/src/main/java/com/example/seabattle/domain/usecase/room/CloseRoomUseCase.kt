@@ -1,12 +1,12 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 class CloseRoomUseCase(
-    val roomRepository: RoomRepository,
+    val preGameRepository: PreGameRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
@@ -19,9 +19,9 @@ class CloseRoomUseCase(
             }
 
             // Delete the room if it wasn't deleted yet and clear the session
-            val room = roomRepository.getRoom(roomId).getOrNull()
+            val room = preGameRepository.getRoom(roomId).getOrNull()
             if (room != null) {
-                roomRepository.deleteRoom(roomId).getOrThrow()
+                preGameRepository.deleteRoom(roomId).getOrThrow()
             }
             session.clearCurrentRoom()
         }

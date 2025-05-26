@@ -2,13 +2,13 @@ package com.example.seabattle.domain.usecase.room
 
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class ListenRoomUseCase(
-    val roomRepository: RoomRepository,
+    val preGameRepository: PreGameRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
@@ -20,7 +20,7 @@ class ListenRoomUseCase(
             }
 
             // Listen to room updates and update the session's current room
-            roomRepository.listenRoomUpdates(roomId)
+            preGameRepository.listenRoomUpdates(roomId)
                 .map { result -> result.getOrThrow() }
                 .collect { room ->
                     session.setCurrentRoom(room)

@@ -1,14 +1,14 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 
 class JoinRoomUseCase(
-    val roomRepository: RoomRepository,
+    val preGameRepository: PreGameRepository,
     val userRepository: UserRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
@@ -23,10 +23,10 @@ class JoinRoomUseCase(
             }
 
             // Update room state and add user to the room
-            roomRepository.joinRoom(roomId, user).getOrThrow()
+            preGameRepository.joinRoom(roomId, user).getOrThrow()
 
             // Fetch the updated room and set it in the session
-            val room = roomRepository.getRoom(roomId).getOrThrow()
+            val room = preGameRepository.getRoom(roomId).getOrThrow()
             session.setCurrentRoom(room)
         }
     }

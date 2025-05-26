@@ -12,7 +12,7 @@ import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.entity.toBasic
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
@@ -25,10 +25,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class RoomRepositoryImpl(
+class PreGameRepositoryImpl(
     private val db: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher
-) : RoomRepository {
+) : PreGameRepository {
 
     private val roomsCollection = db.collection("rooms")
     private val gamesCollection = db.collection("games")

@@ -1,17 +1,14 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.Room
-import com.example.seabattle.domain.entity.RoomState
-import com.example.seabattle.domain.entity.toBasic
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class CreateRoomUseCase(
-    val roomRepository: RoomRepository,
+    val preGameRepository: PreGameRepository,
     val userRepository: UserRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
@@ -27,10 +24,10 @@ class CreateRoomUseCase(
 
             // Create the room in the repository
             val roomId = UUID.randomUUID().toString()
-            roomRepository.createRoom(roomId, roomName, user).getOrThrow()
+            preGameRepository.createRoom(roomId, roomName, user).getOrThrow()
 
             // Fetch the updated room and set it in the session
-            val room = roomRepository.getRoom(roomId).getOrThrow()
+            val room = preGameRepository.getRoom(roomId).getOrThrow()
             session.setCurrentRoom(room)
             return@runCatching
         }

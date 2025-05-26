@@ -4,14 +4,14 @@ package com.example.seabattle.domain.usecase.room
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 
 class WaitRoomUseCase(
-    val roomRepository: RoomRepository,
+    val preGameRepository: PreGameRepository,
     val gameRepository: GameRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
@@ -41,7 +41,7 @@ class WaitRoomUseCase(
                     if (userId == room.player1.userId) {
                         // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
                         val gameId = UUID.randomUUID().toString()
-                        roomRepository.createGame(gameId, roomId).getOrThrow()
+                        preGameRepository.createGame(gameId, roomId).getOrThrow()
 
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
@@ -59,15 +59,15 @@ class WaitRoomUseCase(
                             throw Exception("Game ID is not set")
                         }
                         // Update the room state to GAME_STARTED.
-                        val game = roomRepository.joinGame(gameId, roomId).getOrThrow()
+                        val game = preGameRepository.joinGame(gameId, roomId).getOrThrow()
                         session.setCurrentGame(game)
                     }
                 }
                 RoomState.GAME_STARTING.name -> {
                     // Delete the room if it wasn't deleted yet and clear the room from the session.
-                    val room = roomRepository.getRoom(roomId).getOrNull()
+                    val room = preGameRepository.getRoom(roomId).getOrNull()
                     if (room != null) {
-                        roomRepository.deleteRoom(roomId).getOrThrow()
+                        preGameRepository.deleteRoom(roomId).getOrThrow()
                     }
                     session.clearCurrentRoom()
                 }

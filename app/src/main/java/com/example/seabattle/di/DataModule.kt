@@ -5,10 +5,10 @@ import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.data.firebase.AuthRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserRepositoryImpl
 import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
-import com.example.seabattle.data.firestore.repository.RoomRepositoryImpl
+import com.example.seabattle.data.firestore.repository.PreGameRepositoryImpl
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
-import com.example.seabattle.domain.repository.RoomRepository
+import com.example.seabattle.domain.repository.PreGameRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,9 +23,8 @@ val dataModule = module {
     // Firestore
     single { FirebaseFirestore.getInstance() }
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
-    // Others repositories
     single<GameRepository> { GameRepositoryImpl(get(), get()) }
-    single<RoomRepository> { RoomRepositoryImpl(get(), get()) }
+    single<PreGameRepository> { PreGameRepositoryImpl(get(), get()) }
     // Managers
     single { BoardManager() }
 }
