@@ -16,7 +16,7 @@ class ListenRoomUseCase(
     suspend operator fun invoke(roomId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             if (roomId.isEmpty()) {
-                throw IllegalStateException("Room is not set")
+                throw Exception("Room is not set")
             }
 
             // Listen to room updates and update the session's current room

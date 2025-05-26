@@ -84,17 +84,13 @@ class RoomRepositoryImpl(
 
 
     // Function to create a new room
-    override suspend fun createRoom(room: Room) : Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun createRoom(room: Room) : Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
             val roomDto = room.toRoomDto()
-            roomsCollection.document(roomDto.roomId)
-                .set(roomDto)
-                .await()
+            roomsCollection.document(roomDto.roomId).set(roomDto).await()
+            return@runCatching Unit
         }
-            .map { _ -> }
-            .onFailure { e ->
-                Log.e(tag, "Error creating room with Id: ${room.roomId}. ${e.message}")
-            }
     }
 
 
@@ -154,6 +150,35 @@ class RoomRepositoryImpl(
     }
 
 
+    // Function to delete a room by roomId
+    override suspend fun deleteRoom(roomId: String) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = roomsCollection.document(roomId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Room not found")
+                }
+
+                val roomDto = snapshot.toObject(RoomDtoRd::class.java)
+                    ?: throw Exception("Room data is corrupted")
+
+                // Check if the room conditions are met for deletion
+                if (roomDto.roomState == RoomState.WAITING_FOR_PLAYER.name ||
+                    roomDto.roomState == RoomState.GAME_STARTED.name)
+                {
+                    transaction.delete(document)
+                } else {
+                    throw Exception("Room cannot be deleted in current state: ${roomDto.roomState}")
+                }
+                return@runTransaction Unit
+            }.await()
+        }
+    }
+
+
     override suspend fun updateRoom(roomId: String, newData: Map<String, Any>) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
@@ -167,23 +192,12 @@ class RoomRepositoryImpl(
                 throw Exception("Room not found")
             }
         }
-        .map { _ -> }
-        .onFailure { e ->
-            Log.e(tag, "Error updating room: ${roomId}. ${e.message}")
-        }
+            .map { _ -> }
+            .onFailure { e ->
+                Log.e(tag, "Error updating room: ${roomId}. ${e.message}")
+            }
     }
 
-
-    override suspend fun deleteRoom(roomId: String) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            roomsCollection.document(roomId).delete().await()
-        }
-        .map { _ -> }
-        .onFailure { e ->
-            Log.e(tag, "Error deleting room with Id: ${roomId}. ${e.message}")
-        }
-    }
 
 
     override suspend fun updateRoomState(roomId: String, userId: String) : Result<Unit>
