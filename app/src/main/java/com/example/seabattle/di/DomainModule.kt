@@ -28,7 +28,7 @@ val domainModule = module {
     factory { CreateRoomUseCase(get(), get(), get(), get()) }
     factory { ListenRoomUseCase(get(), get(), get())}
     factory { JoinRoomUseCase(get(), get(), get(), get()) }
-    factory { WaitRoomUseCase(get(), get(), get()) }
+    factory { WaitRoomUseCase(get(), get(), get(), get()) }
     factory { CloseRoomUseCase(get(), get(), get())}
     // Game Use cases
     factory { UserReadyUseCase(get(), get(), get())}

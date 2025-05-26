@@ -2,11 +2,13 @@ package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
 import com.example.seabattle.data.firestore.dto.GameDtoRd
+import com.example.seabattle.data.firestore.dto.GameDtoWr
 import com.example.seabattle.data.firestore.dto.RoomDtoRd
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.data.firestore.mappers.toRoomDto
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.User
@@ -154,6 +156,7 @@ class RoomRepositoryImpl(
     }
 
 
+
     // Function to delete a room by roomId
     override suspend fun deleteRoom(roomId: String) : Result<Unit>
     = withContext(ioDispatcher) {
@@ -183,13 +186,47 @@ class RoomRepositoryImpl(
     }
 
 
+
     // Function to create a new game from the room
-    override suspend fun createGame(game: Game) : Result<Unit>
+    override suspend fun createGame(gameId: String, roomId: String) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
-            // TO DO
+            db.runTransaction {  transaction ->
+                val roomDocument = roomsCollection.document(roomId)
+                val roomSnapshot = transaction.get(roomDocument)
+                if (!roomSnapshot.exists()) {
+                    throw Exception("Room not found")
+                }
+                val roomDto = roomSnapshot.toObject(RoomDtoRd::class.java)
+                    ?: throw Exception("Room data is corrupted")
+
+                // Check if the room is in the correct state for creating a game
+                if (roomDto.roomState != RoomState.SECOND_PLAYER_JOINED.name || roomDto.player2 == null) {
+                    throw Exception("Room is not available for creating a game")
+                }
+
+                // Create the game document
+                val gameDtoWr = GameDtoWr(
+                    gameId = gameId,
+                    player1 = roomDto.player1,
+                    player2 = roomDto.player2,
+                    gameState = GameState.CHECK_READY.name
+                )
+                transaction.set(gamesCollection.document(gameId), gameDtoWr)
+
+
+                // Update the room state to indicate that a game has been created
+                val newData: Map<String, Any> = mapOf(
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                    "roomState" to RoomState.GAME_CREATED.name,
+                    "gameId" to gameId
+                )
+                transaction.update(roomDocument, newData)
+                return@runTransaction
+            }.await()
         }
     }
+
 
 
     // Function to join and existing game from the room

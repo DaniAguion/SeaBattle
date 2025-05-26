@@ -12,6 +12,6 @@ interface RoomRepository {
     suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
     suspend fun getRoom(roomId: String) : Result<Room>
     suspend fun deleteRoom(roomId: String) : Result<Unit>
-    suspend fun createGame(game: Game) : Result<Unit>
+    suspend fun createGame(gameId: String, roomId: String) : Result<Unit>
     suspend fun joinGame(gameId: String, roomId: String) : Result<Game>
 }

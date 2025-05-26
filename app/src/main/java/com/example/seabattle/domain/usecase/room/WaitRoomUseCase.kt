@@ -2,8 +2,6 @@ package com.example.seabattle.domain.usecase.room
 
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.RoomRepository
@@ -14,6 +12,7 @@ import java.util.UUID
 
 class WaitRoomUseCase(
     val roomRepository: RoomRepository,
+    val gameRepository: GameRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
@@ -40,14 +39,12 @@ class WaitRoomUseCase(
                         throw Exception("Player 2 is not set")
                     }
                     if (userId == room.player1.userId) {
-                        val game = Game(
-                            gameId = UUID.randomUUID().toString(),
-                            player1 = room.player1,
-                            player2 = room.player2,
-                            gameState = GameState.CHECK_READY.name,
-                        )
                         // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
-                        roomRepository.createGame(game).getOrThrow()
+                        val gameId = UUID.randomUUID().toString()
+                        roomRepository.createGame(gameId, roomId).getOrThrow()
+
+                        // Fetch the game and set it in the session.
+                        val game = gameRepository.getGame(gameId).getOrThrow()
                         session.setCurrentGame(game)
                     }
                 }

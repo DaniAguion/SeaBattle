@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
+import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class RoomViewModel(
     private val listenRoomUseCase: ListenRoomUseCase,
+    private val waitRoomUseCase: WaitRoomUseCase,
     private val closeRoomUseCase: CloseRoomUseCase,
     private val session: Session,
 ) : ViewModel() {
@@ -23,7 +25,7 @@ class RoomViewModel(
 
     // Listeners use to observe the room updates
     private var listenRoomJob: Job? = null
-    private var updateUIJob: Job? = null
+    private var updateRoomJob: Job? = null
 
 
     init {
@@ -39,9 +41,12 @@ class RoomViewModel(
         }
 
 
-        // Observe the current room from the session and update the UI state
-        updateUIJob = viewModelScope.launch {
+        // Observe the current room from the session and react to changes
+        // This will update the UI state with the current room information
+        updateRoomJob = viewModelScope.launch {
             session.currentRoom.collect { room ->
+                waitRoomUseCase.invoke()
+                // If the room is not null, update the UI state with the room information
                 if (room != null) {
                     _uiState.value = RoomUiState(room = room)
                 }
@@ -68,7 +73,7 @@ class RoomViewModel(
     fun stopListening() {
         listenRoomJob?.cancel()
         listenRoomJob = null
-        updateUIJob?.cancel()
-        updateUIJob = null
+        updateRoomJob?.cancel()
+        updateRoomJob = null
     }
 }
