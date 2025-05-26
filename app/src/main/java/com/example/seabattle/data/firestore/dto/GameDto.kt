@@ -4,7 +4,12 @@ import com.example.seabattle.domain.entity.UserBasic
 import com.google.firebase.firestore.FieldValue
 import java.util.Date
 
-data class GameDtoWr(
+
+/**
+ * Data Transfer Object (DTO) for creating a game.
+ * This class is used to transfer data from the client to the server when creating a new game.
+ */
+data class GameCreationDto(
     val gameId: String = "",
     val player1: UserBasic = UserBasic(),
     val player1Ready: Boolean = false,
@@ -21,8 +26,10 @@ data class GameDtoWr(
     val updatedAt: FieldValue = FieldValue.serverTimestamp(),
 )
 
-
-data class GameDtoRd(
+/**
+ * Data Transfer Object (DTO) for fetching a game.
+ */
+data class GameDto(
     val gameId: String = "",
     val player1: UserBasic = UserBasic(),
     var player1Ready: Boolean = false,

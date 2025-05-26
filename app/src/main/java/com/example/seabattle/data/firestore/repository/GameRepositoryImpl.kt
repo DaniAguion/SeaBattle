@@ -1,15 +1,13 @@
 package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
-import com.example.seabattle.data.firestore.dto.GameDtoRd
-import com.example.seabattle.data.firestore.mappers.toGameDto
+import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenSource
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.SnapshotListenOptions
 import kotlinx.coroutines.CoroutineDispatcher
@@ -48,7 +46,7 @@ class GameRepositoryImpl(
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache()) {
-                    val gameEntity = snapshot.toObject(GameDtoRd::class.java)?.toGameEntity()
+                    val gameEntity = snapshot.toObject(GameDto::class.java)?.toGameEntity()
                     if (gameEntity == null) {
                         trySend(Result.failure(Exception("Game not found")))
                         return@addSnapshotListener
@@ -72,7 +70,7 @@ class GameRepositoryImpl(
                     throw Exception("Game not found")
                 }
 
-                val gameDto = snapshot.toObject(GameDtoRd::class.java)
+                val gameDto = snapshot.toObject(GameDto::class.java)
                     ?: throw Exception("Game data is corrupted")
 
                 var newData: Map<String, Any> = mapOf(
@@ -94,7 +92,7 @@ class GameRepositoryImpl(
                 }
 
                 transaction.update(document, newData)
-                return@runTransaction Unit
+                return@runTransaction
             }.await()
         }
     }
@@ -105,7 +103,7 @@ class GameRepositoryImpl(
         runCatching {
             val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
-                val gameEntity = document.toObject(GameDtoRd::class.java)?.toGameEntity()
+                val gameEntity = document.toObject(GameDto::class.java)?.toGameEntity()
                 if (gameEntity == null) {
                     throw Exception("Game not found")
                 }
@@ -117,21 +115,6 @@ class GameRepositoryImpl(
         .onFailure { e ->
             Log.e(tag, "Error fetching game: ${e.message}")
             emptyList<Game>()
-        }
-    }
-
-
-
-    override suspend fun createGame(game: Game) : Result<Unit>  = withContext(ioDispatcher) {
-        runCatching {
-            val gameDto = game.toGameDto()
-            gamesCollection.document(gameDto.gameId)
-                .set(gameDto)
-                .await()
-        }
-        .map { _ -> }
-        .onFailure { e ->
-            Log.e(tag, "Error creating game with Id: ${game.gameId}. ${e.message}")
         }
     }
 

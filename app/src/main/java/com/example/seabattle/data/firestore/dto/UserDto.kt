@@ -5,8 +5,5 @@ data class UserDto(
     val displayName: String = "",
     val email: String = "",
     val photoUrl: String = "",
-    val score: Int = 0,
-    val online: Boolean = false,
-    val lookingForGame: Boolean = false,
-    val inGame: Boolean = false,
+    val score: Int = 0
 )

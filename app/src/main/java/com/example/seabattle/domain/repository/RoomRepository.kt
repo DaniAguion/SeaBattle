@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface RoomRepository {
     fun fetchRooms() : Flow<Result<List<Room>>>
     fun listenRoomUpdates(roomId: String) : Flow<Result<Room>>
-    suspend fun createRoom(room: Room) : Result<Unit>
+    suspend fun createRoom(roomId: String, roomName: String, user: User) : Result<Unit>
     suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
     suspend fun getRoom(roomId: String) : Result<Room>
     suspend fun deleteRoom(roomId: String) : Result<Unit>

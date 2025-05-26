@@ -4,7 +4,6 @@ import com.example.seabattle.data.firestore.dto.UserDto
 import com.example.seabattle.domain.entity.User
 
 
-
 fun User.toUserDto(): UserDto =
     UserDto(
         userId = userId,

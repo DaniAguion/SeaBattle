@@ -25,20 +25,13 @@ class CreateRoomUseCase(
                 throw Exception("User not found")
             }
 
-            val room = Room(
-                roomId = UUID.randomUUID().toString(),
-                roomName = roomName,
-                roomState = RoomState.WAITING_FOR_PLAYER.name,
-                numberOfPlayers = 1,
-                player1 = user.toBasic(),
-            )
-
             // Create the room in the repository
-            roomRepository.createRoom(room).getOrThrow()
+            val roomId = UUID.randomUUID().toString()
+            roomRepository.createRoom(roomId, roomName, user).getOrThrow()
 
             // Fetch the updated room and set it in the session
-            val createdRoom = roomRepository.getRoom(room.roomId).getOrThrow()
-            session.setCurrentRoom(createdRoom)
+            val room = roomRepository.getRoom(roomId).getOrThrow()
+            session.setCurrentRoom(room)
             return@runCatching
         }
     }

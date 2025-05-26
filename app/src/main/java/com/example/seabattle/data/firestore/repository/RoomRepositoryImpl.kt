@@ -1,11 +1,10 @@
 package com.example.seabattle.data.firestore.repository
 
-import android.util.Log
-import com.example.seabattle.data.firestore.dto.GameDtoRd
-import com.example.seabattle.data.firestore.dto.GameDtoWr
-import com.example.seabattle.data.firestore.dto.RoomDtoRd
+import com.example.seabattle.data.firestore.dto.GameDto
+import com.example.seabattle.data.firestore.dto.GameCreationDto
+import com.example.seabattle.data.firestore.dto.RoomCreationDto
+import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
-import com.example.seabattle.data.firestore.mappers.toRoomDto
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -33,7 +32,6 @@ class RoomRepositoryImpl(
 
     private val roomsCollection = db.collection("rooms")
     private val gamesCollection = db.collection("games")
-    private val tag = "RoomRepository"
 
 
     // Function to fetch all rooms with only one player
@@ -47,7 +45,7 @@ class RoomRepositoryImpl(
                 }
 
                 val rooms = snapshot?.documents?.mapNotNull { document ->
-                    document.toObject(RoomDtoRd::class.java)?.toRoomEntity()
+                    document.toObject(RoomDto::class.java)?.toRoomEntity()
                 } ?: emptyList()
 
                 trySend(Result.success(rooms))
@@ -76,7 +74,7 @@ class RoomRepositoryImpl(
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache()) {
-                    val roomEntity = snapshot.toObject(RoomDtoRd::class.java)?.toRoomEntity()
+                    val roomEntity = snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
                     if (roomEntity == null) {
                         trySend(Result.failure(Exception("Room not found")))
                         return@addSnapshotListener
@@ -90,10 +88,15 @@ class RoomRepositoryImpl(
 
 
     // Function to create a new room
-    override suspend fun createRoom(room: Room) : Result<Unit>
+    override suspend fun createRoom(roomId: String, roomName: String, user: User) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
-            val roomDto = room.toRoomDto()
+            val roomDto = RoomCreationDto(
+                roomId = roomId,
+                roomName = roomName,
+                roomState = RoomState.WAITING_FOR_PLAYER.name,
+                player1 = user.toBasic(),
+            )
             roomsCollection.document(roomDto.roomId).set(roomDto).await()
             return@runCatching
         }
@@ -113,7 +116,7 @@ class RoomRepositoryImpl(
                     throw Exception("Room not found")
                 }
 
-                val roomDto = snapshot.toObject(RoomDtoRd::class.java)
+                val roomDto = snapshot.toObject(RoomDto::class.java)
                     ?: throw Exception("Room data is corrupted")
 
                 // Check if the room conditions are met for the second player to join
@@ -144,7 +147,7 @@ class RoomRepositoryImpl(
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
             if (document.exists()) {
-                val roomEntity = document.toObject(RoomDtoRd::class.java)?.toRoomEntity()
+                val roomEntity = document.toObject(RoomDto::class.java)?.toRoomEntity()
                 if (roomEntity == null) {
                     throw Exception("Room not found")
                 }
@@ -169,7 +172,7 @@ class RoomRepositoryImpl(
                     throw Exception("Room not found")
                 }
 
-                val roomDto = snapshot.toObject(RoomDtoRd::class.java)
+                val roomDto = snapshot.toObject(RoomDto::class.java)
                     ?: throw Exception("Room data is corrupted")
 
                 // Check if the room conditions are met for deletion
@@ -197,7 +200,7 @@ class RoomRepositoryImpl(
                 if (!roomSnapshot.exists()) {
                     throw Exception("Room not found")
                 }
-                val roomDto = roomSnapshot.toObject(RoomDtoRd::class.java)
+                val roomDto = roomSnapshot.toObject(RoomDto::class.java)
                     ?: throw Exception("Room data is corrupted")
 
                 // Check if the room is in the correct state for creating a game
@@ -206,13 +209,13 @@ class RoomRepositoryImpl(
                 }
 
                 // Create the game document
-                val gameDtoWr = GameDtoWr(
+                val gameCreationDto = GameCreationDto(
                     gameId = gameId,
                     player1 = roomDto.player1,
                     player2 = roomDto.player2,
                     gameState = GameState.CHECK_READY.name
                 )
-                transaction.set(gamesCollection.document(gameId), gameDtoWr)
+                transaction.set(gamesCollection.document(gameId), gameCreationDto)
 
 
                 // Update the room state to indicate that a game has been created
@@ -244,10 +247,10 @@ class RoomRepositoryImpl(
                     throw Exception("Game or Room not found")
                 }
 
-                val gameEntity = gameSnapshot.toObject(GameDtoRd::class.java)?.toGameEntity()
+                val gameEntity = gameSnapshot.toObject(GameDto::class.java)?.toGameEntity()
                     ?: throw Exception("Game data is corrupted")
 
-                val roomDto = roomSnapshot.toObject(RoomDtoRd::class.java)
+                val roomDto = roomSnapshot.toObject(RoomDto::class.java)
                     ?: throw Exception("Room data is corrupted")
 
                 // Check if the room is in the correct state for joining and double check the gameId
