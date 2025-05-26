@@ -40,7 +40,6 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
-import com.example.seabattle.presentation.resources.RoomCard
 import com.example.seabattle.presentation.validation.ValidationError
 import org.koin.androidx.compose.koinViewModel
 

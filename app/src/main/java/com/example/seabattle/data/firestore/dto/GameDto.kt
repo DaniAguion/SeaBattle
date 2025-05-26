@@ -17,7 +17,7 @@ data class GameCreationDto(
     val player2: UserBasic = UserBasic(),
     val player2Ready: Boolean = false,
     val player2Board: Map<String, Map<String, Int>>? = null,
-    val currentTurn: Int = 0,
+    val currentTurn: Int = 1,
     val currentPlayer: String? = null,
     val gameState: String? = null,
     val gameFinished: Boolean = false,

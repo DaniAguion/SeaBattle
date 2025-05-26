@@ -213,7 +213,8 @@ class PreGameRepositoryImpl(
                     gameId = gameId,
                     player1 = roomDto.player1,
                     player2 = roomDto.player2,
-                    gameState = GameState.CHECK_READY.name
+                    gameState = GameState.CHECK_READY.name,
+                    currentPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random(),
                 )
                 transaction.set(gamesCollection.document(gameId), gameCreationDto)
 

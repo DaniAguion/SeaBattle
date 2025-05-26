@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -96,44 +95,6 @@ fun GameScreenContent(
                     enableReadyButton = enableReadyButton()
                 )
             }
-            /*
-            item {
-                if (game.player1Ready) {
-                    Text(
-                        text = "${game.player1.displayName} is ready",
-                        fontSize = 16.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier
-                            .padding(dimensionResource(R.dimen.padding_small))
-                    )
-                } else {
-                    Text(
-                        text = "Waiting for ${game.player1.displayName} to be ready...",
-                        fontSize = 16.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier
-                            .padding(dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                if (game.player2Ready) {
-                    Text(
-                        text = "${game.player2.displayName} is ready",
-                        fontSize = 16.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier
-                            .padding(dimensionResource(R.dimen.padding_small))
-                    )
-                } else {
-                    Text(
-                        text = "Waiting for ${game.player2.displayName} to be ready...",
-                        fontSize = 16.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier
-                            .padding(dimensionResource(R.dimen.padding_small))
-                    )
-                }
-            }
-           */
         }
     }
 }
@@ -195,33 +156,6 @@ fun CardPlayer(
         }
     }
 }
-
-
-@Composable
-fun ReadyCheckSection(
-    game: Game,
-    onClickReady: () -> Unit = {},
-    enableReadyButton : Boolean = true
-) {
-    Text(
-        text = "Confirm when you are ready!",
-        fontSize = 20.sp,
-        fontWeight = SemiBold,
-        modifier = Modifier
-            .padding(dimensionResource(R.dimen.padding_small))
-    )
-    Button(
-        onClick = onClickReady,
-        enabled = enableReadyButton,
-        modifier = Modifier
-            .padding(dimensionResource(R.dimen.padding_small))
-            .sizeIn(minWidth = 150.dp)
-    ) {
-        Text(text = "Ready")
-    }
-}
-
-
 
 
 @Preview(showBackground = true)
