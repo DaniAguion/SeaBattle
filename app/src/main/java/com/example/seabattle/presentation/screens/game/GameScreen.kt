@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.game
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
@@ -39,6 +41,7 @@ import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun GameScreen(
@@ -47,8 +50,7 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activity = LocalActivity.current
+
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
@@ -57,27 +59,24 @@ fun GameScreen(
         }
     }
 
-    // If the user leaves the game, the game will be closed
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                if (activity?.isChangingConfigurations == false) {
-                    gameViewModel.onUserLeave()
-                }
+    // If the user presses the back button, leave the game and navigate to the home screen
+    BackHandler(
+        onBack = {
+            gameViewModel.onUserLeave()
+            navController.navigate(SeaBattleScreen.Home.title){
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
+    )
 
     // Observe the game state and navigate to the home screen if the game has ended
     LaunchedEffect(key1 = gameUiState.game) {
         val game = gameUiState.game
         if (game!= null && game.gameState == GameState.GAME_ABORTED.name) {
             gameViewModel.onUserLeave()
-            navController.navigate(SeaBattleScreen.Home.title)
+            navController.navigate(SeaBattleScreen.Home.title){
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            }
         }
     }
 

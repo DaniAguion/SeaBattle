@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.room
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
@@ -39,8 +41,6 @@ fun RoomScreen(
     roomViewModel: RoomViewModel = koinViewModel(),
 ) {
     val roomUiState by roomViewModel.uiState.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activity = LocalActivity.current
 
 
     // Stop listeners when the screen is disposed
@@ -50,26 +50,24 @@ fun RoomScreen(
         }
     }
 
-    // If the user leaves the room, the room will be closed
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                if (activity?.isChangingConfigurations == false) {
-                    roomViewModel.onUserLeave()
-                }
+    // If the user presses the back button, leave the room and navigate to the home screen
+    BackHandler(
+        onBack = {
+            roomViewModel.onUserLeave()
+            navController.navigate(SeaBattleScreen.Home.title){
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
+    )
+
 
     // Observe the room state and navigate to the game screen if the game was created
     LaunchedEffect(key1 = roomUiState.room) {
         val room = roomUiState.room
         if (room!= null && room.roomState == RoomState.GAME_CREATED.name) {
-            navController.navigate(SeaBattleScreen.Game.title)
+            navController.navigate(SeaBattleScreen.Game.title){
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            }
         }
     }
 
@@ -134,7 +132,9 @@ fun RoomScreenContent(
                 Button(
                     onClick = {
                         onUserLeave()
-                        navController.navigate(SeaBattleScreen.Home.title)
+                        navController.navigate(SeaBattleScreen.Home.title){
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                        }
                     },
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
                 ) {
