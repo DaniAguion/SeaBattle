@@ -2,9 +2,11 @@ package com.example.seabattle.data.firestore.repository
 
 import android.util.Log
 import com.example.seabattle.data.firestore.dto.GameDto
+import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.onFailure
 
 class GameRepositoryImpl(
@@ -24,7 +27,6 @@ class GameRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : GameRepository {
     private val gamesCollection = db.collection("games")
-    private val tag = "GameRepository"
 
 
 
@@ -113,7 +115,7 @@ class GameRepositoryImpl(
             }
         }
         .onFailure { e ->
-            Log.e(tag, "Error fetching game: ${e.message}")
+            Timber.e("Error fetching game: ${e.message}")
             emptyList<Game>()
         }
     }
@@ -121,7 +123,7 @@ class GameRepositoryImpl(
 
 
     override suspend fun updateGame(gameId: String, newData: Map<String, Any>) : Result<Unit>
-            = withContext(ioDispatcher) {
+    = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId).get().await()
             if (document.exists()) {
@@ -135,7 +137,44 @@ class GameRepositoryImpl(
         }
         .map { _ -> }
         .onFailure { e ->
-            Log.e(tag, "Error updating game: ${gameId}. ${e.message}")
+            Timber.e("Error updating game: ${gameId}. ${e.message}")
+        }
+    }
+
+
+    override suspend fun leaveGame(gameId: String, userId: String) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = gamesCollection.document(gameId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Game not found")
+                }
+
+                val gameDto = snapshot.toObject(GameDto::class.java)
+                    ?: throw Exception("Game data is corrupted")
+
+                // If the game is already finished or aborted, we can just delete it
+                // otherwise we update the game state to GAME_ABORTED
+                if (gameDto.gameState == GameState.GAME_ABORTED.name ||
+                    gameDto.gameState == GameState.GAME_ABANDONED.name)
+                {
+                    transaction.delete(document)
+                } else if(gameDto.gameState == GameState.CHECK_READY.name) {
+                    transaction.update(document, mapOf(
+                        "updatedAt" to FieldValue.serverTimestamp(),
+                        "gameState" to GameState.GAME_ABORTED.name,
+                        "gameFinished" to true,
+                        "winnerId" to null
+                    ))
+                }
+                else {
+                    // TO DO
+                }
+                return@runTransaction
+            }.await()
         }
     }
 }

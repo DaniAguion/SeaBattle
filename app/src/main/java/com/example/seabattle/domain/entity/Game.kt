@@ -25,6 +25,7 @@ data class Game(
 // This cases are controlled by the server through cloud functions.
 enum class GameState {
     CHECK_READY,
+    GAME_ABORTED,
     IN_PROGRESS,
     PLAYER_1_WON,
     PLAYER_2_WON,

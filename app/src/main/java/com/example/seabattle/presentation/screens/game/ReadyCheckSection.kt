@@ -2,11 +2,14 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +27,8 @@ import com.example.seabattle.domain.entity.UserBasic
 fun ReadyCheckSection(
     game: Game,
     onClickReady: () -> Unit = {},
-    enableReadyButton : Boolean = true
+    enableReadyButton : Boolean = true,
+    onClickLeave: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -63,14 +67,30 @@ fun ReadyCheckSection(
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
             )
-            Button(
-                onClick = onClickReady,
-                enabled = enableReadyButton,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
-                    .sizeIn(minWidth = 150.dp)
-            ) {
-                Text(text = "Ready")
+            Row {
+                Button(
+                    onClick = onClickLeave,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    ),
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                        .sizeIn(minWidth = 150.dp)
+                ) {
+                    Text(text = "Leave Game")
+                }
+                Button(
+                    onClick = onClickReady,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    enabled = enableReadyButton,
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                        .sizeIn(minWidth = 150.dp)
+                ) {
+                    Text(text = "Ready")
+                }
             }
         }
     }

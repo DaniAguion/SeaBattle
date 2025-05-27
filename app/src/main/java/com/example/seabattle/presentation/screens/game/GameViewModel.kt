@@ -3,6 +3,7 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import kotlinx.coroutines.Job
@@ -17,6 +18,7 @@ class GameViewModel(
     private val session: Session,
     private val userReadyUseCase: UserReadyUseCase,
     private val listenGameUseCase: ListenGameUseCase,
+    private val leaveGameUseCase: LeaveGameUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -62,6 +64,12 @@ class GameViewModel(
             return false
         } else {
             return true
+        }
+    }
+
+    fun onUserLeave() {
+        viewModelScope.launch {
+            leaveGameUseCase.invoke()
         }
     }
 
