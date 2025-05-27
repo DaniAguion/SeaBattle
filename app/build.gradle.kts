@@ -85,6 +85,9 @@ dependencies {
     // Image loading
     implementation (libs.coil.compose)
 
+    // Timber for logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

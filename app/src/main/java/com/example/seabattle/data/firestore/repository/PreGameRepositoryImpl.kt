@@ -38,6 +38,7 @@ class PreGameRepositoryImpl(
     override fun fetchRooms() : Flow<Result<List<Room>>> = callbackFlow {
         val listener = roomsCollection
             .whereEqualTo("numberOfPlayers", 1)
+            .whereEqualTo("roomState", RoomState.WAITING_FOR_PLAYER.name)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(Result.failure(error))

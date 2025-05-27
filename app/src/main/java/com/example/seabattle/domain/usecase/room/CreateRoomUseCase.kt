@@ -6,6 +6,7 @@ import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import timber.log.Timber
 
 class CreateRoomUseCase(
     val preGameRepository: PreGameRepository,

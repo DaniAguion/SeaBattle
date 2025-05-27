@@ -19,11 +19,16 @@ data class Game(
     val updatedAt: Date? = null
 )
 
+
+// This enum represents the possible states of a game.
+// The timeout and game abandoned states are used to handle cases where a player does not respond in time or leaves the game.
+// This cases are controlled by the server through cloud functions.
 enum class GameState {
     CHECK_READY,
     IN_PROGRESS,
     PLAYER_1_WON,
     PLAYER_2_WON,
-    PLAYER_1_DISCONNECTED,
-    PLAYER_2_DISCONNECTED
+    PLAYER_1_TIMEOUT,
+    PLAYER_2_TIMEOUT,
+    GAME_ABANDONED
 }

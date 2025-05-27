@@ -17,6 +17,7 @@ data class Room(
 enum class RoomState {
     WAITING_FOR_PLAYER,
     SECOND_PLAYER_JOINED,
+    ROOM_ABANDONED,
     GAME_CREATED,
-    GAME_STARTING
+    GAME_STARTING,
 }

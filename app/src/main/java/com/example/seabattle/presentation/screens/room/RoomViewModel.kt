@@ -29,14 +29,11 @@ class RoomViewModel(
 
 
     init {
-        // Observe the current room and listen for updates
+        // Observe the assigned room and start listening for updates
         listenRoomJob = viewModelScope.launch {
-            session.currentRoom.first { room ->
-                if (room != null) {
-                    listenRoomUseCase.invoke(room.roomId)
-                        .onSuccess { return@first true }
-                }
-                false
+            val room = session.getCurrentRoom()
+            if (room != null) {
+                listenRoomUseCase.invoke(room.roomId)
             }
         }
 

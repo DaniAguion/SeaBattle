@@ -63,7 +63,7 @@ class WaitRoomUseCase(
                         session.setCurrentGame(game)
                     }
                 }
-                RoomState.GAME_STARTING.name -> {
+                RoomState.GAME_STARTING.name, RoomState.ROOM_ABANDONED.name  -> {
                     // Delete the room if it wasn't deleted yet and clear the room from the session.
                     val room = preGameRepository.getRoom(roomId).getOrNull()
                     if (room != null) {
