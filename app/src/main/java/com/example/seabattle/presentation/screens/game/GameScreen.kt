@@ -1,7 +1,7 @@
 package com.example.seabattle.presentation.screens.game
 
+
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,13 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,9 +34,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -41,7 +44,7 @@ import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
+
 
 @Composable
 fun GameScreen(
@@ -50,6 +53,7 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
+    var showLeaveDialog by remember { mutableStateOf(false) }
 
 
     // Stop listeners when the screen is disposed
@@ -59,17 +63,12 @@ fun GameScreen(
         }
     }
 
-    // If the user presses the back button, leave the game and navigate to the home screen
+    // If the user presses the back button, show a confirmation dialog
     BackHandler(
-        onBack = {
-            gameViewModel.onUserLeave()
-            navController.navigate(SeaBattleScreen.Home.title){
-                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-            }
-        }
+        onBack = { showLeaveDialog = true }
     )
 
-    // Observe the game state and navigate to the home screen if the game has ended
+    // Observe the game state and navigate to the home screen if the game has been deleted or aborted
     LaunchedEffect(key1 = gameUiState.game) {
         val game = gameUiState.game
         if (game!= null && game.gameState == GameState.GAME_ABORTED.name) {
@@ -86,8 +85,46 @@ fun GameScreen(
         game = gameUiState.game,
         onClickReady = gameViewModel::onClickReady,
         enableReadyButton = gameViewModel::enableReadyButton,
-        onUserLeave = gameViewModel::onUserLeave
+        onClickLeave = { showLeaveDialog = true }
     )
+
+
+    // Show a dialog to confirm the user wants to leave the game
+    if (showLeaveDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showLeaveDialog = false
+            },
+            title = {
+                Text("Confirm you want to leave")
+            },
+            text = {
+                Text("¿Are you sure you want to leave?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showLeaveDialog = false
+                        gameViewModel.onUserLeave()
+                        navController.navigate(SeaBattleScreen.Home.title){
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                        }
+                    }
+                ) {
+                    Text("Leave")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showLeaveDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -96,7 +133,7 @@ fun GameScreenContent(
     game: Game?,
     onClickReady: () -> Unit = {},
     enableReadyButton: () -> Boolean = { true },
-    onUserLeave: () -> Unit = {}
+    onClickLeave: () -> Unit = {}
 ) {
     if (game == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -127,7 +164,7 @@ fun GameScreenContent(
                     game = game,
                     onClickReady = onClickReady,
                     enableReadyButton = enableReadyButton(),
-                    onClickLeave = onUserLeave
+                    onClickLeave = onClickLeave
                 )
             }
         }

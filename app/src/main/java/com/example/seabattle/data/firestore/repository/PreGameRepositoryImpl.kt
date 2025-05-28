@@ -176,7 +176,7 @@ class PreGameRepositoryImpl(
                 val roomDto = snapshot.toObject(RoomDto::class.java)
                     ?: throw Exception("Room data is corrupted")
 
-                // Check if the room conditions are met for deletion
+                // Room can be deleted only if it is in WAITING_FOR_PLAYER or GAME_STARTING state
                 if (roomDto.roomState == RoomState.WAITING_FOR_PLAYER.name ||
                     roomDto.roomState == RoomState.GAME_STARTING.name)
                 {

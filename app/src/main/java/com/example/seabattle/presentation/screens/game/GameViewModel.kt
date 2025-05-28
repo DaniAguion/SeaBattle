@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class GameViewModel(
@@ -57,6 +56,7 @@ class GameViewModel(
         }
     }
 
+
     fun enableReadyButton() : Boolean {
         val userId = session.getCurrentUserId()
         if (userId == uiState.value.game?.player1?.userId && uiState.value.game?.player1Ready == true) {
@@ -68,6 +68,7 @@ class GameViewModel(
         }
     }
 
+
     fun onUserLeave() {
         viewModelScope.launch {
             leaveGameUseCase.invoke()
@@ -78,6 +79,7 @@ class GameViewModel(
     fun onCellClick(x: Int, y: Int) {
         //_uiState.value = _uiState.value.copy(gameBoard = discoverCellUseCase(x, y))
     }
+
 
     fun stopListening() {
         listenGameJob?.cancel()
