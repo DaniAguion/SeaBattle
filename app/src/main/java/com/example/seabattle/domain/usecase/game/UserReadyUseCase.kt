@@ -20,7 +20,7 @@ class UserReadyUseCase(
                 throw IllegalStateException("User is not logged in or game is not set")
             }
 
-            gameRepository.updateUserReady(gameId, userId).getOrThrow()
+            gameRepository.confirmReady(gameId, userId).getOrThrow()
         }
     }
 }

@@ -1,11 +1,12 @@
 package com.example.seabattle.di
 
-import com.example.seabattle.domain.services.BoardManager
+import com.example.seabattle.data.GameBoardRepositoryImpl
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.data.firebase.AuthRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserRepositoryImpl
 import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
 import com.example.seabattle.data.firestore.repository.PreGameRepositoryImpl
+import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.PreGameRepository
@@ -25,6 +26,5 @@ val dataModule = module {
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<GameRepository> { GameRepositoryImpl(get(), get()) }
     single<PreGameRepository> { PreGameRepositoryImpl(get(), get()) }
-    // Managers
-    single { BoardManager() }
+    single<GameBoardRepository> { GameBoardRepositoryImpl() }
 }

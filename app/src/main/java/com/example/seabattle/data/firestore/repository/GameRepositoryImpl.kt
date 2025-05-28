@@ -1,12 +1,9 @@
 package com.example.seabattle.data.firestore.repository
 
-import android.util.Log
 import com.example.seabattle.data.firestore.dto.GameDto
-import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,7 +58,7 @@ class GameRepositoryImpl(
 
 
 
-    override suspend fun updateUserReady(gameId: String, userId: String) : Result<Unit>
+    override suspend fun confirmReady(gameId: String, userId: String) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             db.runTransaction { transaction ->

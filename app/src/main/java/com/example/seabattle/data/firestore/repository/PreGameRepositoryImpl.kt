@@ -192,8 +192,12 @@ class PreGameRepositoryImpl(
 
 
     // Function to create a new game from the room
-    override suspend fun createGame(gameId: String, roomId: String) : Result<Unit>
-    = withContext(ioDispatcher) {
+    override suspend fun createGame(
+        gameId: String,
+        roomId: String,
+        player1Board: Map<String, Map<String, Int>>,
+        player2Board: Map<String, Map<String, Int>>
+    ) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             db.runTransaction {  transaction ->
                 val roomDocument = roomsCollection.document(roomId)
@@ -213,6 +217,8 @@ class PreGameRepositoryImpl(
                 val gameCreationDto = GameCreationDto(
                     gameId = gameId,
                     player1 = roomDto.player1,
+                    player1Board = player1Board,
+                    player2Board = player2Board,
                     player2 = roomDto.player2,
                     gameState = GameState.CHECK_READY.name,
                     currentPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random(),

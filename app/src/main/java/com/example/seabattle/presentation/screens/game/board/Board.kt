@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.resources
+package com.example.seabattle.presentation.screens.game.board
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable

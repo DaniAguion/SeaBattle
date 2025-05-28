@@ -1,42 +1,53 @@
-package com.example.seabattle.domain.services
+package com.example.seabattle.data
 
-import com.example.seabattle.domain.entity.GameBoard
+
 import com.example.seabattle.domain.entity.Position
-import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipDirection
+import com.example.seabattle.domain.repository.GameBoardRepository
+import timber.log.Timber
 
-class BoardManager {
-    private val gameBoard: GameBoard = GameBoard()
-    val gameBoardSize: Int = gameBoard.cells.size
-    val ships: List<Ship>
 
-    init {
-        ships = seedGameBoard()
+class GameBoardRepositoryImpl() : GameBoardRepository {
+    val gameBoardSize: Int = 10
+
+    // Initializing a game board with 10 rows and 10 columns, all cells set to 0
+    var gameBoard: MutableList<MutableList<Int>> = MutableList(gameBoardSize) {
+        MutableList(gameBoardSize) { 0 }
+    }
+
+    // Function to set the position of the ships on the game board
+    // The game board is mapped to a Map<String, Map<String, Int>> format to be handle by the repository
+    override fun createGameBoard(): Result<Map<String, Map<String, Int>>> {
+        return runCatching {
+            // Reset the game board to a new state so that it can be reused
+            gameBoard = MutableList(gameBoardSize) {
+                MutableList(gameBoardSize) { 0 }
+            }
+
+            val shipSizes = listOf(5, 4, 3, 3, 2)
+            shipSizes.map { size ->
+                setPosition(size)
+            }
+            gameBoard.mapIndexed { x, row ->
+                x.toString() to row.mapIndexed { y, cell ->
+                    y.toString() to cell
+                }.toMap()
+            }.toMap()
+        }.onFailure {
+            Timber.e("Error creating game board: ${it.message}")
+        }
     }
 
 
-    fun getGameBoard(): GameBoard {
-        return gameBoard
-    }
-
-
-    // Function to define ships positions
-    private fun seedGameBoard() : List<Ship> {
-        val shipSizes = listOf(5, 4, 3, 3, 2)
-        return shipSizes.map { size -> Ship(size, setPosition(size)) }
-    }
-
-
-    // Function to set the position of a ship on the game board
-    private fun setPosition(shipSize: Int) : Position {
+    // Function to set the position of a ship of determined size on the game board
+    private fun setPosition(shipSize: Int) : Unit {
         val position = definePosition(shipSize)
 
         for (i in 0 until shipSize)
             when (position.shipDirection) {
-                ShipDirection.VERTICAL -> gameBoard.cells[position.x][position.y + i] = 1
-                ShipDirection.HORIZONTAL -> gameBoard.cells[position.x + i][position.y] = 1
+                ShipDirection.VERTICAL -> gameBoard[position.x][position.y + i] = 1
+                ShipDirection.HORIZONTAL -> gameBoard[position.x + i][position.y] = 1
             }
-        return position
     }
 
 
@@ -83,19 +94,9 @@ class BoardManager {
 
         for (x in xMin..xMax) {
             for (y in yMin .. yMax) {
-                if (gameBoard.cells[x][y] != 0) return false
+                if (gameBoard[x][y] != 0) return false
             }
         }
         return true
-    }
-
-
-    fun discoverCell(x: Int, y: Int) : GameBoard {
-        when (gameBoard.cells[x][y]) {
-            0 -> gameBoard.cells[x][y] = 2
-            1 -> gameBoard.cells[x][y] = 3
-            else -> gameBoard.cells[x][y] = gameBoard.cells[x][y]
-        }
-        return gameBoard
     }
 }

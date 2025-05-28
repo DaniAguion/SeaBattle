@@ -4,6 +4,7 @@ package com.example.seabattle.domain.usecase.room
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.PreGameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -13,6 +14,7 @@ import java.util.UUID
 class WaitRoomUseCase(
     val preGameRepository: PreGameRepository,
     val gameRepository: GameRepository,
+    val gameBoardRepository: GameBoardRepository,
     val ioDispatcher: CoroutineDispatcher,
     val session: Session,
 ) {
@@ -41,7 +43,9 @@ class WaitRoomUseCase(
                     if (userId == room.player1.userId) {
                         // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
                         val gameId = UUID.randomUUID().toString()
-                        preGameRepository.createGame(gameId, roomId).getOrThrow()
+                        val player1Board = gameBoardRepository.createGameBoard().getOrThrow()
+                        val player2Board = gameBoardRepository.createGameBoard().getOrThrow()
+                        preGameRepository.createGame(gameId, roomId, player1Board, player2Board).getOrThrow()
 
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
