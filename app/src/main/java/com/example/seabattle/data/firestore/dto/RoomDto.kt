@@ -28,11 +28,11 @@ data class RoomDto(
     val roomId: String = "",
     val roomName: String = "",
     val roomState: String = "",
-    val numberOfPlayers: Int = 0,
+    val numberOfPlayers: Int = 1,
     val player1: UserBasic = UserBasic(),
     val player2: UserBasic? = null,
     val gameId: String? = null,
-    val createdAt: Date? = null,
-    val updatedAt: Date? = null,
+    val createdAt: Date = Date(),
+    val updatedAt: Date = Date(),
 )
 

@@ -1,5 +1,6 @@
 package com.example.seabattle.data.firestore.repository
 
+import timber.log.Timber
 import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.RoomCreationDto
@@ -45,10 +46,20 @@ class PreGameRepositoryImpl(
                     return@addSnapshotListener
                 }
 
-                val rooms = snapshot?.documents?.mapNotNull { document ->
-                    document.toObject(RoomDto::class.java)?.toRoomEntity()
-                } ?: emptyList()
+                if (snapshot == null) {
+                    trySend(Result.success(emptyList()))
+                    return@addSnapshotListener
+                }
 
+                val rooms = snapshot.documents.mapNotNull { document ->
+                    try {
+                        document.toObject(RoomDto::class.java)?.toRoomEntity()
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error to deserialize document: ${document.id}")
+                        trySend(Result.failure(e))
+                        return@addSnapshotListener
+                    }
+                }
                 trySend(Result.success(rooms))
             }
         awaitClose { listener.remove() }
@@ -75,7 +86,14 @@ class PreGameRepositoryImpl(
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache()) {
-                    val roomEntity = snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
+                    val roomEntity = try {
+                        snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error to deserialize roomId: ${roomId}")
+                        trySend(Result.failure(e))
+                        return@addSnapshotListener
+                    }
+
                     if (roomEntity == null) {
                         trySend(Result.failure(Exception("Room not found")))
                         return@addSnapshotListener
