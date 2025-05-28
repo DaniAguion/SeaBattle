@@ -45,7 +45,13 @@ class GameRepositoryImpl(
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache()) {
-                    val gameEntity = snapshot.toObject(GameDto::class.java)?.toGameEntity()
+                    val gameEntity = try {
+                        snapshot.toObject(GameDto::class.java)?.toGameEntity()
+                    } catch (e: Exception) {
+                        Timber.e("Error converting game data: ${e.message}")
+                        trySend(Result.failure(e))
+                        return@addSnapshotListener
+                    }
                     if (gameEntity == null) {
                         trySend(Result.failure(Exception("Game not found")))
                         return@addSnapshotListener

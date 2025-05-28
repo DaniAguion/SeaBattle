@@ -89,7 +89,7 @@ class PreGameRepositoryImpl(
                     val roomEntity = try {
                         snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
                     } catch (e: Exception) {
-                        Timber.e(e, "Error to deserialize roomId: ${roomId}")
+                        Timber.e(e, "Error to deserialize roomId: $roomId")
                         trySend(Result.failure(e))
                         return@addSnapshotListener
                     }
