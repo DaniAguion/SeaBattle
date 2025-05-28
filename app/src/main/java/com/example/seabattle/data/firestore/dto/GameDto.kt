@@ -1,5 +1,6 @@
 package com.example.seabattle.data.firestore.dto
 
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.UserBasic
 import com.google.firebase.firestore.FieldValue
 import java.util.Date
@@ -14,9 +15,11 @@ data class GameCreationDto(
     val player1: UserBasic = UserBasic(),
     val player1Ready: Boolean = false,
     val player1Board: Map<String, Map<String, Int>> = emptyMap(),
+    val player1Ships: List<Ship> = emptyList(),
     val player2: UserBasic = UserBasic(),
     val player2Ready: Boolean = false,
     val player2Board: Map<String, Map<String, Int>> = emptyMap(),
+    val player2Ships: List<Ship> = emptyList(),
     val currentTurn: Int = 1,
     val currentPlayer: String = "",
     val gameState: String = "",
@@ -34,9 +37,11 @@ data class GameDto(
     val player1: UserBasic = UserBasic(),
     var player1Ready: Boolean = false,
     var player1Board: Map<String, Map<String, Int>> = emptyMap(),
+    val player1Ships: List<Ship> = emptyList(),
     val player2: UserBasic = UserBasic(),
     var player2Ready: Boolean = false,
     var player2Board: Map<String, Map<String, Int>> = emptyMap(),
+    val player2Ships: List<Ship> = emptyList(),
     var currentTurn: Int = 1,
     var currentPlayer: String = "",
     var gameState: String = "",

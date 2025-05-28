@@ -1,18 +1,13 @@
 package com.example.seabattle.domain.entity
 
 data class Ship(
-    val size: Int,
-    val position: Position = Position(0, 0, ShipDirection.VERTICAL),
+    val size: Int = 0,
+    val shipBody: MutableList<ShipPiece> = MutableList(size) { ShipPiece() },
+    val isSinked: Boolean = false
 )
 
-data class Position (
-    val x: Int,
-    val y: Int,
-    val shipDirection: ShipDirection
+data class ShipPiece(
+    val x: Int = 0,
+    val y: Int = 0,
+    val isHit: Boolean = false
 )
-
-// The direction is done taking the top of the boat as static point.
-enum class ShipDirection {
-    VERTICAL,
-    HORIZONTAL
-}

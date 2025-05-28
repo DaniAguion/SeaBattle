@@ -2,6 +2,7 @@ package com.example.seabattle.domain.repository
 
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.User
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +17,9 @@ interface PreGameRepository {
         gameId: String,
         roomId: String,
         player1Board: Map<String, Map<String, Int>>,
-        player2Board: Map<String, Map<String, Int>>
+        player1Ships: List<Ship>,
+        player2Board: Map<String, Map<String, Int>>,
+        player2Ships: List<Ship>
     ) : Result<Unit>
     suspend fun joinGame(gameId: String, roomId: String) : Result<Game>
 }

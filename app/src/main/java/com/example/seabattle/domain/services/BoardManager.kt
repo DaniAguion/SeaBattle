@@ -7,6 +7,7 @@ import com.example.seabattle.domain.entity.ShipDirection
 
 class BoardManager {
     private val gameBoard: GameBoard = GameBoard()
+    /*
     val gameBoardSize: Int = gameBoard.cells.size
     val ships: List<Ship>
 
@@ -98,4 +99,6 @@ class BoardManager {
         }
         return gameBoard
     }
+
+     */
 }

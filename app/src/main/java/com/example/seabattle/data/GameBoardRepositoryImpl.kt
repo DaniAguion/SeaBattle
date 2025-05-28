@@ -1,59 +1,69 @@
 package com.example.seabattle.data
 
-
-import com.example.seabattle.domain.entity.Position
+import com.example.seabattle.domain.entity.ShipPosition
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipDirection
 import com.example.seabattle.domain.repository.GameBoardRepository
-import timber.log.Timber
 
 
 class GameBoardRepositoryImpl() : GameBoardRepository {
-    val gameBoardSize: Int = 10
-
-    // Initializing a game board with 10 rows and 10 columns, all cells set to 0
-    var gameBoard: MutableList<MutableList<Int>> = MutableList(gameBoardSize) {
+    private val gameBoardSize: Int = 10
+    private var gameBoard: MutableList<MutableList<Int>> = MutableList(gameBoardSize) {
         MutableList(gameBoardSize) { 0 }
     }
+    private var shipList: MutableList<Ship> = mutableListOf()
 
     // Function to set the position of the ships on the game board
     // The game board is mapped to a Map<String, Map<String, Int>> format to be handle by the repository
-    override fun createGameBoard(): Result<Map<String, Map<String, Int>>> {
+    override fun createGameBoard(): Result<Unit> {
         return runCatching {
             // Reset the game board to a new state so that it can be reused
-            gameBoard = MutableList(gameBoardSize) {
-                MutableList(gameBoardSize) { 0 }
-            }
+            gameBoard = MutableList(gameBoardSize) { MutableList(gameBoardSize) { 0 } }
+            shipList.clear()
 
             val shipSizes = listOf(5, 4, 3, 3, 2)
             shipSizes.map { size ->
-                setPosition(size)
+                shipList.add(setShipPosition(size))
             }
-            gameBoard.mapIndexed { x, row ->
-                x.toString() to row.mapIndexed { y, cell ->
-                    y.toString() to cell
-                }.toMap()
-            }.toMap()
-        }.onFailure {
-            Timber.e("Error creating game board: ${it.message}")
         }
     }
 
+    override fun getGameBoard(): Map<String, Map<String, Int>> {
+        return gameBoard.mapIndexed { x, row ->
+            x.toString() to row.mapIndexed { y, cell ->
+                y.toString() to cell
+            }.toMap()
+        }.toMap()
+    }
 
-    // Function to set the position of a ship of determined size on the game board
-    private fun setPosition(shipSize: Int) : Unit {
+    override fun getShipList(): List<Ship> {
+        return shipList.toList()
+    }
+
+    // This function places the ship on the game board and returns the Ship object
+    private fun setShipPosition(shipSize: Int) : Ship {
         val position = definePosition(shipSize)
+        val ship = Ship(size = shipSize)
 
         for (i in 0 until shipSize)
             when (position.shipDirection) {
-                ShipDirection.VERTICAL -> gameBoard[position.x][position.y + i] = 1
-                ShipDirection.HORIZONTAL -> gameBoard[position.x + i][position.y] = 1
+                ShipDirection.VERTICAL -> {
+                    gameBoard[position.x][position.y + i] = 1
+                    ship.shipBody[i] = ship.shipBody[i].copy(x = position.x, y = position.y + i)
+                }
+
+                ShipDirection.HORIZONTAL -> {
+                    gameBoard[position.x + i][position.y] = 1
+                    ship.shipBody[i] = ship.shipBody[i].copy(x = position.x + i, y = position.y)
+                }
             }
+        return ship
     }
 
 
     // Function to define a random position for a ship on the game board
     // This function tries different positions and directions until it finds a valid one
-    private fun definePosition(shipSize: Int): Position {
+    private fun definePosition(shipSize: Int): ShipPosition {
         while (true) {
             val shipDirection = ShipDirection.entries.random()
             var x0: Int
@@ -78,7 +88,7 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
 
             // Check if the random position is valid
             if (checkPosition(x0, x1, y0, y1)) {
-                return Position(x0, y0, shipDirection)
+                return ShipPosition(x0, y0, shipDirection)
             }
         }
     }

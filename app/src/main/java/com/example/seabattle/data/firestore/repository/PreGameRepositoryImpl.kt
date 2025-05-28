@@ -11,6 +11,7 @@ import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.repository.PreGameRepository
@@ -214,7 +215,9 @@ class PreGameRepositoryImpl(
         gameId: String,
         roomId: String,
         player1Board: Map<String, Map<String, Int>>,
-        player2Board: Map<String, Map<String, Int>>
+        player1Ships: List<Ship>,
+        player2Board: Map<String, Map<String, Int>>,
+        player2Ships: List<Ship>
     ) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             db.runTransaction {  transaction ->
@@ -236,8 +239,10 @@ class PreGameRepositoryImpl(
                     gameId = gameId,
                     player1 = roomDto.player1,
                     player1Board = player1Board,
-                    player2Board = player2Board,
+                    player1Ships = player1Ships,
                     player2 = roomDto.player2,
+                    player2Board = player2Board,
+                    player2Ships = player2Ships,
                     gameState = GameState.CHECK_READY.name,
                     currentPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random(),
                 )

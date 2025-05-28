@@ -3,6 +3,7 @@ package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.PreGameRepository
@@ -43,9 +44,24 @@ class WaitRoomUseCase(
                     if (userId == room.player1.userId) {
                         // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
                         val gameId = UUID.randomUUID().toString()
-                        val player1Board = gameBoardRepository.createGameBoard().getOrThrow()
-                        val player2Board = gameBoardRepository.createGameBoard().getOrThrow()
-                        preGameRepository.createGame(gameId, roomId, player1Board, player2Board).getOrThrow()
+
+                        // Create game board for player 1 and ship list.
+                        gameBoardRepository.createGameBoard().getOrThrow()
+                        val player1Board = gameBoardRepository.getGameBoard()
+                        val player1Ships = gameBoardRepository.getShipList()
+                        // Create the game board for player 2.
+                        gameBoardRepository.createGameBoard().getOrThrow()
+                        val player2Board = gameBoardRepository.getGameBoard()
+                        val player2Ships = gameBoardRepository.getShipList()
+
+                        preGameRepository.createGame(
+                            gameId,
+                            roomId,
+                            player1Board,
+                            player1Ships,
+                            player2Board,
+                            player2Ships,
+                        ).getOrThrow()
 
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
