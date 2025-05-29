@@ -18,25 +18,26 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.content.ContextCompat.getColor
-import com.example.seabattle.domain.entity.GameBoard
 
 
 @Composable
 fun Board(
-    gameBoard: GameBoard,
-    onCellClick: (row: Int, col: Int) -> Unit
+    gameBoard: Map<String, Map<String, Int>>,
+    onCellClick: (row: Int, col: Int) -> Unit,
+    clickEnabled: Boolean
 ) {
     Column(
         modifier = Modifier
     ) {
-        for (i in 0 until gameBoard.cells.size) {
+        for (i in 0 until gameBoard.size) {
             Row {
-                for (j in 0 until gameBoard.cells[i].size) {
+                for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
                     Cell(
-                        cellValue = gameBoard.cells[i][j],
+                        cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
                         onCellClick = {
                             onCellClick(i, j)
-                        }
+                        },
+                        clickEnabled = clickEnabled
                     )
                 }
             }
@@ -48,7 +49,8 @@ fun Board(
 @Composable
 fun Cell(
     cellValue: Int,
-    onCellClick: () -> Unit
+    onCellClick: () -> Unit,
+    clickEnabled: Boolean
 ) {
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
@@ -62,7 +64,7 @@ fun Cell(
             else -> CellStyle.Water
         }
 
-    val cellClickable = cellStyle.clickable
+    val cellClickable = if (clickEnabled) cellStyle.clickable else false
     val cellColor : Color = colorResource(id = cellStyle.backgroundColor)
     val targetColorId = cellStyle.targetColor
     val targetSize = dimensionResource(cellStyle.targetSize)
@@ -108,7 +110,19 @@ fun Cell(
 @Composable
 fun BattlePlanPreview(){
     Board(
-        gameBoard = GameBoard(),
-        onCellClick = { _, _ ->  } // Dummy click handler for preview
+        gameBoard = mapOf(
+            "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+            "1" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+            "2" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+            "3" to mapOf("0" to 0, "1" to 1, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 0),
+            "4" to mapOf("0" to 0, "1" to 1, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 0),
+            "5" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+            "6" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+            "7" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+            "8" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+            "9" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0)
+        ),
+        onCellClick = { _, _ ->  }, // Dummy click handler for preview
+        clickEnabled = true
     )
 }

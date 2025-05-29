@@ -39,8 +39,9 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameBoard
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.Ship
+import com.example.seabattle.domain.entity.ShipPiece
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel
@@ -85,7 +86,9 @@ fun GameScreen(
         game = gameUiState.game,
         onClickReady = gameViewModel::onClickReady,
         enableReadyButton = gameViewModel::enableReadyButton,
-        onClickLeave = { showLeaveDialog = true }
+        onClickLeave = { showLeaveDialog = true },
+        onClickCell = gameViewModel::onClickCell,
+        enableClickCell = gameViewModel::enableClickCell
     )
 
 
@@ -133,7 +136,9 @@ fun GameScreenContent(
     game: Game?,
     onClickReady: () -> Unit = {},
     enableReadyButton: () -> Boolean = { true },
-    onClickLeave: () -> Unit = {}
+    onClickLeave: () -> Unit = {},
+    onClickCell: (row: Int, col: Int) -> Unit = { _, _ -> },
+    enableClickCell: (gameBoardOwner: String) -> Boolean = { true }
 ) {
     if (game == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -165,6 +170,17 @@ fun GameScreenContent(
                     onClickReady = onClickReady,
                     enableReadyButton = enableReadyButton(),
                     onClickLeave = onClickLeave
+                )
+            }
+        }
+
+
+        if (game.gameState == GameState.IN_PROGRESS.name) {
+            item {
+                PlayingSection(
+                    gameBoard = game.player1Board,
+                    onClickCell = onClickCell,
+                    clickEnabled = enableClickCell("player1")
                 )
             }
         }
@@ -239,12 +255,138 @@ fun GameScreenPreview(){
     GameScreenContent(
         modifier = Modifier.fillMaxSize(),
         game = Game(
-            gameId = "123",
-            player1 = UserBasic("userId", "Daniel"),
-            player1Board = GameBoard().toMapOfMaps(),
-            player2 = UserBasic("userId", "PedroPablo80"),
-            player2Board = GameBoard().toMapOfMaps(),
-            gameState = GameState.CHECK_READY.name
+            gameId="f074ffb3-2bdd-4edc-97b4-8a423d3705af",
+            player1=UserBasic(userId="dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName="MeuPixel", photoUrl=""),
+            player1Board = mapOf(
+                "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "1" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "2" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "3" to mapOf("0" to 0, "1" to 1, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 0),
+                "4" to mapOf("0" to 0, "1" to 1, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 0),
+                "5" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+                "6" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+                "7" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 0, "8" to 0, "9" to 1),
+                "8" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "9" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0)
+            ),
+            player1Ready=false,
+            player1Ships = listOf(
+                Ship(
+                    size = 5,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 3, y = 6, touched = false),
+                        ShipPiece(x = 4, y = 6, touched = false),
+                        ShipPiece(x = 5, y = 6, touched = false),
+                        ShipPiece(x = 6, y = 6, touched = false),
+                        ShipPiece(x = 7, y = 6, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 4,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 0, y = 0, touched = false),
+                        ShipPiece(x = 0, y = 1, touched = false),
+                        ShipPiece(x = 0, y = 2, touched = false),
+                        ShipPiece(x = 0, y = 3, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 3,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 8, y = 0, touched = false),
+                        ShipPiece(x = 8, y = 1, touched = false),
+                        ShipPiece(x = 8, y = 2, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 3,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 5, y = 9, touched = false),
+                        ShipPiece(x = 6, y = 9, touched = false),
+                        ShipPiece(x = 7, y = 9, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 2,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 3, y = 1, touched = false),
+                        ShipPiece(x = 4, y = 1, touched = false)
+                    ),
+                    sunk = false
+                )
+            ),
+            player2=UserBasic(userId="MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName="Daniel", photoUrl="https://lh3.googleusercontent.com/a/ACg8ocJNvKdeillcj8hhgyN3qMbyXCTUtC3Hcm5-p9HwRFHEos2tcsQ=s96-c"),
+            player2Ready = false,
+            player2Board = mapOf(
+                "0" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 1, "8" to 1, "9" to 0),
+                "1" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 1, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "2" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "3" to mapOf("0" to 1, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "4" to mapOf("0" to 1, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "5" to mapOf("0" to 1, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 1, "9" to 0),
+                "6" to mapOf("0" to 0, "1" to 0, "2" to 1, "3" to 1, "4" to 1, "5" to 1, "6" to 0, "7" to 0, "8" to 1, "9" to 0),
+                "7" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "8" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
+                "9" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0)
+            ),
+            player2Ships = listOf(
+                Ship(
+                    size = 5,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 1, y = 0, touched = false),
+                        ShipPiece(x = 1, y = 1, touched = false),
+                        ShipPiece(x = 1, y = 2, touched = false),
+                        ShipPiece(x = 1, y = 3, touched = false),
+                        ShipPiece(x = 1, y = 4, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 4,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 6, y = 2, touched = false),
+                        ShipPiece(x = 6, y = 3, touched = false),
+                        ShipPiece(x = 6, y = 4, touched = false),
+                        ShipPiece(x = 6, y = 5, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 3,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 0, y = 6, touched = false),
+                        ShipPiece(x = 0, y = 7, touched = false),
+                        ShipPiece(x = 0, y = 8, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 3,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 3, y = 0, touched = false),
+                        ShipPiece(x = 4, y = 0, touched = false),
+                        ShipPiece(x = 5, y = 0, touched = false)
+                    ),
+                    sunk = false
+                ),
+                Ship(
+                    size = 2,
+                    shipBody = mutableListOf(
+                        ShipPiece(x = 5, y = 8, touched = false),
+                        ShipPiece(x = 6, y = 8, touched = false)
+                    ),
+                    sunk = false
+                )
+            ),
+            currentTurn=1,
+            currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
+            gameState="CHECK_READY",
+            gameFinished=false,
+            winnerId=null
         )
     )
 }

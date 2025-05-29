@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class GameViewModel(
@@ -75,11 +76,27 @@ class GameViewModel(
         }
     }
 
-
-    fun onCellClick(x: Int, y: Int) {
-        //_uiState.value = _uiState.value.copy(gameBoard = discoverCellUseCase(x, y))
+    fun onClickCell(x: Int, y: Int){
+        // TO DO
     }
 
+    fun enableClickCell(gameBoardOwner: String) : Boolean {
+        val userId = session.getCurrentUserId()
+        if (
+            userId == uiState.value.game?.currentPlayer
+            && (uiState.value.game?.currentPlayer == uiState.value.game?.player1?.userId)
+            && gameBoardOwner == "player1"
+        ) {
+            return true
+        } else if (
+            userId == uiState.value.game?.currentPlayer
+            && (uiState.value.game?.currentPlayer == uiState.value.game?.player2?.userId)
+            && gameBoardOwner == "player2"
+        ) {
+            return true
+        }
+        else return false
+    }
 
     fun stopListening() {
         listenGameJob?.cancel()

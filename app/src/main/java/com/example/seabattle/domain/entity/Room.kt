@@ -10,8 +10,8 @@ data class Room(
     val player1: UserBasic = UserBasic(),
     val player2: UserBasic? = null,
     val gameId: String? = null,
-    val createdAt: Date = Date(),
-    val updatedAt: Date = Date()
+    val createdAt: Date? = Date(),
+    val updatedAt: Date? = Date()
 )
 
 enum class RoomState {
