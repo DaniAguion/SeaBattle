@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.game
+package com.example.seabattle.presentation.screens.game.resources
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

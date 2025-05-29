@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.game.board
+package com.example.seabattle.presentation.screens.game.resources
 
 import com.example.seabattle.R
 

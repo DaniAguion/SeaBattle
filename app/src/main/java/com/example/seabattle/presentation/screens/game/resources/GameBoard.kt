@@ -1,44 +1,57 @@
-package com.example.seabattle.presentation.screens.game.board
+package com.example.seabattle.presentation.screens.game.resources
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import com.example.seabattle.R
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Card
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getColor
+import com.example.seabattle.R
 
 
 @Composable
-fun Board(
+fun GameBoard(
     gameBoard: Map<String, Map<String, Int>>,
-    onCellClick: (row: Int, col: Int) -> Unit,
+    onClickCell: (row: Int, col: Int) -> Unit,
     clickEnabled: Boolean
 ) {
-    Column(
+    Card(
         modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.padding_medium))
     ) {
-        for (i in 0 until gameBoard.size) {
-            Row {
-                for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
-                    Cell(
-                        cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
-                        onCellClick = {
-                            onCellClick(i, j)
-                        },
-                        clickEnabled = clickEnabled
-                    )
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            for (i in 0 until gameBoard.size) {
+                Row {
+                    for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
+                        Cell(
+                            cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
+                            onClickCell = { onClickCell(i, j) },
+                            clickEnabled = clickEnabled
+                        )
+                    }
                 }
             }
         }
@@ -49,7 +62,7 @@ fun Board(
 @Composable
 fun Cell(
     cellValue: Int,
-    onCellClick: () -> Unit,
+    onClickCell: () -> Unit,
     clickEnabled: Boolean
 ) {
     val context = LocalContext.current
@@ -74,9 +87,7 @@ fun Cell(
             .size(cellSize)
             .clickable(
                 enabled = cellClickable,
-                onClick = {
-                    onCellClick()
-                }
+                onClick = onClickCell
             ),
         shape = RectangleShape,
         color = Color.Transparent,
@@ -102,14 +113,14 @@ fun Cell(
                 .size(cellSize)
         )
     }
-
 }
 
 
-@Preview (showBackground = true)
+
+@Preview(showBackground = true)
 @Composable
-fun BattlePlanPreview(){
-    Board(
+fun PlayingSectionPreview(){
+    GameBoard(
         gameBoard = mapOf(
             "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
             "1" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
@@ -122,7 +133,7 @@ fun BattlePlanPreview(){
             "8" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
             "9" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0)
         ),
-        onCellClick = { _, _ ->  }, // Dummy click handler for preview
+        onClickCell = { row, col -> },
         clickEnabled = true
     )
 }

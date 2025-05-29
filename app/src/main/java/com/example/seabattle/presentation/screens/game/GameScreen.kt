@@ -44,6 +44,8 @@ import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipPiece
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.screens.game.resources.GameBoard
+import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -174,10 +176,9 @@ fun GameScreenContent(
             }
         }
 
-
         if (game.gameState == GameState.IN_PROGRESS.name) {
             item {
-                PlayingSection(
+                GameBoard(
                     gameBoard = game.player1Board,
                     onClickCell = onClickCell,
                     clickEnabled = enableClickCell("player1")
