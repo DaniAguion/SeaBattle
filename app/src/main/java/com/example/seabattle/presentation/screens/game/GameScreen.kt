@@ -176,13 +176,24 @@ fun GameScreenContent(
             }
         }
 
+        // During the game, each player can click on the opponent's board to make a move
         if (game.gameState == GameState.IN_PROGRESS.name) {
-            item {
-                GameBoard(
-                    gameBoard = game.player1Board,
-                    onClickCell = onClickCell,
-                    clickEnabled = enableClickCell("player1")
-                )
+            if (game.currentPlayer == game.player1.userId) {
+                item {
+                    GameBoard(
+                        gameBoard = game.player2Board,
+                        onClickCell = onClickCell,
+                        clickEnabled = enableClickCell("player1")
+                    )
+                }
+            } else {
+                item {
+                    GameBoard(
+                        gameBoard = game.player1Board,
+                        onClickCell = onClickCell,
+                        clickEnabled = enableClickCell("player2")
+                    )
+                }
             }
         }
 

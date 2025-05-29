@@ -9,4 +9,5 @@ interface GameRepository {
     suspend fun getGame(gameId: String) : Result<Game>
     suspend fun updateGame(gameId: String, newData: Map<String, Any>) : Result<Unit>
     suspend fun leaveGame(gameId: String, userId: String) : Result<Unit>
+    suspend fun makeMove(gameId: String, userId: String, x: Int, y: Int) : Result<Unit>
 }

@@ -19,6 +19,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.onFailure
 
+
 class GameRepositoryImpl(
     private val db: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher
@@ -177,6 +178,74 @@ class GameRepositoryImpl(
                     // TO DO
                 }
                 return@runTransaction
+            }.await()
+        }
+    }
+
+
+
+    override suspend fun makeMove(gameId: String, userId: String, x: Int, y: Int) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val document = gamesCollection.document(gameId)
+                val snapshot = transaction.get(document)
+
+                if (!snapshot.exists()) {
+                    throw Exception("Game not found")
+                }
+
+                val gameDto = snapshot.toObject(GameDto::class.java)
+                    ?: throw Exception("Game data is corrupted")
+
+                if (gameDto.gameState != GameState.IN_PROGRESS.name) {
+                    throw Exception("Game is not in progress state")
+                }
+
+                if (gameDto.currentPlayer != userId) {
+                    throw Exception("It's not user turn")
+                }
+
+                val gameBoard = if (gameDto.currentPlayer == gameDto.player1.userId){
+                    gameDto.player1Board
+                } else if(gameDto.currentPlayer == gameDto.player2.userId){
+                    gameDto.player2Board
+                } else { throw Exception("Player 2 cannot hit own ship") }
+
+                val row = gameBoard[x.toString()]?.toMutableMap() ?: throw Exception("Invalid cell coordinates")
+                val cellValue = row[y.toString()] ?: throw Exception("Invalid cell coordinates")
+
+                if (gameBoard[x.toString()] == null || gameBoard[x.toString()]?.get(y.toString()) == null) {
+                    throw Exception("Invalid cell coordinates")
+                }
+
+                when (cellValue) {
+                    0 -> gameBoard[x.toString()]?.put(y.toString(), 2)
+                    1 -> gameBoard[x.toString()]?.put(y.toString(), 3)
+                    else -> {
+                        throw Exception("Invalid cell")
+                        Timber.e("Invalid cell value: ${gameBoard[x.toString()]?.get(y.toString())}")
+                    }
+                }
+
+                if (gameDto.currentPlayer == gameDto.player1.userId) {
+                    transaction.update(document, mapOf(
+                        "player2Board" to gameBoard,
+                        "currentTurn" to FieldValue.increment(1),
+                        "currentPlayer" to gameDto.player2.userId,
+                        "updatedAt" to FieldValue.serverTimestamp()
+                    ))
+                } else {
+                    transaction.update(document, mapOf(
+                        "player1Board" to gameBoard,
+                        "currentTurn" to FieldValue.increment(1),
+                        "currentPlayer" to gameDto.player1.userId,
+                        "updatedAt" to FieldValue.serverTimestamp()
+                    ))
+                }
+
+
+                return@runTransaction Unit
             }.await()
         }
     }

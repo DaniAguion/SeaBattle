@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
+import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import timber.log.Timber
 class GameViewModel(
     private val session: Session,
     private val userReadyUseCase: UserReadyUseCase,
+    private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase
 ) : ViewModel() {
@@ -77,7 +79,9 @@ class GameViewModel(
     }
 
     fun onClickCell(x: Int, y: Int){
-        // TO DO
+        viewModelScope.launch {
+            makeMoveUseCase.invoke(x, y)
+        }
     }
 
     fun enableClickCell(gameBoardOwner: String) : Boolean {
