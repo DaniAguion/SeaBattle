@@ -2,6 +2,11 @@ package com.example.seabattle.presentation.screens.game
 
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.EaseOutQuart
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,8 +53,9 @@ import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
-
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 
 @Composable
 fun GameScreen(
@@ -154,7 +160,7 @@ fun GameScreenContent(
     var delayedCurrentPlayer by remember { mutableStateOf(game.currentPlayer) }
 
     LaunchedEffect(key1 = game.currentPlayer) {
-        delay(3000)
+        delay(2000)
         delayedCurrentPlayer = game.currentPlayer
     }
 
@@ -186,25 +192,40 @@ fun GameScreenContent(
         }
 
         // During the game, each player can click on the opponent's board to make a move
+        // During the game, each player can click on the opponent's board to make a move
         if (game.gameState == GameState.IN_PROGRESS.name) {
-            if (delayedCurrentPlayer == game.player1.userId) {
-                item {
-                    GameBoard(
-                        gameBoard = game.player2Board,
-                        onClickCell = onClickCell,
-                        clickEnabled = enableClickCell("player1")
-                    )
-                }
-            } else {
-                item {
-                    GameBoard(
-                        gameBoard = game.player1Board,
-                        onClickCell = onClickCell,
-                        clickEnabled = enableClickCell("player2")
-                    )
+            item {
+                AnimatedContent(
+                    targetState = delayedCurrentPlayer,
+                    transitionSpec = {
+                        if (targetState == game.player1.userId) {
+                            // If the board is for player 1, slide in from the left and slide out to the right
+                            slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeIn(tween(500)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeOut(tween(500))
+                        } else {
+                            // If the board is for player 2, slide in from the right and slide out to the left
+                            slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeIn(tween(500)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeOut(tween(500))
+                        }
+                    }, label = "GameBoardTransition"
+                ) { delayedCurrentPlayer ->
+                    if (delayedCurrentPlayer == game.player1.userId) {
+                        GameBoard(
+                            gameBoard = game.player2Board,
+                            onClickCell = onClickCell,
+                            clickEnabled = enableClickCell("player1")
+                        )
+                    } else {
+                        GameBoard(
+                            gameBoard = game.player1Board,
+                            onClickCell = onClickCell,
+                            clickEnabled = enableClickCell("player2")
+                        )
+                    }
                 }
             }
         }
+
 
         // TO DO: Add more sections for different game states
         // Screen showing the game board
