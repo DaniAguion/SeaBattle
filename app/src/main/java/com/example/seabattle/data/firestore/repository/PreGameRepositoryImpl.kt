@@ -234,6 +234,8 @@ class PreGameRepositoryImpl(
                     throw Exception("Room is not available for creating a game")
                 }
 
+                val firstPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random()
+
                 // Create the game document
                 val gameCreationDto = GameCreationDto(
                     gameId = gameId,
@@ -244,7 +246,7 @@ class PreGameRepositoryImpl(
                     boardForPlayer2 = boardForPlayer2,
                     player2Ships = player2Ships,
                     gameState = GameState.CHECK_READY.name,
-                    currentPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random(),
+                    currentPlayer = firstPlayer,
                 )
                 transaction.set(gamesCollection.document(gameId), gameCreationDto)
 
