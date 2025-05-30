@@ -45,22 +45,22 @@ class WaitRoomUseCase(
                         // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
                         val gameId = UUID.randomUUID().toString()
 
-                        // Create game board for player 1 and ship list.
+                        // Create game board for player 1 and register the ships for player 2.
                         gameBoardRepository.createGameBoard().getOrThrow()
-                        val player1Board = gameBoardRepository.getGameBoard()
-                        val player1Ships = gameBoardRepository.getShipList()
-                        // Create the game board for player 2.
-                        gameBoardRepository.createGameBoard().getOrThrow()
-                        val player2Board = gameBoardRepository.getGameBoard()
+                        val boardForPlayer1 = gameBoardRepository.getGameBoard()
                         val player2Ships = gameBoardRepository.getShipList()
+                        // Create game board for player 2 and register the ships for player 1.
+                        gameBoardRepository.createGameBoard().getOrThrow()
+                        val boardForPlayer2 = gameBoardRepository.getGameBoard()
+                        val player1Ships = gameBoardRepository.getShipList()
 
                         preGameRepository.createGame(
-                            gameId,
-                            roomId,
-                            player1Board,
-                            player1Ships,
-                            player2Board,
-                            player2Ships,
+                            gameId = gameId,
+                            roomId = roomId,
+                            boardForPlayer1 = boardForPlayer1,
+                            player1Ships = player1Ships,
+                            boardForPlayer2 = boardForPlayer2,
+                            player2Ships = player2Ships,
                         ).getOrThrow()
 
                         // Fetch the game and set it in the session.

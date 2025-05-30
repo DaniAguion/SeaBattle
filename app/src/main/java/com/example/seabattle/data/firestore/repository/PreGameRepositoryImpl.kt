@@ -214,9 +214,9 @@ class PreGameRepositoryImpl(
     override suspend fun createGame(
         gameId: String,
         roomId: String,
-        player1Board: Map<String, Map<String, Int>>,
+        boardForPlayer1: Map<String, Map<String, Int>>,
         player1Ships: List<Ship>,
-        player2Board: Map<String, Map<String, Int>>,
+        boardForPlayer2: Map<String, Map<String, Int>>,
         player2Ships: List<Ship>
     ) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
@@ -238,10 +238,10 @@ class PreGameRepositoryImpl(
                 val gameCreationDto = GameCreationDto(
                     gameId = gameId,
                     player1 = roomDto.player1,
-                    player1Board = player1Board,
+                    boardForPlayer1 = boardForPlayer1,
                     player1Ships = player1Ships,
                     player2 = roomDto.player2,
-                    player2Board = player2Board,
+                    boardForPlayer2 = boardForPlayer2,
                     player2Ships = player2Ships,
                     gameState = GameState.CHECK_READY.name,
                     currentPlayer = listOf(roomDto.player1.userId, roomDto.player2.userId).random(),

@@ -5,11 +5,11 @@ import java.util.Date
 data class Game(
     val gameId: String,
     val player1: UserBasic,
-    val player1Board: Map<String, Map<String, Int>> = emptyMap(),
+    val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),
     val player1Ready: Boolean = false,
     val player1Ships: List<Ship> = emptyList(),
     val player2: UserBasic,
-    val player2Board: Map<String, Map<String, Int>> = emptyMap(),
+    val boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
     val player2Ready: Boolean = false,
     val player2Ships: List<Ship> = emptyList(),
     val currentTurn: Int = 0,

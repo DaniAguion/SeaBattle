@@ -211,13 +211,13 @@ fun GameScreenContent(
                 ) { delayedCurrentPlayer ->
                     if (delayedCurrentPlayer == game.player1.userId) {
                         GameBoard(
-                            gameBoard = game.player2Board,
+                            gameBoard = game.boardForPlayer1,
                             onClickCell = onClickCell,
                             clickEnabled = enableClickCell("player1")
                         )
                     } else {
                         GameBoard(
-                            gameBoard = game.player1Board,
+                            gameBoard = game.boardForPlayer2,
                             onClickCell = onClickCell,
                             clickEnabled = enableClickCell("player2")
                         )
@@ -299,7 +299,7 @@ fun GameScreenPreview(){
         game = Game(
             gameId="f074ffb3-2bdd-4edc-97b4-8a423d3705af",
             player1=UserBasic(userId="dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName="MeuPixel", photoUrl=""),
-            player1Board = mapOf(
+            boardForPlayer2 = mapOf(
                 "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
                 "1" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
                 "2" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
@@ -363,7 +363,7 @@ fun GameScreenPreview(){
             ),
             player2=UserBasic(userId="MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName="Daniel", photoUrl="https://lh3.googleusercontent.com/a/ACg8ocJNvKdeillcj8hhgyN3qMbyXCTUtC3Hcm5-p9HwRFHEos2tcsQ=s96-c"),
             player2Ready = false,
-            player2Board = mapOf(
+            boardForPlayer1 = mapOf(
                 "0" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 1, "8" to 1, "9" to 0),
                 "1" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 1, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
                 "2" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),

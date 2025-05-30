@@ -207,9 +207,9 @@ class GameRepositoryImpl(
                 }
 
                 val gameBoard = if (gameDto.currentPlayer == gameDto.player1.userId){
-                    gameDto.player2Board
+                    gameDto.boardForPlayer1
                 } else if(gameDto.currentPlayer == gameDto.player2.userId){
-                    gameDto.player1Board
+                    gameDto.boardForPlayer2
                 } else { throw Exception("Player cannot hit own ship") }
 
                 val row = gameBoard[x.toString()]?.toMutableMap() ?: throw Exception("Invalid cell coordinates")
@@ -230,16 +230,16 @@ class GameRepositoryImpl(
 
                 if (gameDto.currentPlayer == gameDto.player1.userId) {
                     transaction.update(document, mapOf(
-                        "player2Board" to gameBoard,
+                        "boardForPlayer1" to gameBoard,
                         "currentTurn" to FieldValue.increment(1),
-                        "currentPlayer" to gameDto.player2.userId,
+                        "currentPlayer" to gameDto.player2.userId, // switch to player 2
                         "updatedAt" to FieldValue.serverTimestamp()
                     ))
                 } else {
                     transaction.update(document, mapOf(
-                        "player1Board" to gameBoard,
+                        "boardForPlayer2" to gameBoard,
                         "currentTurn" to FieldValue.increment(1),
-                        "currentPlayer" to gameDto.player1.userId,
+                        "currentPlayer" to gameDto.player1.userId, // switch to player 1
                         "updatedAt" to FieldValue.serverTimestamp()
                     ))
                 }

@@ -16,9 +16,9 @@ interface PreGameRepository {
     suspend fun createGame(
         gameId: String,
         roomId: String,
-        player1Board: Map<String, Map<String, Int>>,
+        boardForPlayer1: Map<String, Map<String, Int>>,
         player1Ships: List<Ship>,
-        player2Board: Map<String, Map<String, Int>>,
+        boardForPlayer2: Map<String, Map<String, Int>>,
         player2Ships: List<Ship>
     ) : Result<Unit>
     suspend fun joinGame(gameId: String, roomId: String) : Result<Game>

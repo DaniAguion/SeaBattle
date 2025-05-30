@@ -9,11 +9,11 @@ fun GameDto.toGameEntity(): Game {
     return Game(
         gameId = gameId,
         player1 = player1,
-        player1Board = boardToMap(player1Board),
+        boardForPlayer2 = boardToMap(boardForPlayer2),
         player1Ready = player1Ready,
         player1Ships = player1Ships,
         player2 = player2,
-        player2Board = boardToMap(player2Board),
+        boardForPlayer1 = boardToMap(boardForPlayer1),
         player2Ready = player2Ready,
         player2Ships = player2Ships,
         currentTurn = currentTurn,
