@@ -46,7 +46,9 @@ import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 
 @Composable
@@ -92,7 +94,6 @@ fun GameScreen(
         onClickCell = gameViewModel::onClickCell,
         enableClickCell = gameViewModel::enableClickCell
     )
-
 
     // Show a dialog to confirm the user wants to leave the game
     if (showLeaveDialog) {
@@ -149,6 +150,14 @@ fun GameScreenContent(
         return
     }
 
+    // Delayed current player variable used to delay the switch of game board
+    var delayedCurrentPlayer by remember { mutableStateOf(game.currentPlayer) }
+
+    LaunchedEffect(key1 = game.currentPlayer) {
+        delay(3000)
+        delayedCurrentPlayer = game.currentPlayer
+    }
+
     LazyColumn(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -178,7 +187,7 @@ fun GameScreenContent(
 
         // During the game, each player can click on the opponent's board to make a move
         if (game.gameState == GameState.IN_PROGRESS.name) {
-            if (game.currentPlayer == game.player1.userId) {
+            if (delayedCurrentPlayer == game.player1.userId) {
                 item {
                     GameBoard(
                         gameBoard = game.player2Board,

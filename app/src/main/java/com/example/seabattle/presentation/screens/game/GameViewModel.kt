@@ -87,15 +87,15 @@ class GameViewModel(
     fun enableClickCell(gameBoardOwner: String) : Boolean {
         val userId = session.getCurrentUserId()
         if (
-            userId == uiState.value.game?.currentPlayer
-            && (uiState.value.game?.currentPlayer == uiState.value.game?.player1?.userId)
-            && gameBoardOwner == "player1"
+            gameBoardOwner == "player1"
+            && (userId == uiState.value.game?.player1?.userId)
+            && (userId == uiState.value.game?.currentPlayer)
         ) {
             return true
         } else if (
-            userId == uiState.value.game?.currentPlayer
-            && (uiState.value.game?.currentPlayer == uiState.value.game?.player2?.userId)
-            && gameBoardOwner == "player2"
+            gameBoardOwner == "player2"
+            && (userId == uiState.value.game?.player2?.userId)
+            && (userId == uiState.value.game?.currentPlayer)
         ) {
             return true
         }

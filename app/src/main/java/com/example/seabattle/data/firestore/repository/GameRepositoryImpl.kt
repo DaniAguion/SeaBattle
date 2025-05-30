@@ -207,10 +207,10 @@ class GameRepositoryImpl(
                 }
 
                 val gameBoard = if (gameDto.currentPlayer == gameDto.player1.userId){
-                    gameDto.player1Board
-                } else if(gameDto.currentPlayer == gameDto.player2.userId){
                     gameDto.player2Board
-                } else { throw Exception("Player 2 cannot hit own ship") }
+                } else if(gameDto.currentPlayer == gameDto.player2.userId){
+                    gameDto.player1Board
+                } else { throw Exception("Player cannot hit own ship") }
 
                 val row = gameBoard[x.toString()]?.toMutableMap() ?: throw Exception("Invalid cell coordinates")
                 val cellValue = row[y.toString()] ?: throw Exception("Invalid cell coordinates")
