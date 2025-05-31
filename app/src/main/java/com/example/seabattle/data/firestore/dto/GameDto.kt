@@ -23,7 +23,7 @@ data class GameCreationDto(
     val currentTurn: Int = 1,
     val currentPlayer: String = "",
     val gameState: String = "",
-    val winnerId: Int? = null,
+    val winnerId: String? = null,
     val createdAt: FieldValue = FieldValue.serverTimestamp(),
     val updatedAt: FieldValue = FieldValue.serverTimestamp(),
 )

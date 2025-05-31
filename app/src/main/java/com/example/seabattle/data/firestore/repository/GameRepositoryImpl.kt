@@ -126,7 +126,7 @@ class GameRepositoryImpl(
 
 
 
-    // Function to update a game data. If the game data has changed since the last fetch, it will throw an exception.
+    // Function to update the game data. If the game data has changed since the last fetch, it will throw an exception.
     override suspend fun updateGame(game: Game, updatedGame: Game) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
@@ -159,6 +159,22 @@ class GameRepositoryImpl(
         }
     }
 
+
+    // Function to update a game field by gameId without validation.
+    override suspend fun updateGameField(gameId: String, updatedFields: Map<String, Any>) : Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            val document = gamesCollection.document(gameId)
+            val snapshot = document.get().await()
+
+            if (!snapshot.exists()) {
+                throw Exception("Game not found")
+            }
+
+            document.update(updatedFields + mapOf("updatedAt" to FieldValue.serverTimestamp())).await()
+            return@runCatching Unit
+        }
+    }
 
 
     // Function to delete a game by gameId

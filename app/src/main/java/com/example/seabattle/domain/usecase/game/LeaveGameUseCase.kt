@@ -30,10 +30,10 @@ class LeaveGameUseCase(
                 gameRepository.deleteGame(gameId).getOrThrow()
             } else if(game.gameState == GameState.CHECK_READY.name) {
                 // If the game is in CHECK_READY state, the game can be aborted
-                val updatedGame = game.copy(
-                    gameState = GameState.GAME_ABORTED.name,
+                 val updatedFields = mapOf(
+                    "gameState" to GameState.GAME_ABORTED.name,
                 )
-                gameRepository.updateGame(game, updatedGame).getOrThrow()
+                gameRepository.updateGameField(gameId, updatedFields).getOrThrow()
             } else {
                 // If the game is left in progress, the opponent is declared the winner
                 val updatedGame = game.copy(

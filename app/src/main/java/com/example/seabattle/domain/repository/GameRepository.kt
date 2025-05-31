@@ -8,5 +8,6 @@ interface GameRepository {
     suspend fun confirmReady(gameId: String, userId: String) : Result<Unit>
     suspend fun getGame(gameId: String) : Result<Game>
     suspend fun updateGame(oldGame: Game, newGame: Game) : Result<Unit>
+    suspend fun updateGameField(gameId: String, newData: Map<String, Any>) : Result<Unit>
     suspend fun deleteGame(gameId: String) : Result<Unit>
 }
