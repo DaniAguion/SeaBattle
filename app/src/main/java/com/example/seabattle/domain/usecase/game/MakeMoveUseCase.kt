@@ -28,11 +28,26 @@ class MakeMoveUseCase(
             throw Exception("It's not user turn")
         }
 
+        if (game.player1.userId != userId && game.player2.userId != userId) {
+            throw Exception("User does not belong to this game")
+        }
+
+        // Deep copy of game board and ships
         val gameBoard = if (game.currentPlayer == game.player1.userId){
             game.boardForPlayer1.mapValues { (_, innerMap) -> innerMap.toMutableMap() }.toMutableMap()
-        } else if(game.currentPlayer == game.player2.userId){
+        } else {
             game.boardForPlayer2.mapValues { (_, innerMap) -> innerMap.toMutableMap() }.toMutableMap()
-        } else { throw Exception("Invalid player") }
+        }
+
+        val listShip = if (game.currentPlayer == game.player1.userId) {
+            game.player1Ships.map { ship ->
+                ship.copy(shipBody = ship.shipBody.map { piece -> piece.copy() }.toMutableList())
+            }.toMutableList()
+        } else {
+            game.player2Ships.map { ship ->
+                ship.copy(shipBody = ship.shipBody.map { piece -> piece.copy() }.toMutableList())
+            }.toMutableList()
+        }
 
         // Check valid cell coordinates
         val row = gameBoard[x.toString()] ?: throw Exception("Invalid cell coordinates")
@@ -42,9 +57,29 @@ class MakeMoveUseCase(
             throw Exception("Invalid cell coordinates")
         }
 
+        var nextPlayer = ""
+
         when (cellValue) {
-            0 -> gameBoard[x.toString()]?.put(y.toString(), 2)
-            1 -> gameBoard[x.toString()]?.put(y.toString(), 3)
+            0 -> { // Did not hit. Turn over
+                gameBoard[x.toString()]?.put(y.toString(), 2)
+                nextPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
+            }
+            1 -> { // Hit. Player continues. Check if ship is sunk.
+                gameBoard[x.toString()]?.put(y.toString(), 3)
+                nextPlayer = game.currentPlayer
+                // List of ships is checked to see if any ship has been sunk
+                // Its been modified by reference, so we can modify it directly
+                for (ship in listShip) {
+                    for (piece in ship.shipBody) {
+                        if (piece.x == x && piece.y == y) {
+                            piece.touched = true
+                        }
+                    }
+                    if (ship.shipBody.all { it.touched }) {
+                        ship.sunk = true
+                    }
+                }
+            }
             else -> {
                 throw Exception("Invalid cell value")
             }
@@ -53,9 +88,11 @@ class MakeMoveUseCase(
         // Copy game to avoid modifying the original game boards
         val newGame = game.copy(
             boardForPlayer1 = if (game.currentPlayer == game.player1.userId) gameBoard else game.boardForPlayer1,
+            player1Ships = if (game.currentPlayer == game.player1.userId) listShip else game.player1Ships,
             boardForPlayer2 = if (game.currentPlayer == game.player2.userId) gameBoard else game.boardForPlayer2,
+            player2Ships = if (game.currentPlayer == game.player2.userId) listShip else game.player2Ships,
             currentTurn = game.currentTurn + 1,
-            currentPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
+            currentPlayer = nextPlayer
         )
 
         gameRepository.updateGame(oldGame= game, newGame= newGame).getOrThrow()
