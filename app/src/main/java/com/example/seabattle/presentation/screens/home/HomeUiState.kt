@@ -4,7 +4,7 @@ import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.presentation.validation.ValidationError
 
 data class HomeUiState (
-    val roomName: String = "",
+    val roomName: String = "Testing",
     val roomNameError: ValidationError? = null,
     val roomList: List<Room>,
     val errorList: Boolean = false,

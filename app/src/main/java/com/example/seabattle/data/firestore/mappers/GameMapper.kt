@@ -19,7 +19,6 @@ fun GameDto.toGameEntity(): Game {
         currentTurn = currentTurn,
         currentPlayer = currentPlayer,
         gameState = gameState,
-        gameFinished = gameFinished,
         winnerId = winnerId,
         createdAt = createdAt,
         updatedAt = updatedAt
@@ -42,7 +41,6 @@ fun Game.toGameDto(): GameDto {
         currentTurn = currentTurn,
         currentPlayer = currentPlayer,
         gameState = gameState,
-        gameFinished = gameFinished,
         winnerId = winnerId,
         createdAt = createdAt,
         updatedAt = updatedAt

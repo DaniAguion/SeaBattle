@@ -3,13 +3,17 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 
 class MakeMoveUseCase(
     val gameRepository: GameRepository,
     val session: Session,
+    val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(x: Int, y: Int) : Unit {
+    suspend operator fun invoke(x: Int, y: Int) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
         val userId = session.getCurrentUserId()
         val gameId = session.getCurrentGameId()
         val game = session.getCurrentGame()
@@ -85,7 +89,7 @@ class MakeMoveUseCase(
             }
         }
 
-        // Copy game to avoid modifying the original game boards
+        // Create a game copy with the calculated data
         val newGame = game.copy(
             boardForPlayer1 = if (game.currentPlayer == game.player1.userId) gameBoard else game.boardForPlayer1,
             player1Ships = if (game.currentPlayer == game.player1.userId) listShip else game.player1Ships,
@@ -96,5 +100,6 @@ class MakeMoveUseCase(
         )
 
         gameRepository.updateGame(oldGame= game, newGame= newGame).getOrThrow()
+        }
     }
 }

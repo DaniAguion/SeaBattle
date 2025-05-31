@@ -15,7 +15,6 @@ data class Game(
     var currentTurn: Int = 0,
     var currentPlayer: String = "",
     val gameState: String = "",
-    val gameFinished: Boolean = false,
     val winnerId: Int? = null,
     val createdAt: Date = Date(),
     val updatedAt: Date = Date()

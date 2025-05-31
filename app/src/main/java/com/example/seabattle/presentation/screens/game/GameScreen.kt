@@ -94,6 +94,7 @@ fun GameScreen(
     GameScreenContent(
         modifier = modifier,
         game = gameUiState.game,
+        userId = gameUiState.userId,
         onClickReady = gameViewModel::onClickReady,
         enableReadyButton = gameViewModel::enableReadyButton,
         onClickLeave = { showLeaveDialog = true },
@@ -143,6 +144,7 @@ fun GameScreen(
 fun GameScreenContent(
     modifier: Modifier,
     game: Game?,
+    userId: String,
     onClickReady: () -> Unit = {},
     enableReadyButton: () -> Boolean = { true },
     onClickLeave: () -> Unit = {},
@@ -194,6 +196,23 @@ fun GameScreenContent(
         // During the game, each player can click on the opponent's board to make a move
         // During the game, each player can click on the opponent's board to make a move
         if (game.gameState == GameState.IN_PROGRESS.name) {
+            item {
+                if (delayedCurrentPlayer == userId) {
+                    Text(
+                        text = "It's your turn!",
+                        fontSize = 20.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    )
+                } else {
+                    Text(
+                        text = "It's your opponent's turn!",
+                        fontSize = 20.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+            }
             item {
                 AnimatedContent(
                     targetState = delayedCurrentPlayer,
@@ -427,8 +446,8 @@ fun GameScreenPreview(){
             currentTurn=1,
             currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
             gameState="CHECK_READY",
-            gameFinished=false,
             winnerId=null
-        )
+        ),
+        userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2"
     )
 }

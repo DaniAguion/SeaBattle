@@ -46,8 +46,9 @@ class GameViewModel(
 
         // Observe the current game from the session and update the UI state
         updateUIJob = viewModelScope.launch {
+            _uiState.value = GameUiState(userId = session.getCurrentUserId())
             session.currentGame.collect { game ->
-                _uiState.value = GameUiState(game = game)
+                _uiState.value = _uiState.value.copy(game = game)
             }
         }
     }

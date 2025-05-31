@@ -35,5 +35,5 @@ val domainModule = module {
     factory { ListenGameUseCase(get(), get(), get())}
     factory { UserReadyUseCase(get(), get(), get())}
     factory { LeaveGameUseCase(get(), get(), get())}
-    factory { MakeMoveUseCase(get(), get())}
+    factory { MakeMoveUseCase(get(), get(), get())}
 }
