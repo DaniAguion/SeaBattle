@@ -28,7 +28,6 @@ class GameRepositoryImpl(
     private val gamesCollection = db.collection("games")
 
 
-
     override fun listenGameUpdates(gameId: String) : Flow<Result<Game>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
@@ -127,14 +126,15 @@ class GameRepositoryImpl(
 
 
 
-    override suspend fun updateGame(oldGame: Game, newGame: Game) : Result<Unit>
+    // Function to update a game data. If the game data has changed since the last fetch, it will throw an exception.
+    override suspend fun updateGame(game: Game, updatedGame: Game) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             db.runTransaction { transaction ->
-                val oldGameDto = oldGame.toGameDto()
-                val newGameDto = newGame.toGameDto()
+                val oldGameDto = game.toGameDto()
+                val updatedGameDto = updatedGame.toGameDto()
 
-                val gameId = oldGame.gameId
+                val gameId = game.gameId
                 val document = transaction.get(gamesCollection.document(gameId))
 
                 if (!document.exists()) {
@@ -150,7 +150,7 @@ class GameRepositoryImpl(
                 }
 
                 // Load the new calculated game data and refresh updatedAt field
-                transaction.set(gamesCollection.document(gameId), newGameDto)
+                transaction.set(gamesCollection.document(gameId), updatedGameDto)
                 transaction.update(gamesCollection.document(gameId), mapOf(
                     "updatedAt" to FieldValue.serverTimestamp()
                 ))
@@ -160,39 +160,12 @@ class GameRepositoryImpl(
     }
 
 
-    override suspend fun leaveGame(gameId: String, userId: String) : Result<Unit>
-    = withContext(ioDispatcher) {
+
+    // Function to delete a game by gameId
+    override suspend fun deleteGame(gameId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            db.runTransaction { transaction ->
-                val document = gamesCollection.document(gameId)
-                val snapshot = transaction.get(document)
-
-                if (!snapshot.exists()) {
-                    throw Exception("Game not found")
-                }
-
-                val gameDto = snapshot.toObject(GameDto::class.java)
-                    ?: throw Exception("Game data is corrupted")
-
-                // If the game is already finished or aborted, we can just delete it
-                // otherwise we update the game state to GAME_ABORTED
-                if (gameDto.gameState == GameState.GAME_ABORTED.name ||
-                    gameDto.gameState == GameState.GAME_ABANDONED.name)
-                {
-                    transaction.delete(document)
-                } else if(gameDto.gameState == GameState.CHECK_READY.name) {
-                    transaction.update(document, mapOf(
-                        "updatedAt" to FieldValue.serverTimestamp(),
-                        "gameState" to GameState.GAME_ABORTED.name,
-                        "gameFinished" to true,
-                        "winnerId" to null
-                    ))
-                }
-                else {
-                    // TO DO
-                }
-                return@runTransaction
-            }.await()
+            gamesCollection.document(gameId).delete().await()
+            return@runCatching Unit
         }
     }
 }

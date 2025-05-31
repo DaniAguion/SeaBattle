@@ -5,5 +5,5 @@ data class UserDto(
     val displayName: String = "",
     val email: String = "",
     val photoUrl: String = "",
-    val score: Int = 0
+    val score: Int = 1000 // Default score value
 )

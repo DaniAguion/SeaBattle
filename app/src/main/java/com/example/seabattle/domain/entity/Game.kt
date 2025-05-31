@@ -15,7 +15,7 @@ data class Game(
     var currentTurn: Int = 0,
     var currentPlayer: String = "",
     val gameState: String = "",
-    val winnerId: Int? = null,
+    val winnerId: String? = null,
     val createdAt: Date = Date(),
     val updatedAt: Date = Date()
 )
@@ -28,9 +28,6 @@ enum class GameState {
     CHECK_READY,
     GAME_ABORTED,
     IN_PROGRESS,
-    PLAYER_1_WON,
-    PLAYER_2_WON,
-    PLAYER_1_TIMEOUT,
-    PLAYER_2_TIMEOUT,
+    GAME_FINISHED,
     GAME_ABANDONED
 }

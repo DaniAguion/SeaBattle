@@ -44,7 +44,7 @@ data class GameDto(
     var currentTurn: Int = 1,
     var currentPlayer: String = "",
     var gameState: String = "",
-    var winnerId: Int? = null,
+    var winnerId: String? = null,
     val createdAt: Date = Date(),
     var updatedAt: Date = Date(),
 )
