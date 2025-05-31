@@ -5,15 +5,15 @@ import java.util.Date
 data class Game(
     val gameId: String,
     val player1: UserBasic,
-    val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),  // Board where the player 1 plays, it contains the ships of player 2.
+    val boardForPlayer1: MutableMap<String, MutableMap<String, Int>> = mutableMapOf(),  // Board where the player 1 plays, it contains the ships of player 2.
     val player1Ready: Boolean = false,
-    val player1Ships: List<Ship> = emptyList(), // List of ships of player 1 and their state.
+    val player1Ships: MutableList<Ship> = mutableListOf(), // List of ships of player 1 and their state.
     val player2: UserBasic,
-    val boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
+    val boardForPlayer2: MutableMap<String, MutableMap<String, Int>> = mutableMapOf(),
     val player2Ready: Boolean = false,
-    val player2Ships: List<Ship> = emptyList(),
-    val currentTurn: Int = 0,
-    val currentPlayer: String = "",
+    val player2Ships: MutableList<Ship> = mutableListOf(),
+    var currentTurn: Int = 0,
+    var currentPlayer: String = "",
     val gameState: String = "",
     val gameFinished: Boolean = false,
     val winnerId: Int? = null,

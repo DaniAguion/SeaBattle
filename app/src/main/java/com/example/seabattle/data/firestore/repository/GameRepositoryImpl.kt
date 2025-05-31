@@ -1,6 +1,7 @@
 package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.GameDto
+import com.example.seabattle.data.firestore.mappers.toGameDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -126,22 +127,35 @@ class GameRepositoryImpl(
 
 
 
-    override suspend fun updateGame(gameId: String, newData: Map<String, Any>) : Result<Unit>
+    override suspend fun updateGame(oldGame: Game, newGame: Game) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
-            val document = gamesCollection.document(gameId).get().await()
-            if (document.exists()) {
-                val updatedGame = newData + mapOf(
+            db.runTransaction { transaction ->
+                val oldGameDto = oldGame.toGameDto()
+                val newGameDto = newGame.toGameDto()
+
+                val gameId = oldGame.gameId
+                val document = transaction.get(gamesCollection.document(gameId))
+
+                if (!document.exists()) {
+                    throw Exception("Game not found")
+                }
+
+                val fetchedGame = document.toObject(GameDto::class.java)
+                    ?: throw Exception("Game data is corrupted")
+
+                // Validate original game data
+                if (oldGameDto != fetchedGame) {
+                    throw Exception("Original game data does not match the current data in the database")
+                }
+
+                // Load the new calculated game data and refresh updatedAt field
+                transaction.set(gamesCollection.document(gameId), newGameDto)
+                transaction.update(gamesCollection.document(gameId), mapOf(
                     "updatedAt" to FieldValue.serverTimestamp()
-                )
-                gamesCollection.document(gameId).update(updatedGame).await()
-            } else {
-                throw Exception("Game not found")
-            }
-        }
-        .map { _ -> }
-        .onFailure { e ->
-            Timber.e("Error updating game: ${gameId}. ${e.message}")
+                ))
+                return@runTransaction
+            }.await()
         }
     }
 
@@ -178,74 +192,6 @@ class GameRepositoryImpl(
                     // TO DO
                 }
                 return@runTransaction
-            }.await()
-        }
-    }
-
-
-
-    override suspend fun makeMove(gameId: String, userId: String, x: Int, y: Int) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction { transaction ->
-                val document = gamesCollection.document(gameId)
-                val snapshot = transaction.get(document)
-
-                if (!snapshot.exists()) {
-                    throw Exception("Game not found")
-                }
-
-                val gameDto = snapshot.toObject(GameDto::class.java)
-                    ?: throw Exception("Game data is corrupted")
-
-                if (gameDto.gameState != GameState.IN_PROGRESS.name) {
-                    throw Exception("Game is not in progress state")
-                }
-
-                if (gameDto.currentPlayer != userId) {
-                    throw Exception("It's not user turn")
-                }
-
-                val gameBoard = if (gameDto.currentPlayer == gameDto.player1.userId){
-                    gameDto.boardForPlayer1
-                } else if(gameDto.currentPlayer == gameDto.player2.userId){
-                    gameDto.boardForPlayer2
-                } else { throw Exception("Player cannot hit own ship") }
-
-                val row = gameBoard[x.toString()]?.toMutableMap() ?: throw Exception("Invalid cell coordinates")
-                val cellValue = row[y.toString()] ?: throw Exception("Invalid cell coordinates")
-
-                if (gameBoard[x.toString()] == null || gameBoard[x.toString()]?.get(y.toString()) == null) {
-                    throw Exception("Invalid cell coordinates")
-                }
-
-                when (cellValue) {
-                    0 -> gameBoard[x.toString()]?.put(y.toString(), 2)
-                    1 -> gameBoard[x.toString()]?.put(y.toString(), 3)
-                    else -> {
-                        throw Exception("Invalid cell")
-                        Timber.e("Invalid cell value: ${gameBoard[x.toString()]?.get(y.toString())}")
-                    }
-                }
-
-                if (gameDto.currentPlayer == gameDto.player1.userId) {
-                    transaction.update(document, mapOf(
-                        "boardForPlayer1" to gameBoard,
-                        "currentTurn" to FieldValue.increment(1),
-                        "currentPlayer" to gameDto.player2.userId, // switch to player 2
-                        "updatedAt" to FieldValue.serverTimestamp()
-                    ))
-                } else {
-                    transaction.update(document, mapOf(
-                        "boardForPlayer2" to gameBoard,
-                        "currentTurn" to FieldValue.increment(1),
-                        "currentPlayer" to gameDto.player1.userId, // switch to player 1
-                        "updatedAt" to FieldValue.serverTimestamp()
-                    ))
-                }
-
-
-                return@runTransaction Unit
             }.await()
         }
     }
