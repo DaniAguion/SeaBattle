@@ -29,5 +29,6 @@ enum class GameState {
     GAME_ABORTED,
     IN_PROGRESS,
     GAME_FINISHED,
+    USER_LEFT,
     GAME_ABANDONED
 }

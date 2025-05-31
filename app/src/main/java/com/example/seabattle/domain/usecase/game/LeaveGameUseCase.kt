@@ -37,7 +37,7 @@ class LeaveGameUseCase(
             } else {
                 // If the game is left in progress, the opponent is declared the winner
                 val updatedGame = game.copy(
-                    gameState = GameState.GAME_ABANDONED.name,
+                    gameState = GameState.USER_LEFT.name,
                     winnerId = if (game.player1.userId == userId) game.player2.userId else game.player1.userId,
                 )
                 gameRepository.updateGame(game, updatedGame).getOrThrow()

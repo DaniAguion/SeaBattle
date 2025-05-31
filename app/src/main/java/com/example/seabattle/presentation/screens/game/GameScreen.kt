@@ -1,6 +1,7 @@
 package com.example.seabattle.presentation.screens.game
 
 
+import android.R.attr.bottom
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOutQuart
@@ -56,6 +57,7 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Column
 
 @Composable
 fun GameScreen(
@@ -243,11 +245,32 @@ fun GameScreenContent(
                     }
                 }
             }
+        } else if (game.gameState == GameState.USER_LEFT.name && game.winnerId == userId) {
+            // Screen showing the case when the opponent has left the game and the user is the winner
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(R.dimen.padding_medium)),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "You have won!!",
+                        fontSize = 24.sp,
+                        fontWeight = SemiBold,
+                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+                    )
+                    Text(
+                        text = "The opponent has left the game.",
+                        fontSize = 18.sp
+                    )
+                }
+            }
         }
 
+        TODO("Add more sections for different game states")
 
-        // TO DO: Add more sections for different game states
-        // Screen showing the game board
     }
 }
 
@@ -445,7 +468,7 @@ fun GameScreenPreview(){
             ),
             currentTurn=1,
             currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
-            gameState="CHECK_READY",
+            gameState="USER_LEFT",
             winnerId=null
         ),
         userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2"
