@@ -13,13 +13,6 @@ interface PreGameRepository {
     suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
     suspend fun getRoom(roomId: String) : Result<Room>
     suspend fun deleteRoom(roomId: String) : Result<Unit>
-    suspend fun createGame(
-        gameId: String,
-        roomId: String,
-        boardForPlayer1: Map<String, Map<String, Int>>,
-        player1Ships: List<Ship>,
-        boardForPlayer2: Map<String, Map<String, Int>>,
-        player2Ships: List<Ship>
-    ) : Result<Unit>
-    suspend fun joinGame(gameId: String, roomId: String) : Result<Game>
+    suspend fun createGame(roomId: String, logicFunction: (Room) -> Game, updatedRoomData: Map<String, Any>) : Result<String>
+    suspend fun updateGameFields(roomId: String, logicFunction: (Room) -> Map<String, Any>): Result<Unit>
 }

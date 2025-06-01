@@ -1,12 +1,17 @@
 package com.example.seabattle.domain.usecase.room
 
 
+import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.PreGameRepository
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -33,56 +38,89 @@ class WaitRoomUseCase(
             val roomId = room.roomId
 
             when(room.roomState) {
+
+
                 RoomState.WAITING_FOR_PLAYER.name -> {
                     return@runCatching
                 }
+
+
                 RoomState.SECOND_PLAYER_JOINED.name -> {
                     // If the second player has joined the room, the first player will create a game.
-                    if (room.player2 == null) {
-                        throw Exception("Player 2 is not set")
-                    }
                     if (userId == room.player1.userId) {
-                        // Create a new game and update room state to GAME_CREATED and attach the gameId to the room.
+
                         val gameId = UUID.randomUUID().toString()
 
-                        // Create game board for player 1 and register the ships for player 2.
-                        gameBoardRepository.createGameBoard().getOrThrow()
-                        val boardForPlayer1 = gameBoardRepository.getGameBoard()
-                        val player2Ships = gameBoardRepository.getShipList()
-                        // Create game board for player 2 and register the ships for player 1.
-                        gameBoardRepository.createGameBoard().getOrThrow()
-                        val boardForPlayer2 = gameBoardRepository.getGameBoard()
-                        val player1Ships = gameBoardRepository.getShipList()
+                        // Function to create a game with the given room.
+                        fun createGame(room: Room): Game {
+                            // Validate room state before creating a game.
+                            if (room.roomState != RoomState.SECOND_PLAYER_JOINED.name || room.player2 == null) {
+                                throw Exception("Room is not available for creating a game")
+                            }
+                            // Create game board for player 1 and register the ships for player 2.
+                            // Create game board for player 2 and register the ships for player 1.
+                            gameBoardRepository.createGameBoard().getOrThrow()
+                            val boardForPlayer1 = gameBoardRepository.getGameBoard()
+                            val player2Ships = gameBoardRepository.getShipList()
+                            gameBoardRepository.createGameBoard().getOrThrow()
+                            val boardForPlayer2 = gameBoardRepository.getGameBoard()
+                            val player1Ships = gameBoardRepository.getShipList()
+                            var game = Game(
+                                gameId = gameId,
+                                player1 = room.player1,
+                                boardForPlayer1 = boardForPlayer1,
+                                player1Ships = player1Ships,
+                                player2 = room.player2,
+                                boardForPlayer2 = boardForPlayer2,
+                                player2Ships = player2Ships,
+                                gameState = GameState.CHECK_READY.name,
+                                currentPlayer = listOf(room.player1.userId, room.player2.userId).random(),
+                            )
+                            return game
+                        }
 
-                        preGameRepository.createGame(
-                            gameId = gameId,
-                            roomId = roomId,
-                            boardForPlayer1 = boardForPlayer1,
-                            player1Ships = player1Ships,
-                            boardForPlayer2 = boardForPlayer2,
-                            player2Ships = player2Ships,
-                        ).getOrThrow()
+                        // Update the room state to GAME_CREATED and indicate the game ID.
+                        val updatedRoomData : Map<String, Any> = mapOf(
+                            "roomState" to RoomState.GAME_CREATED.name,
+                            "gameId" to gameId,
+                        )
 
+                        // Update the room in the database and create a game.
+                        preGameRepository.createGame(roomId, ::createGame, updatedRoomData).getOrThrow()
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
                         session.setCurrentGame(game)
                     }
                 }
+
+
                 RoomState.GAME_CREATED.name -> {
                     // If the first player has created a game, the second player will join the game.
-                    if (room.player2 == null) {
-                        throw Exception("Player 2 is not set")
+                    if (room.player2 == null || room.gameId == null) {
+                        throw Exception("Missing data in the room object")
                     }
                     if (userId == room.player2.userId) {
-                        val gameId = room.gameId
-                        if (gameId.isNullOrEmpty()) {
-                            throw Exception("Game ID is not set")
+
+                        // Function to validate the room state and join the game.
+                        fun joinGame(room: Room): Map<String, Any> {
+                            if (room.roomState != RoomState.GAME_CREATED.name || room.gameId == null) {
+                                throw Exception("Game is not available for joining the game")
+                            }
+                            return mapOf(
+                                "roomState" to RoomState.GAME_STARTING.name
+                            )
                         }
-                        // Update the room state to GAME_STARTED.
-                        val game = preGameRepository.joinGame(gameId, roomId).getOrThrow()
+
+                        // Update the room state to GAME_STARTING and join the game.
+                        preGameRepository.updateGameFields(roomId, ::joinGame).getOrThrow()
+                        // Fetch the game and set it in the session.
+                        val game = gameRepository.getGame(room.gameId).getOrThrow()
                         session.setCurrentGame(game)
                     }
                 }
+
+
+
                 RoomState.GAME_STARTING.name, RoomState.ROOM_ABANDONED.name  -> {
                     // Delete the room if it wasn't deleted yet and clear the room from the session.
                     val room = preGameRepository.getRoom(roomId).getOrNull()

@@ -1,9 +1,10 @@
 package com.example.seabattle.data.firestore.repository
 
+import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.GameDto
-import com.example.seabattle.data.firestore.mappers.toGameDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,7 +45,7 @@ class GameRepositoryImpl(
                     trySend(Result.failure(Exception("Game not found")))
                     return@addSnapshotListener
                 }
-                if (!snapshot.metadata.isFromCache()) {
+                if (!snapshot.metadata.isFromCache) {
                     val gameEntity = try {
                         snapshot.toObject(GameDto::class.java)?.toGameEntity()
                     } catch (e: Exception) {
@@ -85,6 +86,29 @@ class GameRepositoryImpl(
     }
 
 
+    // Function to create a new game.
+    override suspend fun createGame(game: Game): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val gameCreationDto = GameCreationDto(
+                gameId = game.gameId,
+                player1 = game.player1,
+                boardForPlayer1 = game.boardForPlayer1,
+                player1Ships = game.player1Ships,
+                player2 = game.player2,
+                boardForPlayer2 = game.boardForPlayer2,
+                player2Ships = game.player2Ships,
+                gameState = game.gameState,
+                currentPlayer = game.currentPlayer,
+            )
+            gamesCollection.document(game.gameId).set(gameCreationDto).await()
+            return@runCatching
+        }
+        .onFailure { e ->
+            Timber.e("Error creating game: ${e.message}")
+        }
+    }
+
+
 
     // Function to update the game data validating the game state.
     override suspend fun updateGameFields(gameId: String, logicFunction: (Game) -> Map<String, Any>): Result<Unit>
@@ -115,7 +139,7 @@ class GameRepositoryImpl(
     override suspend fun deleteGame(gameId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             gamesCollection.document(gameId).delete().await()
-            return@runCatching Unit
+            return@runCatching
         }
     }
 }

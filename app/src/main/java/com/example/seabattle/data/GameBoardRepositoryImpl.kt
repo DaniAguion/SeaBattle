@@ -28,16 +28,16 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
         }
     }
 
-    override fun getGameBoard(): Map<String, Map<String, Int>> {
-        return gameBoard.mapIndexed { x, row ->
-            x.toString() to row.mapIndexed { y, cell ->
-                y.toString() to cell
-            }.toMap()
-        }.toMap()
+    override fun getGameBoard(): MutableMap<String, MutableMap<String, Int>> {
+        return gameBoard.mapIndexed { rowIndex, row ->
+            rowIndex.toString() to row.mapIndexed { colIndex, value ->
+                colIndex.toString() to value
+            }.toMap().toMutableMap()
+        }.toMap().toMutableMap()
     }
 
-    override fun getShipList(): List<Ship> {
-        return shipList.toList()
+    override fun getShipList(): MutableList<Ship> {
+        return shipList
     }
 
     // This function places the ship on the game board and returns the Ship object
