@@ -269,7 +269,7 @@ fun GameScreenContent(
             }
         }
 
-        TODO("Add more sections for different game states")
+        //TO DO: "Add more sections for different game states"
 
     }
 }

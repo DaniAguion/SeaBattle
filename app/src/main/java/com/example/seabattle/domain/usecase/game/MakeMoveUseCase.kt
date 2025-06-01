@@ -99,7 +99,7 @@ class MakeMoveUseCase(
             currentPlayer = nextPlayer
         )
 
-        gameRepository.updateGame(oldGame= game, newGame= newGame).getOrThrow()
+        gameRepository.updateGame(game= game, updatedGame= newGame).getOrThrow()
         }
     }
 }

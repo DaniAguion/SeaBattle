@@ -65,46 +65,6 @@ class GameRepositoryImpl(
 
 
 
-    override suspend fun confirmReady(gameId: String, userId: String) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction { transaction ->
-                val document = gamesCollection.document(gameId)
-                val snapshot = transaction.get(document)
-
-                if (!snapshot.exists()) {
-                    throw Exception("Game not found")
-                }
-
-                val gameDto = snapshot.toObject(GameDto::class.java)
-                    ?: throw Exception("Game data is corrupted")
-
-                var newData: Map<String, Any> = mapOf(
-                    "updatedAt" to FieldValue.serverTimestamp()
-                )
-
-                when(userId) {
-                    gameDto.player1.userId -> {
-                        newData = newData + mapOf( "player1Ready" to true )
-                    }
-                    gameDto.player2.userId -> {
-                        newData = newData + mapOf( "player2Ready" to true )
-                    }
-                    else -> throw Exception("User does not belong to this game")
-                }
-
-                if (gameDto.player1Ready || gameDto.player2Ready) {
-                    newData = newData + mapOf( "gameState" to GameState.IN_PROGRESS.name )
-                }
-
-                transaction.update(document, newData)
-                return@runTransaction
-            }.await()
-        }
-    }
-
-
-
     override suspend fun getGame(gameId: String): Result<Game> = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId).get().await()

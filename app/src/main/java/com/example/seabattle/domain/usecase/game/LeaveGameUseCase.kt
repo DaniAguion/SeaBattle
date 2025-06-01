@@ -22,7 +22,6 @@ class LeaveGameUseCase(
                 throw IllegalStateException("User is not logged in or game is not set")
             }
 
-
             if (game.gameState == GameState.GAME_ABORTED.name ||
                 game.gameState == GameState.GAME_ABANDONED.name ||
                 game.gameState == GameState.GAME_FINISHED.name) {
