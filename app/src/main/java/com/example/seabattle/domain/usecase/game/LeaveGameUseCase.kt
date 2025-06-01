@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.usecase.game
 
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,20 +28,28 @@ class LeaveGameUseCase(
                 game.gameState == GameState.GAME_FINISHED.name) {
                 // If the game is already finished or aborted, we can just delete it
                 gameRepository.deleteGame(gameId).getOrThrow()
-            } else if(game.gameState == GameState.CHECK_READY.name) {
-                // If the game is in CHECK_READY state, the game can be aborted
-                 val updatedFields = mapOf(
-                    "gameState" to GameState.GAME_ABORTED.name,
-                )
-                gameRepository.updateGameField(gameId, updatedFields).getOrThrow()
+
             } else {
-                // If the game is left in progress, the opponent is declared the winner
-                val updatedGame = game.copy(
-                    gameState = GameState.USER_LEFT.name,
-                    winnerId = if (game.player1.userId == userId) game.player2.userId else game.player1.userId,
-                )
-                gameRepository.updateGame(game, updatedGame).getOrThrow()
+
+                // If the game is in progress or waiting, the game state has to be updated to reflect the user leaving
+                fun leaveGame(game: Game): Map<String, Any> {
+                    if (game.gameState == GameState.CHECK_READY.name) {
+                        return mapOf(
+                            "gameState" to GameState.GAME_ABORTED.name,
+                        )
+                    } else if (game.gameState == GameState.IN_PROGRESS.name) {
+                        val winnerId = if (game.player1.userId == userId) game.player2.userId else game.player1.userId
+                        return mapOf(
+                            "gameState" to GameState.USER_LEFT.name,
+                            "winnerId" to winnerId
+                        )
+                    } else {
+                        throw IllegalStateException("Game is not in a valid state to leave")
+                    }
+                }
+                gameRepository.updateGameFields(gameId = gameId, logicFunction = ::leaveGame).getOrThrow()
             }
+
             session.clearCurrentGame()
         }
     }

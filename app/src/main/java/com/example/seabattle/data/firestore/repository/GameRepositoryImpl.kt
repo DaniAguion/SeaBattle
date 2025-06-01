@@ -4,7 +4,6 @@ import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.mappers.toGameDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -65,6 +64,7 @@ class GameRepositoryImpl(
 
 
 
+    // Function to get a game by gameId
     override suspend fun getGame(gameId: String): Result<Game> = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId).get().await()
@@ -86,55 +86,29 @@ class GameRepositoryImpl(
 
 
 
-    // Function to update the game data. If the game data has changed since the last fetch, it will throw an exception.
-    override suspend fun updateGame(game: Game, updatedGame: Game) : Result<Unit>
+    // Function to update the game data validating the game state.
+    override suspend fun updateGameFields(gameId: String, logicFunction: (Game) -> Map<String, Any>): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
+            val document = gamesCollection.document(gameId)
+
             db.runTransaction { transaction ->
-                val oldGameDto = game.toGameDto()
-                val updatedGameDto = updatedGame.toGameDto()
+                val snapshot = transaction.get(document)
+                val fetchedGameDto = snapshot.toObject(GameDto::class.java)
+                    ?: throw Exception("Game not found or invalid.")
 
-                val gameId = game.gameId
-                val document = transaction.get(gamesCollection.document(gameId))
+                val gameEntity = fetchedGameDto.toGameEntity()
 
-                if (!document.exists()) {
-                    throw Exception("Game not found")
-                }
+                var updateData = logicFunction(gameEntity)
+                updateData = updateData + mapOf("updatedAt" to FieldValue.serverTimestamp())
 
-                val fetchedGame = document.toObject(GameDto::class.java)
-                    ?: throw Exception("Game data is corrupted")
+                transaction.update(document, updateData)
 
-                // Validate original game data
-                if (oldGameDto != fetchedGame) {
-                    throw Exception("Original game data does not match the current data in the database")
-                }
-
-                // Load the new calculated game data and refresh updatedAt field
-                transaction.set(gamesCollection.document(gameId), updatedGameDto)
-                transaction.update(gamesCollection.document(gameId), mapOf(
-                    "updatedAt" to FieldValue.serverTimestamp()
-                ))
                 return@runTransaction
             }.await()
         }
     }
 
-
-    // Function to update a game field by gameId without validation.
-    override suspend fun updateGameField(gameId: String, updatedFields: Map<String, Any>) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            val document = gamesCollection.document(gameId)
-            val snapshot = document.get().await()
-
-            if (!snapshot.exists()) {
-                throw Exception("Game not found")
-            }
-
-            document.update(updatedFields + mapOf("updatedAt" to FieldValue.serverTimestamp())).await()
-            return@runCatching Unit
-        }
-    }
 
 
     // Function to delete a game by gameId
