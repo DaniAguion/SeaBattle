@@ -27,7 +27,9 @@ class ListenRoomUseCase(
             roomRepository.listenRoomUpdates(roomId)
                 .map { result -> result.getOrThrow() }
                 .collect { room ->
-                    session.setCurrentRoom(room)
+                    if (room != null) {
+                        session.setCurrentRoom(room)
+                    }
                 }
         }
         .onFailure { e ->

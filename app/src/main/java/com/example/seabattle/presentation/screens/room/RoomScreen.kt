@@ -14,6 +14,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +42,7 @@ fun RoomScreen(
 ) {
     val roomUiState by roomViewModel.uiState.collectAsState()
     val context = LocalContext.current
+    var hasLoadedRoom by remember { mutableStateOf(false) }
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
@@ -70,8 +74,18 @@ fun RoomScreen(
     // Observe the room state and navigate to the game screen if the game was created
     LaunchedEffect(key1 = roomUiState.room) {
         val room = roomUiState.room
-        if (room!= null && room.roomState == RoomState.GAME_CREATED.name) {
+        if (room != null) {
+            hasLoadedRoom = true
+        }
+        // If the room is not null and the room state is GAME_CREATED, navigate to the game screen
+        if (room?.roomState == RoomState.GAME_CREATED.name) {
             navController.navigate(SeaBattleScreen.Game.title){
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            }
+        }
+        // If the room is null and there was a previous room loaded, navigate back to the home screen
+        if (room == null && hasLoadedRoom) {
+            navController.navigate(SeaBattleScreen.Home.title){
                 popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }
         }

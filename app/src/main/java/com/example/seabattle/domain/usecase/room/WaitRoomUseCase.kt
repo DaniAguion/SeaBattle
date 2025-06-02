@@ -117,7 +117,7 @@ class WaitRoomUseCase(
                 }
 
 
-                // 4th State: If the game is starting, the room is not needed anymore, so we can delete it.
+                // 4th State: If the game is starting, the room is not needed anymore, it can be deleted.
                 RoomState.GAME_STARTING.name, RoomState.ROOM_ABANDONED.name  -> {
                     // Delete the room if it wasn't deleted yet and clear the room from the session.
                     val room = roomRepository.getRoom(roomId).getOrNull()

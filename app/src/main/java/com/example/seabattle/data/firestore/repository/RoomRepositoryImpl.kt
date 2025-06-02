@@ -60,7 +60,7 @@ class RoomRepositoryImpl(
 
 
     // Function to listen for updates on a specific room
-    override fun listenRoomUpdates(roomId: String) : Flow<Result<Room>>
+    override fun listenRoomUpdates(roomId: String) : Flow<Result<Room?>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
             .setMetadataChanges(MetadataChanges.INCLUDE)
@@ -74,7 +74,7 @@ class RoomRepositoryImpl(
                     return@addSnapshotListener
                 }
                 if (snapshot == null || !snapshot.exists()) {
-                    trySend(Result.failure(RoomError.RoomNotFound()))
+                    trySend(Result.success(null))
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache) {
@@ -163,8 +163,14 @@ class RoomRepositoryImpl(
     // Function to delete a room by roomId
     override suspend fun deleteRoom(roomId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            roomsCollection.document(roomId).delete().await()
-            return@runCatching
+            db.runTransaction { transaction ->
+                val document = transaction.get(roomsCollection.document(roomId))
+
+                if (document.exists()) {
+                    transaction.delete(document.reference)
+                }
+                return@runTransaction
+            }.await()
         }
         .recoverCatching { throwable ->
             throw throwable.toRoomError()
