@@ -2,9 +2,11 @@ package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.GameDto
+import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.mappers.toGameEntity
+import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,9 +27,11 @@ class GameRepositoryImpl(
     private val db: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher
 ) : GameRepository {
+    private val roomsCollection = db.collection("rooms")
     private val gamesCollection = db.collection("games")
 
 
+    // Function to listen for game updates
     override fun listenGameUpdates(gameId: String) : Flow<Result<Game>>
     = callbackFlow {
         val options = SnapshotListenOptions.Builder()
@@ -65,6 +69,45 @@ class GameRepositoryImpl(
 
 
 
+    // Function to create a new game from the room
+    override suspend fun createGame(roomId: String, logicFunction: (Room) -> Game, updatedRoomData: Map<String, Any>) : Result<String>
+            = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction {  transaction ->
+                val roomDocument = roomsCollection.document(roomId)
+                val roomSnapshot = transaction.get(roomDocument)
+                if (!roomSnapshot.exists()) {
+                    throw Exception("Room not found")
+                }
+                val room = roomSnapshot.toObject(RoomDto::class.java)?.toRoomEntity()
+                    ?: throw Exception("Room data is corrupted")
+
+                val game = logicFunction(room)
+
+                // Create the game document
+                val gameCreationDto = GameCreationDto(
+                    gameId = game.gameId,
+                    player1 = game.player1,
+                    boardForPlayer1 = game.boardForPlayer1,
+                    player1Ships = game.player1Ships,
+                    player2 = game.player2,
+                    boardForPlayer2 = game.boardForPlayer2,
+                    player2Ships = game.player2Ships,
+                    gameState = game.gameState,
+                    currentPlayer = game.currentPlayer,
+                )
+                transaction.set(gamesCollection.document(game.gameId), gameCreationDto)
+
+                // Update the room document to indicate the game has been created
+                val updateData = updatedRoomData + mapOf("updatedAt" to FieldValue.serverTimestamp())
+                transaction.update(roomDocument, updateData)
+                return@runTransaction game.gameId
+            }.await()
+        }
+    }
+
+
+
     // Function to get a game by gameId
     override suspend fun getGame(gameId: String): Result<Game> = withContext(ioDispatcher) {
         runCatching {
@@ -79,33 +122,10 @@ class GameRepositoryImpl(
                 throw Exception("Document not found")
             }
         }
-        .onFailure { e ->
-            Timber.e("Error fetching game: ${e.message}")
-            emptyList<Game>()
-        }
-    }
-
-
-    // Function to create a new game.
-    override suspend fun createGame(game: Game): Result<Unit> = withContext(ioDispatcher) {
-        runCatching {
-            val gameCreationDto = GameCreationDto(
-                gameId = game.gameId,
-                player1 = game.player1,
-                boardForPlayer1 = game.boardForPlayer1,
-                player1Ships = game.player1Ships,
-                player2 = game.player2,
-                boardForPlayer2 = game.boardForPlayer2,
-                player2Ships = game.player2Ships,
-                gameState = game.gameState,
-                currentPlayer = game.currentPlayer,
-            )
-            gamesCollection.document(game.gameId).set(gameCreationDto).await()
-            return@runCatching
-        }
-        .onFailure { e ->
-            Timber.e("Error creating game: ${e.message}")
-        }
+            .onFailure { e ->
+                Timber.e("Error fetching game: ${e.message}")
+                emptyList<Game>()
+            }
     }
 
 

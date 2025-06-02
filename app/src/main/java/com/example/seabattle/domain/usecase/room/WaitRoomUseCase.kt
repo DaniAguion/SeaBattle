@@ -1,24 +1,21 @@
 package com.example.seabattle.domain.usecase.room
 
 
-import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
-import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.GameBoardRepository
-import com.example.seabattle.domain.repository.PreGameRepository
-import com.google.firebase.firestore.FieldValue
+import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 
 class WaitRoomUseCase(
-    val preGameRepository: PreGameRepository,
+    val roomRepository: RoomRepository,
     val gameRepository: GameRepository,
     val gameBoardRepository: GameBoardRepository,
     val ioDispatcher: CoroutineDispatcher,
@@ -39,16 +36,15 @@ class WaitRoomUseCase(
 
             when(room.roomState) {
 
-
+                // 1st State: If the room is created, the first player will wait for the second player to join.
                 RoomState.WAITING_FOR_PLAYER.name -> {
                     return@runCatching
                 }
 
 
+                // 2nd State: If the second player has joined the room, the first player will create a game.
                 RoomState.SECOND_PLAYER_JOINED.name -> {
-                    // If the second player has joined the room, the first player will create a game.
                     if (userId == room.player1.userId) {
-
                         val gameId = UUID.randomUUID().toString()
 
                         // Function to create a game with the given room.
@@ -86,7 +82,7 @@ class WaitRoomUseCase(
                         )
 
                         // Update the room in the database and create a game.
-                        preGameRepository.createGame(roomId, ::createGame, updatedRoomData).getOrThrow()
+                        gameRepository.createGame(roomId, ::createGame, updatedRoomData).getOrThrow()
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
                         session.setCurrentGame(game)
@@ -94,11 +90,12 @@ class WaitRoomUseCase(
                 }
 
 
+                // 3rd State: If the first player has created a game, the second player will join the game.
                 RoomState.GAME_CREATED.name -> {
-                    // If the first player has created a game, the second player will join the game.
                     if (room.player2 == null || room.gameId == null) {
                         throw Exception("Missing data in the room object")
                     }
+
                     if (userId == room.player2.userId) {
 
                         // Function to validate the room state and join the game.
@@ -112,7 +109,7 @@ class WaitRoomUseCase(
                         }
 
                         // Update the room state to GAME_STARTING and join the game.
-                        preGameRepository.updateGameFields(roomId, ::joinGame).getOrThrow()
+                        roomRepository.updateRoomFields(roomId, ::joinGame).getOrThrow()
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(room.gameId).getOrThrow()
                         session.setCurrentGame(game)
@@ -120,17 +117,16 @@ class WaitRoomUseCase(
                 }
 
 
-
+                // 4th State: If the game is starting, the room is not needed anymore, so we can delete it.
                 RoomState.GAME_STARTING.name, RoomState.ROOM_ABANDONED.name  -> {
                     // Delete the room if it wasn't deleted yet and clear the room from the session.
-                    val room = preGameRepository.getRoom(roomId).getOrNull()
+                    val room = roomRepository.getRoom(roomId).getOrNull()
                     if (room != null) {
-                        preGameRepository.deleteRoom(roomId).getOrThrow()
+                        roomRepository.deleteRoom(roomId).getOrThrow()
                     }
                     session.clearCurrentRoom()
                 }
             }
-
         }
     }
 }

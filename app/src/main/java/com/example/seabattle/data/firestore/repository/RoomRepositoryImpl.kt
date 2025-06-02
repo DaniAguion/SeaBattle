@@ -1,16 +1,14 @@
 package com.example.seabattle.data.firestore.repository
 
 import timber.log.Timber
-import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.RoomCreationDto
 import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
-import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.entity.toBasic
-import com.example.seabattle.domain.repository.PreGameRepository
+import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
@@ -24,13 +22,11 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.collections.plus
 
-class PreGameRepositoryImpl(
+class RoomRepositoryImpl(
     private val db: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher
-) : PreGameRepository {
-
+) : RoomRepository {
     private val roomsCollection = db.collection("rooms")
-    private val gamesCollection = db.collection("games")
 
 
     // Function to fetch all rooms with only one player
@@ -83,7 +79,7 @@ class PreGameRepositoryImpl(
                     trySend(Result.failure(Exception("Room not found")))
                     return@addSnapshotListener
                 }
-                if (!snapshot.metadata.isFromCache()) {
+                if (!snapshot.metadata.isFromCache) {
                     val roomEntity = try {
                         snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
                     } catch (e: Exception) {
@@ -105,54 +101,17 @@ class PreGameRepositoryImpl(
 
 
     // Function to create a new room
-    override suspend fun createRoom(roomId: String, roomName: String, user: User) : Result<Unit>
+    override suspend fun createRoom(room: Room) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             val roomDto = RoomCreationDto(
-                roomId = roomId,
-                roomName = roomName,
-                roomState = RoomState.WAITING_FOR_PLAYER.name,
-                player1 = user.toBasic(),
+                roomId = room.roomId,
+                roomName = room.roomName,
+                roomState = room.roomState,
+                player1 = room.player1,
             )
             roomsCollection.document(roomDto.roomId).set(roomDto).await()
             return@runCatching
-        }
-    }
-
-
-
-    // Function to use by the second player to join an existing room
-    override suspend fun joinRoom(roomId: String, user: User) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction { transaction ->
-                val document = roomsCollection.document(roomId)
-                val snapshot = transaction.get(document)
-
-                if (!snapshot.exists()) {
-                    throw Exception("Room not found")
-                }
-
-                val roomDto = snapshot.toObject(RoomDto::class.java)
-                    ?: throw Exception("Room data is corrupted")
-
-                // Check if the room conditions are met for the second player to join
-                if (roomDto.player1.userId == user.userId || roomDto.numberOfPlayers == 2 ||
-                    roomDto.roomState != RoomState.WAITING_FOR_PLAYER.name) {
-                    throw Exception("Room not available")
-                }
-
-                // Update the room state and add the second player
-                val newData = mapOf(
-                    "roomState" to RoomState.SECOND_PLAYER_JOINED.name,
-                    "numberOfPlayers" to 2,
-                    "player2" to user.toBasic(),
-                    "updatedAt" to FieldValue.serverTimestamp()
-                )
-
-                transaction.update(document, newData)
-                return@runTransaction
-            }.await()
         }
     }
 
@@ -177,76 +136,8 @@ class PreGameRepositoryImpl(
 
 
 
-    // Function to delete a room by roomId
-    override suspend fun deleteRoom(roomId: String) : Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction { transaction ->
-                val document = roomsCollection.document(roomId)
-                val snapshot = transaction.get(document)
-
-                if (!snapshot.exists()) {
-                    throw Exception("Room not found")
-                }
-
-                val roomDto = snapshot.toObject(RoomDto::class.java)
-                    ?: throw Exception("Room data is corrupted")
-
-                // Room can be deleted only if it is in WAITING_FOR_PLAYER or GAME_STARTING state
-                if (roomDto.roomState == RoomState.WAITING_FOR_PLAYER.name ||
-                    roomDto.roomState == RoomState.GAME_STARTING.name)
-                {
-                    transaction.delete(document)
-                } else {
-                    throw Exception("Room cannot be deleted in current state: ${roomDto.roomState}")
-                }
-                return@runTransaction
-            }.await()
-        }
-    }
-
-
-
-    // Function to create a new game from the room
-    override suspend fun createGame(roomId: String, logicFunction: (Room) -> Game, updatedRoomData: Map<String, Any>) : Result<String>
-    = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction {  transaction ->
-                val roomDocument = roomsCollection.document(roomId)
-                val roomSnapshot = transaction.get(roomDocument)
-                if (!roomSnapshot.exists()) {
-                    throw Exception("Room not found")
-                }
-                val room = roomSnapshot.toObject(RoomDto::class.java)?.toRoomEntity()
-                    ?: throw Exception("Room data is corrupted")
-
-                val game = logicFunction(room)
-
-                // Create the game document
-                val gameCreationDto = GameCreationDto(
-                    gameId = game.gameId,
-                    player1 = game.player1,
-                    boardForPlayer1 = game.boardForPlayer1,
-                    player1Ships = game.player1Ships,
-                    player2 = game.player2,
-                    boardForPlayer2 = game.boardForPlayer2,
-                    player2Ships = game.player2Ships,
-                    gameState = game.gameState,
-                    currentPlayer = game.currentPlayer,
-                )
-                transaction.set(gamesCollection.document(game.gameId), gameCreationDto)
-
-                // Update the room document to indicate the game has been created
-                val updateData = updatedRoomData + mapOf("updatedAt" to FieldValue.serverTimestamp())
-                transaction.update(roomDocument, updateData)
-                return@runTransaction game.gameId
-            }.await()
-        }
-    }
-
-
     // Function to update the room data validating the game state.
-    override suspend fun updateGameFields(roomId: String, logicFunction: (Room) -> Map<String, Any>): Result<Unit>
+    override suspend fun updateRoomFields(roomId: String, logicFunction: (Room) -> Map<String, Any>): Result<Unit>
             = withContext(ioDispatcher) {
         runCatching {
             val document = roomsCollection.document(roomId)
@@ -265,6 +156,16 @@ class PreGameRepositoryImpl(
 
                 return@runTransaction
             }.await()
+        }
+    }
+
+
+
+    // Function to delete a room by roomId
+    override suspend fun deleteRoom(roomId: String) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            roomsCollection.document(roomId).delete().await()
+            return@runCatching
         }
     }
 }
