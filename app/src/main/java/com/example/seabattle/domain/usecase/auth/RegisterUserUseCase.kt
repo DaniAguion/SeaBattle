@@ -1,9 +1,6 @@
 package com.example.seabattle.domain.usecase.auth
 
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.errors.AuthError
-import com.example.seabattle.domain.errors.DomainError
-import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
