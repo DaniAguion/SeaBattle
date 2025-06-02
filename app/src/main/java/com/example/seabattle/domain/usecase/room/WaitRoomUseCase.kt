@@ -6,11 +6,15 @@ import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.RoomError
+import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.UUID
 
 
@@ -26,13 +30,12 @@ class WaitRoomUseCase(
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userId = session.getCurrentUserId()
-            val room = session.getCurrentRoom()
+            val room = session.getCurrentRoom() ?: throw RoomError.RoomNotFound()
+            val roomId = session.getCurrentRoom()?.roomId
 
-            if (room == null){
-                throw Exception("Room is not set")
+            if (roomId == null || roomId.isEmpty()){
+                throw RoomError.RoomNotFound()
             }
-
-            val roomId = room.roomId
 
             when(room.roomState) {
 
@@ -51,7 +54,7 @@ class WaitRoomUseCase(
                         fun createGame(room: Room): Game {
                             // Validate room state before creating a game.
                             if (room.roomState != RoomState.SECOND_PLAYER_JOINED.name || room.player2 == null) {
-                                throw Exception("Room is not available for creating a game")
+                                throw RoomError.InvalidRoomState()
                             }
                             // Create game board for player 1 and register the ships for player 2.
                             // Create game board for player 2 and register the ships for player 1.
@@ -92,16 +95,13 @@ class WaitRoomUseCase(
 
                 // 3rd State: If the first player has created a game, the second player will join the game.
                 RoomState.GAME_CREATED.name -> {
-                    if (room.player2 == null || room.gameId == null) {
-                        throw Exception("Missing data in the room object")
-                    }
 
-                    if (userId == room.player2.userId) {
+                    if (userId == room.player2?.userId && room.gameId != null) {
 
                         // Function to validate the room state and join the game.
                         fun joinGame(room: Room): Map<String, Any> {
                             if (room.roomState != RoomState.GAME_CREATED.name || room.gameId == null) {
-                                throw Exception("Game is not available for joining the game")
+                                throw RoomError.InvalidRoomState()
                             }
                             return mapOf(
                                 "roomState" to RoomState.GAME_STARTING.name
@@ -127,6 +127,14 @@ class WaitRoomUseCase(
                     session.clearCurrentRoom()
                 }
             }
+        }
+        .onFailure { e ->
+            Timber.e(e, "WaitRoomUseCase failed for room state: ${session.getCurrentRoom()?.roomState}.")
+        }
+        .recoverCatching { throwable ->
+            if (throwable is RoomError) throw throwable
+            else if (throwable is UserError) throw throwable
+            else throw DomainError.Unknown(throwable)
         }
     }
 }

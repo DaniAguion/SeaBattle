@@ -19,23 +19,24 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
 
 
+    // Method to register a new user with email and password
     override suspend fun registerUser(email: String, password: String) : Result<Boolean>
     = withContext(ioDispatcher) {
         runCatching {
-            auth.createUserWithEmailAndPassword(email, password).await()
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            return@runCatching authResult.user != null
         }
-        .map { authResult -> authResult.user != null }
         .recoverCatching { throwable ->
             throw throwable.toAuthError()
         }
     }
 
 
-
+    // Method to login a user using either email/password or Google sign-in
     override suspend fun loginUser(method: LoginMethod) : Result<Boolean>
     = withContext(ioDispatcher) {
         runCatching {
-            when (method) {
+            val authResult = when (method) {
                 is LoginMethod.EmailPassword -> {
                     auth.signInWithEmailAndPassword(method.email, method.password).await()
                 }
@@ -45,14 +46,15 @@ class AuthRepositoryImpl(
                     auth.signInWithCredential(credential).await()
                 }
             }
+            return@runCatching authResult.user != null
         }
-        .map { authResult -> authResult.user != null }
         .recoverCatching { throwable ->
             throw throwable.toAuthError()
         }
     }
 
 
+    // Method to update the user's display name
     override suspend fun setUserName(userName: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val user = auth.currentUser
@@ -61,24 +63,27 @@ class AuthRepositoryImpl(
             }
             val profileUpdates = userProfileChangeRequest { displayName = userName }
             user.updateProfile(profileUpdates).await()
+            return@runCatching
         }
-        .map{ _ -> }
         .recoverCatching { throwable ->
             throw throwable.toAuthError()
         }
     }
 
 
+    // Method to logout the current user
     override fun logoutUser() {
         auth.signOut()
     }
 
 
+    // Method to check if a user is currently logged in
     override fun isLoggedIn() : Boolean {
         return (auth.currentUser != null)
     }
 
 
+    // Method to get the current user's profile
     override fun getAuthUserProfile(): Result<User> {
         return runCatching {
             val user = auth.currentUser ?: throw AuthError.InvalidUser()

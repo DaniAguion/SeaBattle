@@ -26,10 +26,8 @@ class HomeViewModel(
     private var getRoomsJob: Job? = null
 
     init {
-        _uiState.value = _uiState.value.copy(
-            actionFailed = false,
-            loadingList = true
-        )
+        _uiState.value = _uiState.value.copy(loadingList = true)
+
         getRoomsJob = viewModelScope.launch {
             getRoomsUseCase.invoke()
             . collect { result ->
@@ -41,11 +39,12 @@ class HomeViewModel(
                         loadingList = false
                     )
                 }
-                .onFailure { throwable ->
+                .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
                         roomList = emptyList(),
                         errorList = true,
-                        loadingList = false
+                        loadingList = false,
+                        errorMessage = e.message
                     )
                 }
             }
@@ -69,8 +68,8 @@ class HomeViewModel(
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
-                .onFailure {
-                    _uiState.value = _uiState.value.copy(actionFailed = true)
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }
@@ -82,15 +81,15 @@ class HomeViewModel(
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
-                .onFailure {
-                    _uiState.value = _uiState.value.copy(actionFailed = true)
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }
 
 
     fun onErrorShown(){
-        _uiState.value = _uiState.value.copy(actionFailed = false)
+        _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
     fun stopListening() {

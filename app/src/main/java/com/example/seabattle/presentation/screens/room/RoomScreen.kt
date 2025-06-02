@@ -1,7 +1,7 @@
 package com.example.seabattle.presentation.screens.room
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,9 +21,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
@@ -41,7 +38,7 @@ fun RoomScreen(
     roomViewModel: RoomViewModel = koinViewModel(),
 ) {
     val roomUiState by roomViewModel.uiState.collectAsState()
-
+    val context = LocalContext.current
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
@@ -49,6 +46,15 @@ fun RoomScreen(
             roomViewModel.stopListening()
         }
     }
+
+    // Show a toast message when an error occurs
+    LaunchedEffect(key1 = roomUiState.errorMessage) {
+        roomUiState.errorMessage?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            roomViewModel.onErrorShown()
+        }
+    }
+
 
     // If the user presses the back button, leave the room and navigate to the home screen
     BackHandler(

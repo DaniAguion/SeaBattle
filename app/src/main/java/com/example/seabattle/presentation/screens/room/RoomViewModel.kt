@@ -33,6 +33,9 @@ class RoomViewModel(
             val room = session.getCurrentRoom()
             if (room != null) {
                 listenRoomUseCase.invoke(room.roomId)
+                    .onFailure { e ->
+                        _uiState.value = RoomUiState(errorMessage = e.message)
+                    }
             }
         }
 
@@ -41,9 +44,8 @@ class RoomViewModel(
         // This will update the UI state with the current room information
         updateRoomJob = viewModelScope.launch {
             session.currentRoom.collect { room ->
-                waitRoomUseCase.invoke()
-                // If the room is not null, update the UI state with the room information
                 if (room != null) {
+                    waitRoomUseCase.invoke()
                     _uiState.value = RoomUiState(room = room)
                 }
             }
@@ -54,15 +56,19 @@ class RoomViewModel(
     // Function to close the room when the user leaves
     fun onUserLeave(){
         viewModelScope.launch {
-            _uiState.value = RoomUiState(actionFailed = false)
             closeRoomUseCase.invoke()
                 .onSuccess {
                     _uiState.value = RoomUiState(room = null)
                 }
-                .onFailure {
-                    _uiState.value = RoomUiState(actionFailed = true)
+                .onFailure { e ->
+                    _uiState.value = RoomUiState(errorMessage = e.message)
                 }
         }
+    }
+
+
+    fun onErrorShown(){
+        _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
 

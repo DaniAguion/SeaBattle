@@ -53,7 +53,7 @@ fun WelcomeScreen(
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
     val localContext = LocalContext.current
 
-    LaunchedEffect(welcomeUiState.errorMessage) {
+    LaunchedEffect(key1 = welcomeUiState.errorMessage) {
         welcomeUiState.errorMessage?.let { errorMessage ->
             Toast.makeText(localContext, errorMessage, Toast.LENGTH_LONG).show()
             welcomeViewModel.onErrorShown()

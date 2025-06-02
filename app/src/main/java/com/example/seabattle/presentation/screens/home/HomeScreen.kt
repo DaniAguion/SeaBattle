@@ -1,6 +1,5 @@
 package com.example.seabattle.presentation.screens.home
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,18 +58,23 @@ fun HomeScreen(
         }
     }
 
+    // Show a toast message when an error occurs
+    LaunchedEffect(key1 = homeUiState.errorMessage) {
+        homeUiState.errorMessage?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            homeViewModel.onErrorShown()
+        }
+    }
+
     HomeScreenContent(
         modifier = modifier,
         navController = navController,
-        context = context,
         roomName = homeUiState.roomName,
         roomNameError = homeUiState.roomNameError,
         roomList = homeUiState.roomList,
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
         hasJoined = homeUiState.hasJoined,
-        actionFailed = homeUiState.actionFailed,
-        onErrorShown = homeViewModel::onErrorShown,
         onRoomNameUpdate = homeViewModel::onRoomNameUpdate,
         onClickCreateRoom = homeViewModel::onClickCreateRoom,
         onClickJoinRoom = homeViewModel::onClickJoinRoom,
@@ -82,16 +86,13 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    context: Context,
     roomName : String,
     roomNameError : ValidationError?,
     roomList : List<Room>,
     errorList : Boolean,
     loadingList : Boolean,
     hasJoined: Boolean,
-    actionFailed: Boolean,
     onRoomNameUpdate: (String) -> Unit,
-    onErrorShown: () -> Unit,
     onClickCreateRoom: (String) -> Unit,
     onClickJoinRoom: (String) -> Unit,
 ) {
@@ -99,18 +100,6 @@ fun HomeScreenContent(
     LaunchedEffect(key1 = hasJoined) {
         if (hasJoined) {
             navController.navigate(SeaBattleScreen.Room.title)
-        }
-    }
-
-    // Show error message when action failed
-    LaunchedEffect(key1 = actionFailed) {
-        if (actionFailed) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.error_action),
-                Toast.LENGTH_SHORT
-            ).show()
-            onErrorShown()
         }
     }
 
@@ -254,13 +243,11 @@ fun HomeScreenPreview(){
     HomeScreenContent(
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
-        context = LocalContext.current,
         roomName = "Test Room",
         roomNameError = null,
         errorList = false,
         loadingList = false,
         hasJoined = false,
-        actionFailed = false,
         roomList = listOf(
             Room(
                 roomId = "1",
@@ -287,7 +274,6 @@ fun HomeScreenPreview(){
         ),
         onClickCreateRoom = { },
         onClickJoinRoom = { },
-        onErrorShown = { },
         onRoomNameUpdate = { },
     )
 }

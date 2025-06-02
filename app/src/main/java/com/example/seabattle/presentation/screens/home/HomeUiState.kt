@@ -10,6 +10,6 @@ data class HomeUiState (
     val errorList: Boolean = false,
     val loadingList: Boolean = true,
     val hasJoined: Boolean = false,
-    val actionFailed: Boolean = false
+    val errorMessage: String? = null,
 )
 

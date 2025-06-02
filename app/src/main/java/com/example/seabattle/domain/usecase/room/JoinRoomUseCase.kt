@@ -4,10 +4,14 @@ import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.toBasic
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.RoomError
+import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.RoomRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 
 class JoinRoomUseCase(
@@ -25,7 +29,7 @@ class JoinRoomUseCase(
             fun joinRoom(room: Room): Map<String, Any> {
                 if (room.player1.userId == user.userId || room.numberOfPlayers == 2 ||
                     room.roomState != RoomState.WAITING_FOR_PLAYER.name) {
-                    throw Exception("Room not available")
+                    throw RoomError.InvalidRoomState()
                 }
 
                 // Update the room state and add the second player
@@ -42,6 +46,14 @@ class JoinRoomUseCase(
             // Fetch the updated room and set it in the session
             val room = roomRepository.getRoom(roomId).getOrThrow()
             session.setCurrentRoom(room)
+        }
+        .onFailure { e ->
+            Timber.e(e, "JoinRoomUseCase failed.")
+        }
+        .recoverCatching { throwable ->
+            if (throwable is RoomError) throw throwable
+            else if (throwable is UserError) throw throwable
+            else throw DomainError.Unknown(throwable)
         }
     }
 }

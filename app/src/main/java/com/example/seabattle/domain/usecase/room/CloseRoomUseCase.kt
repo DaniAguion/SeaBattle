@@ -1,9 +1,12 @@
 package com.example.seabattle.domain.usecase.room
 
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.RoomError
 import com.example.seabattle.domain.repository.RoomRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class CloseRoomUseCase(
     val roomRepository: RoomRepository,
@@ -15,7 +18,7 @@ class CloseRoomUseCase(
             val roomId = session.getCurrentRoom()?.roomId
 
             if (roomId == null || roomId.isEmpty()){
-                throw Exception("Room is not set")
+                throw RoomError.RoomNotFound()
             }
 
             // Delete the room if it wasn't deleted yet and clear the session
@@ -24,6 +27,13 @@ class CloseRoomUseCase(
                 roomRepository.deleteRoom(roomId).getOrThrow()
             }
             session.clearCurrentRoom()
+        }
+        .onFailure { e ->
+            Timber.e(e, "CloseRoomUseCase failed.")
+        }
+        .recoverCatching { throwable ->
+            if (throwable is RoomError) throw throwable
+            else throw DomainError.Unknown(throwable)
         }
     }
 }

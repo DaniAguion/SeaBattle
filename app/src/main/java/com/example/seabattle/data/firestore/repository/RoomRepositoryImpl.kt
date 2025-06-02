@@ -1,13 +1,12 @@
 package com.example.seabattle.data.firestore.repository
 
-import timber.log.Timber
 import com.example.seabattle.data.firestore.dto.RoomCreationDto
 import com.example.seabattle.data.firestore.dto.RoomDto
+import com.example.seabattle.data.firestore.errors.toRoomError
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
-import com.example.seabattle.domain.entity.User
-import com.example.seabattle.domain.entity.toBasic
+import com.example.seabattle.domain.errors.RoomError
 import com.example.seabattle.domain.repository.RoomRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -36,7 +35,7 @@ class RoomRepositoryImpl(
             .whereEqualTo("roomState", RoomState.WAITING_FOR_PLAYER.name)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    trySend(Result.failure(error))
+                    trySend(Result.failure(error.toRoomError()))
                     return@addSnapshotListener
                 }
 
@@ -47,10 +46,9 @@ class RoomRepositoryImpl(
 
                 val rooms = snapshot.documents.mapNotNull { document ->
                     try {
-                        document.toObject(RoomDto::class.java)?.toRoomEntity()
+                        document.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
                     } catch (e: Exception) {
-                        Timber.e(e, "Error to deserialize document: ${document.id}")
-                        trySend(Result.failure(e))
+                        trySend(Result.failure(e.toRoomError()))
                         return@addSnapshotListener
                     }
                 }
@@ -72,26 +70,21 @@ class RoomRepositoryImpl(
             .document(roomId)
             .addSnapshotListener(options) { snapshot, error ->
                 if (error != null) {
-                    trySend(Result.failure(error))
+                    trySend(Result.failure(error.toRoomError()))
                     return@addSnapshotListener
                 }
                 if (snapshot == null || !snapshot.exists()) {
-                    trySend(Result.failure(Exception("Room not found")))
+                    trySend(Result.failure(RoomError.RoomNotFound()))
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache) {
                     val roomEntity = try {
-                        snapshot.toObject(RoomDto::class.java)?.toRoomEntity()
+                        snapshot.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
                     } catch (e: Exception) {
-                        Timber.e(e, "Error to deserialize roomId: $roomId")
-                        trySend(Result.failure(e))
+                        trySend(Result.failure(e.toRoomError()))
                         return@addSnapshotListener
                     }
 
-                    if (roomEntity == null) {
-                        trySend(Result.failure(Exception("Room not found")))
-                        return@addSnapshotListener
-                    }
                     trySend(Result.success(roomEntity))
                 }
             }
@@ -113,6 +106,9 @@ class RoomRepositoryImpl(
             roomsCollection.document(roomDto.roomId).set(roomDto).await()
             return@runCatching
         }
+        .recoverCatching { throwable ->
+            throw throwable.toRoomError()
+        }
     }
 
 
@@ -122,15 +118,16 @@ class RoomRepositoryImpl(
     = withContext(ioDispatcher) {
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
-            if (document.exists()) {
-                val roomEntity = document.toObject(RoomDto::class.java)?.toRoomEntity()
-                if (roomEntity == null) {
-                    throw Exception("Room not found")
-                }
-                return@runCatching roomEntity
-            } else {
-                throw Exception("Document not found")
+
+            if (!document.exists()) {
+                throw RoomError.RoomNotFound()
             }
+
+            val roomEntity = document.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
+            return@runCatching roomEntity
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toRoomError()
         }
     }
 
@@ -144,8 +141,7 @@ class RoomRepositoryImpl(
 
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(document)
-                val fetchedGameDto = snapshot.toObject(RoomDto::class.java)
-                    ?: throw Exception("Room not found or invalid.")
+                val fetchedGameDto = snapshot.toObject(RoomDto::class.java) ?: throw RoomError.RoomNotValid()
 
                 val roomEntity = fetchedGameDto.toRoomEntity()
 
@@ -157,6 +153,9 @@ class RoomRepositoryImpl(
                 return@runTransaction
             }.await()
         }
+        .recoverCatching { throwable ->
+            throw throwable.toRoomError()
+        }
     }
 
 
@@ -166,6 +165,9 @@ class RoomRepositoryImpl(
         runCatching {
             roomsCollection.document(roomId).delete().await()
             return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toRoomError()
         }
     }
 }

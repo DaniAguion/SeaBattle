@@ -4,10 +4,14 @@ import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.toBasic
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.RoomError
+import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.RoomRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.UUID
 
 class CreateRoomUseCase(
@@ -37,6 +41,14 @@ class CreateRoomUseCase(
             room = roomRepository.getRoom(roomId).getOrThrow()
             session.setCurrentRoom(room)
             return@runCatching
+        }
+        .onFailure { e ->
+            Timber.e(e, "CreateRoomUseCase failed.")
+        }
+        .recoverCatching { throwable ->
+            if (throwable is RoomError) throw throwable
+            else if (throwable is UserError) throw throwable
+            else throw DomainError.Unknown(throwable)
         }
     }
 }
