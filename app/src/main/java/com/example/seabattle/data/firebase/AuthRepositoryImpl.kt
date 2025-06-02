@@ -1,16 +1,17 @@
 package com.example.seabattle.data.firebase
 
 
-import android.util.Log
 import com.example.seabattle.domain.entity.LoginMethod
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.errors.AuthError
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+
 
 class AuthRepositoryImpl(
     private val auth: FirebaseAuth,
@@ -23,11 +24,9 @@ class AuthRepositoryImpl(
         runCatching {
             auth.createUserWithEmailAndPassword(email, password).await()
         }
-        .map { authResult ->
-            authResult.user != null
-        }
-        .onFailure { e ->
-            Log.e("AuthRepository", "Register with email and password failed", e)
+        .map { authResult -> authResult.user != null }
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
         }
     }
 
@@ -47,11 +46,9 @@ class AuthRepositoryImpl(
                 }
             }
         }
-        .map { authResult ->
-            authResult.user != null
-        }
-        .onFailure { e ->
-            Log.e("AuthRepository", "Login failed", e)
+        .map { authResult -> authResult.user != null }
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
         }
     }
 
@@ -60,13 +57,15 @@ class AuthRepositoryImpl(
         runCatching {
             val user = auth.currentUser
             if (user == null) {
-                throw IllegalStateException("User is null")
+                throw AuthError.InvalidUser()
             }
-            val profileUpdates = userProfileChangeRequest {
-                displayName = userName
-            }
+            val profileUpdates = userProfileChangeRequest { displayName = userName }
             user.updateProfile(profileUpdates).await()
-        }.map{ _ -> Unit}
+        }
+        .map{ _ -> }
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
+        }
     }
 
 
@@ -80,16 +79,18 @@ class AuthRepositoryImpl(
     }
 
 
-    override fun getAuthUserProfile(): User? {
-        val user = auth.currentUser
-        return user?.let {
+    override fun getAuthUserProfile(): Result<User> {
+        return runCatching {
+            val user = auth.currentUser ?: throw AuthError.InvalidUser()
             User(
-                userId = it.uid,
-                displayName = it.displayName ?: it.providerData[0]?.displayName ?: "",
-                email =  it.email ?: it.providerData[0]?.email ?: "",
-                photoUrl = (it.photoUrl ?: it.providerData[0]?.photoUrl ?: "").toString()
+                userId = user.uid,
+                displayName = user.displayName ?: user.providerData[0]?.displayName ?: "",
+                email =  user.email ?: user.providerData[0]?.email ?: "",
+                photoUrl = (user.photoUrl ?: user.providerData[0]?.photoUrl ?: "").toString()
             )
         }
-        return null
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
+        }
     }
 }

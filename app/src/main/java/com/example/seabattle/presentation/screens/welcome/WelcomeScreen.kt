@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.welcome
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.presentation.TabItem
@@ -52,6 +54,12 @@ fun WelcomeScreen(
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
     val localContext = LocalContext.current
 
+    LaunchedEffect(welcomeUiState.errorMessage) {
+        welcomeUiState.errorMessage?.let { errorMessage ->
+            Toast.makeText(localContext, errorMessage, Toast.LENGTH_LONG).show()
+            welcomeViewModel.onErrorShown()
+        }
+    }
 
     // Navigate to Home screen if user is already logged in
     LaunchedEffect(key1 = welcomeUiState.isLoggedIn) {

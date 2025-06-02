@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.onSuccess
 
 
 class WelcomeViewModel(
@@ -63,16 +64,24 @@ class WelcomeViewModel(
         }
 
         viewModelScope.launch {
-            val tryResult = loginUseCase(
+            loginUseCase(
                 LoginMethod.EmailPassword(
                     email = _uiState.value.email,
                     password = _uiState.value.password
                 )
             )
-            if (tryResult.isSuccess) {
-                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
-                _uiState.value = _uiState.value.copy(isLoggedIn = true)
-            } else {
+            .onSuccess { result ->
+                if (result) {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = true)
+                } else {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = false)
+                }
+            }
+            .onFailure { throwable ->
+                val errorMessage = throwable.message
+                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
@@ -93,15 +102,23 @@ class WelcomeViewModel(
         }
 
         viewModelScope.launch {
-            val tryResult = registerUseCase(
+            registerUseCase(
                 username = _uiState.value.username,
                 email = _uiState.value.email,
                 password = _uiState.value.password
             )
-            if (tryResult.isSuccess) {
-                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_SUCCESSFUL)
-                _uiState.value = _uiState.value.copy(isLoggedIn = true)
-            } else {
+            .onSuccess { result ->
+                if (result) {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_SUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = true)
+                } else {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = false)
+                }
+            }
+            .onFailure { throwable ->
+                val errorMessage = throwable.message
+                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
@@ -112,18 +129,30 @@ class WelcomeViewModel(
         viewModelScope.launch {
             val googleIdToken = googleSignIn.signIn(context) ?: ""
 
-            val tryResult = loginUseCase(
+            loginUseCase(
                 LoginMethod.Google(
                     googleIdToken = googleIdToken
                 )
             )
-            if (tryResult.isSuccess) {
-                _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
-                _uiState.value = _uiState.value.copy(isLoggedIn = true)
-            } else {
+            .onSuccess { result ->
+                if (result) {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_SUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = true)
+                } else {
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
+                    _uiState.value = _uiState.value.copy(isLoggedIn = false)
+                }
+            }
+            .onFailure { throwable ->
+                val errorMessage = throwable.message
+                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
         }
+    }
+
+    fun onErrorShown(){
+        _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 }

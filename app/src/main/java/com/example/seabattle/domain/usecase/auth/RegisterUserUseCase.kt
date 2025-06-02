@@ -1,10 +1,14 @@
 package com.example.seabattle.domain.usecase.auth
 
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.errors.AuthError
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class RegisterUserUseCase (
     private val authRepository: AuthRepository,
@@ -23,12 +27,14 @@ class RegisterUserUseCase (
 
             authRepository.setUserName(username).getOrThrow()
 
-            val userProfile = authRepository.getAuthUserProfile()
-                ?: throw IllegalStateException("User profile is null after registration")
+            val userProfile = authRepository.getAuthUserProfile().getOrThrow()
 
             userRepository.createUser(userProfile).getOrThrow()
             session.setCurrentUser(userProfile)
             return@runCatching true
+        }
+        .onFailure { e ->
+            Timber.e(e, "RegisterUserUseCase failed.")
         }
     }
 }

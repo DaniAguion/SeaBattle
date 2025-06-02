@@ -11,6 +11,7 @@ data class WelcomeUiState(
     val emailError: ValidationError? = null,
     val passwordError: ValidationError? = null,
     val msgResult: InfoMessages? = null,
+    val errorMessage: String? = null,
 )
 
 enum class InfoMessages {

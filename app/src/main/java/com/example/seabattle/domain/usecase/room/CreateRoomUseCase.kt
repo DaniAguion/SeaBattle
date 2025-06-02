@@ -21,10 +21,6 @@ class CreateRoomUseCase(
             val userId = session.getCurrentUserId()
             val user = userRepository.getUser(userId).getOrThrow()
 
-            if (user == null) {
-                throw Exception("User not found")
-            }
-
             // Create the room in the repository
             val roomId = UUID.randomUUID().toString()
 

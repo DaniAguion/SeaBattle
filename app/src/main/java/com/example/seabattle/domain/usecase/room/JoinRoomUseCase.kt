@@ -21,10 +21,6 @@ class JoinRoomUseCase(
             val userId = session.getCurrentUserId()
             val user = userRepository.getUser(userId).getOrThrow()
 
-            if (user == null) {
-                throw Exception("User not found")
-            }
-
             // Function to validate the room state and join the game.
             fun joinRoom(room: Room): Map<String, Any> {
                 if (room.player1.userId == user.userId || room.numberOfPlayers == 2 ||
