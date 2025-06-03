@@ -69,8 +69,7 @@ class MakeMoveUseCase(
             when (cellValue) {
                 0 -> { // Did not hit. Turn over
                     gameBoard[x.toString()]?.put(y.toString(), 2)
-                    nextPlayer =
-                        if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
+                    nextPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
                 }
 
                 1 -> { // Hit. Player continues. Check if ship is sunk.
