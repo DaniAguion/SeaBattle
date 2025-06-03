@@ -2,6 +2,7 @@ package com.example.seabattle.presentation.screens.game
 
 
 import android.R.attr.bottom
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOutQuart
@@ -58,6 +59,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun GameScreen(
@@ -66,6 +68,7 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showLeaveDialog by remember { mutableStateOf(false) }
 
 
@@ -75,6 +78,15 @@ fun GameScreen(
             gameViewModel.stopListening()
         }
     }
+
+    // Show a toast message when an error occurs
+    LaunchedEffect(key1 = gameUiState.errorMessage) {
+        gameUiState.errorMessage?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            gameViewModel.onErrorShown()
+        }
+    }
+
 
     // If the user presses the back button, show a confirmation dialog
     BackHandler(

@@ -7,6 +7,7 @@ import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
+import com.example.seabattle.presentation.screens.room.RoomUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,12 +35,12 @@ class GameViewModel(
     init{
         // Observe the current game
         listenGameJob = viewModelScope.launch {
-            session.currentGame.first { game ->
-                if (game != null) {
-                    listenGameUseCase.invoke(game.gameId)
-                        .onSuccess { return@first true }
-                }
-                false
+            val game = session.getCurrentGame()
+            if (game != null) {
+                listenGameUseCase.invoke(game.gameId)
+                    .onFailure { e ->
+                        _uiState.value = GameUiState(errorMessage = e.message)
+                    }
             }
         }
 
@@ -57,6 +58,9 @@ class GameViewModel(
     fun onClickReady() {
         viewModelScope.launch {
             userReadyUseCase.invoke()
+                .onFailure { e ->
+                    _uiState.value = GameUiState(errorMessage = e.message)
+                }
         }
     }
 
@@ -76,12 +80,21 @@ class GameViewModel(
     fun onUserLeave() {
         viewModelScope.launch {
             leaveGameUseCase.invoke()
+                .onSuccess {
+                    _uiState.value = GameUiState(game = null)
+                }
+                .onFailure { e ->
+                    _uiState.value = GameUiState(errorMessage = e.message)
+                }
         }
     }
 
     fun onClickCell(x: Int, y: Int){
         viewModelScope.launch {
             makeMoveUseCase.invoke(x, y)
+                .onFailure { e ->
+                    _uiState.value = GameUiState(errorMessage = e.message)
+                }
         }
     }
 
@@ -102,6 +115,12 @@ class GameViewModel(
         }
         else return false
     }
+
+
+    fun onErrorShown(){
+        _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
 
     fun stopListening() {
         listenGameJob?.cancel()

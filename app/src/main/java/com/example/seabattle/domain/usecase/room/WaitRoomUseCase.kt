@@ -7,6 +7,7 @@ import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Room
 import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.RoomError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameRepository
@@ -134,6 +135,7 @@ class WaitRoomUseCase(
         .recoverCatching { throwable ->
             if (throwable is RoomError) throw throwable
             else if (throwable is UserError) throw throwable
+            else if (throwable is GameError) throw throwable
             else throw DomainError.Unknown(throwable)
         }
     }

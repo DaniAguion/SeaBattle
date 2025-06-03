@@ -28,7 +28,7 @@ enum class GameState {
     CHECK_READY,
     GAME_ABORTED,
     IN_PROGRESS,
-    GAME_FINISHED,
     USER_LEFT,
-    GAME_ABANDONED
+    GAME_FINISHED,
+    GAME_ABANDONED // This state is set by the server when there is no changes in the game for a long time.
 }

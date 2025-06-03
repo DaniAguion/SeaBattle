@@ -3,9 +3,15 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.GameError
+import com.example.seabattle.domain.errors.RoomError
+import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 
 class UserReadyUseCase(
@@ -18,14 +24,18 @@ class UserReadyUseCase(
             val userId = session.getCurrentUserId()
             val gameId = session.getCurrentGameId()
 
-            if (userId.isEmpty() || gameId.isEmpty()) {
-                throw IllegalStateException("User is not logged in or game is not set")
+            if (userId.isEmpty()) {
+                throw UserError.UserProfileNotFound()
+            }
+
+            if (gameId.isEmpty()) {
+                throw GameError.GameNotFound()
             }
 
             // Check if the game is in the correct state for user readiness and change the state accordingly
             fun setUserReady(game: Game) : Map<String, Any> {
                 if (game.gameState != GameState.CHECK_READY.name) {
-                    throw Exception("Game is not in check ready state")
+                    throw GameError.InvalidGameState()
                 }
 
                 val player1Ready = if (userId == game.player1.userId) true else game.player1Ready
@@ -40,6 +50,14 @@ class UserReadyUseCase(
             }
 
             gameRepository.updateGameFields(gameId = gameId, logicFunction = ::setUserReady).getOrThrow()
+        }
+        .onFailure { e ->
+            Timber.e(e, "UserReadyUseCase failed.")
+        }
+        .recoverCatching { throwable ->
+            if (throwable is GameError) throw throwable
+            else if (throwable is UserError) throw throwable
+            else throw DomainError.Unknown(throwable)
         }
     }
 }
