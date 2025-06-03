@@ -118,12 +118,11 @@ class RoomRepositoryImpl(
     = withContext(ioDispatcher) {
         runCatching {
             val document = roomsCollection.document(roomId).get().await()
+            if (!document.exists()) { throw RoomError.RoomNotFound() }
 
-            if (!document.exists()) {
-                throw RoomError.RoomNotFound()
-            }
+            val roomEntity = document.toObject(RoomDto::class.java)?.toRoomEntity() ?:
+                throw RoomError.RoomNotValid()
 
-            val roomEntity = document.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
             return@runCatching roomEntity
         }
         .recoverCatching { throwable ->

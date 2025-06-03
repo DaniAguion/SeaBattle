@@ -3,10 +3,14 @@ package com.example.seabattle.data.firestore.repository
 import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.dto.RoomDto
+import com.example.seabattle.data.firestore.errors.toGameError
+import com.example.seabattle.data.firestore.errors.toRoomError
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.data.firestore.mappers.toRoomEntity
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.errors.GameError
+import com.example.seabattle.domain.errors.RoomError
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,25 +46,21 @@ class GameRepositoryImpl(
             .document(gameId)
             .addSnapshotListener(options) { snapshot, error ->
                 if (error != null) {
-                    trySend(Result.failure(error))
+                    trySend(Result.failure(error.toGameError()))
                     return@addSnapshotListener
                 }
                 if (snapshot == null || !snapshot.exists()) {
-                    trySend(Result.failure(Exception("Game not found")))
+                    trySend(Result.failure(GameError.GameNotFound()))
                     return@addSnapshotListener
                 }
                 if (!snapshot.metadata.isFromCache) {
                     val gameEntity = try {
-                        snapshot.toObject(GameDto::class.java)?.toGameEntity()
+                        snapshot.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.GameNotValid()
                     } catch (e: Exception) {
-                        Timber.e("Error converting game data: ${e.message}")
-                        trySend(Result.failure(e))
+                        trySend(Result.failure(e.toRoomError()))
                         return@addSnapshotListener
                     }
-                    if (gameEntity == null) {
-                        trySend(Result.failure(Exception("Game not found")))
-                        return@addSnapshotListener
-                    }
+
                     trySend(Result.success(gameEntity))
                 }
             }
@@ -76,11 +76,10 @@ class GameRepositoryImpl(
             db.runTransaction {  transaction ->
                 val roomDocument = roomsCollection.document(roomId)
                 val roomSnapshot = transaction.get(roomDocument)
-                if (!roomSnapshot.exists()) {
-                    throw Exception("Room not found")
-                }
+                if (!roomSnapshot.exists()) { throw RoomError.RoomNotFound() }
+
                 val room = roomSnapshot.toObject(RoomDto::class.java)?.toRoomEntity()
-                    ?: throw Exception("Room data is corrupted")
+                    ?: throw RoomError.RoomNotValid()
 
                 val game = logicFunction(room)
 
@@ -104,6 +103,10 @@ class GameRepositoryImpl(
                 return@runTransaction game.gameId
             }.await()
         }
+        .recoverCatching { throwable ->
+            // The errors that can be thrown here are related to the room data
+            throw throwable.toRoomError()
+        }
     }
 
 
@@ -112,20 +115,16 @@ class GameRepositoryImpl(
     override suspend fun getGame(gameId: String): Result<Game> = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId).get().await()
-            if (document.exists()) {
-                val gameEntity = document.toObject(GameDto::class.java)?.toGameEntity()
-                if (gameEntity == null) {
-                    throw Exception("Game not found")
-                }
-                return@runCatching gameEntity
-            } else {
-                throw Exception("Document not found")
-            }
+            if (!document.exists()) { throw GameError.GameNotFound() }
+
+            val gameEntity = document.toObject(GameDto::class.java)?.toGameEntity() ?:
+                throw GameError.GameNotValid()
+
+            return@runCatching gameEntity
         }
-            .onFailure { e ->
-                Timber.e("Error fetching game: ${e.message}")
-                emptyList<Game>()
-            }
+        .recoverCatching { throwable ->
+            throw throwable.toGameError()
+        }
     }
 
 
@@ -139,7 +138,7 @@ class GameRepositoryImpl(
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(document)
                 val fetchedGameDto = snapshot.toObject(GameDto::class.java)
-                    ?: throw Exception("Game not found or invalid.")
+                    ?: throw GameError.GameNotValid()
 
                 val gameEntity = fetchedGameDto.toGameEntity()
 
@@ -151,6 +150,9 @@ class GameRepositoryImpl(
                 return@runTransaction
             }.await()
         }
+        .recoverCatching { throwable ->
+            throw throwable.toGameError()
+        }
     }
 
 
@@ -158,8 +160,17 @@ class GameRepositoryImpl(
     // Function to delete a game by gameId
     override suspend fun deleteGame(gameId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            gamesCollection.document(gameId).delete().await()
-            return@runCatching
+            db.runTransaction { transaction ->
+                val document = transaction.get(gamesCollection.document(gameId))
+
+                if (document.exists()) {
+                    transaction.delete(document.reference)
+                }
+                return@runTransaction
+            }.await()
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toGameError()
         }
     }
 }
