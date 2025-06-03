@@ -27,7 +27,7 @@ import com.example.seabattle.R
 
 @Composable
 fun GameBoard(
-    gameBoard: MutableMap<String, MutableMap<String, Int>>,
+    gameBoard: Map<String, Map<String, Int>>,
     onClickCell: (row: Int, col: Int) -> Unit,
     clickEnabled: Boolean
 ) {

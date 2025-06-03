@@ -3,9 +3,14 @@ package com.example.seabattle.data
 import com.example.seabattle.domain.entity.ShipPosition
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipDirection
+import com.example.seabattle.domain.entity.ShipPiece
 import com.example.seabattle.domain.repository.GameBoardRepository
 
 
+// This repository is responsible for managing the game board and ship positions.
+// It initializes a game board of size 10x10 and places ships of various sizes on it.
+// It handles the game board and ships as mutable maps and lists, allowing for dynamic creation.
+// The app will receive the game board and ship positions from this repository as a map of maps and a list of ships.
 class GameBoardRepositoryImpl() : GameBoardRepository {
     private val gameBoardSize: Int = 10
     private var gameBoard: MutableList<MutableList<Int>> = MutableList(gameBoardSize) {
@@ -14,7 +19,6 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
     private var shipList: MutableList<Ship> = mutableListOf()
 
     // Function to set the position of the ships on the game board
-    // The game board is mapped to a Map<String, Map<String, Int>> format to be handle by the repository
     override fun createGameBoard(): Result<Unit> {
         return runCatching {
             // Reset the game board to a new state so that it can be reused
@@ -28,36 +32,40 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
         }
     }
 
-    override fun getGameBoard(): MutableMap<String, MutableMap<String, Int>> {
+    override fun getGameBoard(): Map<String, Map<String, Int>> {
         return gameBoard.mapIndexed { rowIndex, row ->
             rowIndex.toString() to row.mapIndexed { colIndex, value ->
                 colIndex.toString() to value
-            }.toMap().toMutableMap()
-        }.toMap().toMutableMap()
+            }.toMap()
+        }.toMap()
     }
 
-    override fun getShipList(): MutableList<Ship> {
-        return shipList
+    override fun getShipList(): List<Ship> {
+        return shipList.toList()
     }
 
     // This function places the ship on the game board and returns the Ship object
     private fun setShipPosition(shipSize: Int) : Ship {
         val position = definePosition(shipSize)
-        val ship = Ship(size = shipSize)
+        val shipBody = MutableList(shipSize) { ShipPiece(0, 0, false) }
 
         for (i in 0 until shipSize)
             when (position.shipDirection) {
                 ShipDirection.VERTICAL -> {
                     gameBoard[position.x][position.y + i] = 1
-                    ship.shipBody[i] = ship.shipBody[i].copy(x = position.x, y = position.y + i)
+                    shipBody[i] = shipBody[i].copy(x = position.x, y = position.y + i)
                 }
 
                 ShipDirection.HORIZONTAL -> {
                     gameBoard[position.x + i][position.y] = 1
-                    ship.shipBody[i] = ship.shipBody[i].copy(x = position.x + i, y = position.y)
+                    shipBody[i] = shipBody[i].copy(x = position.x + i, y = position.y)
                 }
             }
-        return ship
+        return Ship (
+            size = shipSize,
+            shipBody = shipBody.toList(),
+            sunk = false
+        )
     }
 
 

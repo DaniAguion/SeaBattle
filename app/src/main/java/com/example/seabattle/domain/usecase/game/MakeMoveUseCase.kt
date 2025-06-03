@@ -3,9 +3,11 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.repository.GameRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 
 class MakeMoveUseCase(
@@ -35,7 +37,17 @@ class MakeMoveUseCase(
                 throw Exception("User does not belong to this game")
             }
 
-            // Deep copy of game board and ships
+            // Get the opponent ships and create a copy
+            val currentShips = if (game.currentPlayer == game.player1.userId) {
+                game.player2Ships
+            } else {
+                game.player1Ships
+            }
+            var updatedShips: List<Ship> = currentShips
+
+            // Deep copy of game board and ships and convert them to mutable maps
+            // This is necessary to avoid modifying the original game object
+            // Its converted to mutable maps to allow modifications
             val gameBoard = if (game.currentPlayer == game.player1.userId) {
                 game.boardForPlayer1.mapValues { (_, innerMap) -> innerMap.toMutableMap() }
                     .toMutableMap()
@@ -44,17 +56,6 @@ class MakeMoveUseCase(
                     .toMutableMap()
             }
 
-            val listShip = if (game.currentPlayer == game.player1.userId) {
-                game.player1Ships.map { ship ->
-                    ship.copy(shipBody = ship.shipBody.map { piece -> piece.copy() }
-                        .toMutableList())
-                }.toMutableList()
-            } else {
-                game.player2Ships.map { ship ->
-                    ship.copy(shipBody = ship.shipBody.map { piece -> piece.copy() }
-                        .toMutableList())
-                }.toMutableList()
-            }
 
             // Check valid cell coordinates
             val row = gameBoard[x.toString()] ?: throw Exception("Invalid cell coordinates")
@@ -75,17 +76,16 @@ class MakeMoveUseCase(
                 1 -> { // Hit. Player continues. Check if ship is sunk.
                     gameBoard[x.toString()]?.put(y.toString(), 3)
                     nextPlayer = game.currentPlayer
-                    // List of ships is checked to see if any ship has been sunk
-                    // Its been modified by reference, so we can modify it directly
-                    for (ship in listShip) {
-                        for (piece in ship.shipBody) {
-                            if (piece.x == x && piece.y == y) {
-                                piece.touched = true
+                    updatedShips = currentShips.map { ship ->
+                        val newShipBody = ship.shipBody.map { piece ->
+                            if (piece.x.toString() == x.toString() && piece.y.toString() == y.toString()) {
+                                piece.copy(touched = true)
+                            } else {
+                                piece
                             }
                         }
-                        if (ship.shipBody.all { it.touched }) {
-                            ship.sunk = true
-                        }
+                        val isSunk = newShipBody.all { it.touched }
+                        ship.copy(shipBody = newShipBody, sunk = isSunk)
                     }
                 }
                 else -> {
@@ -95,9 +95,9 @@ class MakeMoveUseCase(
 
             return mapOf(
                 "boardForPlayer1" to if (game.currentPlayer == game.player1.userId) gameBoard else game.boardForPlayer1,
-                "player1Ships" to if (game.currentPlayer == game.player1.userId) listShip else game.player1Ships,
+                "player1Ships" to if (game.currentPlayer == game.player1.userId) updatedShips else game.player1Ships,
                 "boardForPlayer2" to if (game.currentPlayer == game.player2.userId) gameBoard else game.boardForPlayer2,
-                "player2Ships" to if (game.currentPlayer == game.player2.userId) listShip else game.player2Ships,
+                "player2Ships" to if (game.currentPlayer == game.player2.userId) updatedShips else game.player2Ships,
                 "currentTurn" to game.currentTurn + 1,
                 "currentPlayer" to nextPlayer
             )
