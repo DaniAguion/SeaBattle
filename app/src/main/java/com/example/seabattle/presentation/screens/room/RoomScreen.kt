@@ -78,7 +78,7 @@ fun RoomScreen(
             hasLoadedRoom = true
         }
         // If the room is not null and the room state is GAME_CREATED, navigate to the game screen
-        if (room?.roomState == RoomState.GAME_CREATED.name) {
+        if (roomViewModel.gameIsReady()) {
             navController.navigate(SeaBattleScreen.Game.title){
                 popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }

@@ -9,6 +9,7 @@ import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
+import com.example.seabattle.domain.usecase.room.CheckGameUseCase
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
 import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
@@ -31,6 +32,7 @@ val domainModule = module {
     factory { JoinRoomUseCase(get(), get(), get(), get())}
     factory { WaitRoomUseCase(get(), get(), get(), get(), get())}
     factory { CloseRoomUseCase(get(), get(), get())}
+    factory { CheckGameUseCase(get())}
     // Game Use cases
     factory { ListenGameUseCase(get(), get(), get())}
     factory { UserReadyUseCase(get(), get(), get())}

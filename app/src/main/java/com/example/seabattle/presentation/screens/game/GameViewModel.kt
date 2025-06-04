@@ -7,12 +7,13 @@ import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
+import com.example.seabattle.presentation.screens.room.RoomUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
+import timber.log.Timber
 
 
 class GameViewModel(
@@ -27,27 +28,27 @@ class GameViewModel(
 
     // Listeners used to observe the room updates
     private var listenGameJob: Job? = null
-    private var updateUIJob: Job? = null
-
 
     init{
+        // Initialize the UI state with the current user ID
+        val userId = session.getCurrentUserId()
+        _uiState.value = GameUiState(userId = userId)
+
         // Observe the current game
         listenGameJob = viewModelScope.launch {
             val game = session.getCurrentGame()
-            if (game != null) {
+            // If the game is not null, start listening for updates
+            if (game != null && game.gameId.isNotEmpty()) {
                 listenGameUseCase.invoke(game.gameId)
-                    .onFailure { e ->
-                        _uiState.value = GameUiState(errorMessage = e.message)
+                    .collect { result ->
+                        result
+                            .onSuccess { game ->
+                                _uiState.value = GameUiState(game = game)
+                            }
+                            .onFailure { e ->
+                                _uiState.value = GameUiState(errorMessage = e.message)
+                            }
                     }
-            }
-        }
-
-
-        // Observe the current game from the session and update the UI state
-        updateUIJob = viewModelScope.launch {
-            _uiState.value = GameUiState(userId = session.getCurrentUserId())
-            session.currentGame.collect { game ->
-                _uiState.value = _uiState.value.copy(game = game)
             }
         }
     }
@@ -123,7 +124,5 @@ class GameViewModel(
     fun stopListening() {
         listenGameJob?.cancel()
         listenGameJob = null
-        updateUIJob?.cancel()
-        updateUIJob = null
     }
 }

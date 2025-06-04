@@ -3,6 +3,8 @@ package com.example.seabattle.presentation.screens.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.RoomState
+import com.example.seabattle.domain.usecase.room.CheckGameUseCase
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
@@ -17,6 +19,7 @@ class RoomViewModel(
     private val listenRoomUseCase: ListenRoomUseCase,
     private val waitRoomUseCase: WaitRoomUseCase,
     private val closeRoomUseCase: CloseRoomUseCase,
+    private val checkGameUseCase: CheckGameUseCase,
     private val session: Session,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<RoomUiState>(RoomUiState())
@@ -24,30 +27,31 @@ class RoomViewModel(
 
     // Listeners use to observe the room updates
     private var listenRoomJob: Job? = null
-    private var updateRoomJob: Job? = null
 
 
     init {
-        // Observe the assigned room and start listening for updates
+        // Start listening for room updates when the ViewModel is initialized
         listenRoomJob = viewModelScope.launch {
             val room = session.getCurrentRoom()
-            if (room != null) {
+            // If the room is not null, start listening for updates
+            if (room != null && room.roomId.isNotEmpty()) {
                 listenRoomUseCase.invoke(room.roomId)
-                    .onFailure { e ->
-                        _uiState.value = RoomUiState(errorMessage = e.message)
+                    .collect { result ->
+                        result
+                            .onSuccess { room ->
+                                // If the room is not null, update the UI state and react to the room updates
+                                if (room != null) {
+                                    _uiState.value = RoomUiState(room = room)
+                                    waitRoomUseCase.invoke()
+                                        .onFailure { e ->
+                                            _uiState.value = RoomUiState(errorMessage = e.message)
+                                        }
+                                }
+                            }
+                            .onFailure { e ->
+                                _uiState.value = RoomUiState(errorMessage = e.message)
+                            }
                     }
-            }
-        }
-
-
-        // Observe the current room from the session and react to changes
-        // This will update the UI state with the current room information
-        updateRoomJob = viewModelScope.launch {
-            session.currentRoom.collect { room ->
-                if (room != null) {
-                    waitRoomUseCase.invoke()
-                    _uiState.value = RoomUiState(room = room)
-                }
             }
         }
     }
@@ -66,6 +70,11 @@ class RoomViewModel(
         }
     }
 
+    // Function to check if the room is in a game created state
+    fun gameIsReady(): Boolean {
+        return checkGameUseCase.invoke()
+    }
+
 
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(errorMessage = null)
@@ -75,7 +84,5 @@ class RoomViewModel(
     fun stopListening() {
         listenRoomJob?.cancel()
         listenRoomJob = null
-        updateRoomJob?.cancel()
-        updateRoomJob = null
     }
 }

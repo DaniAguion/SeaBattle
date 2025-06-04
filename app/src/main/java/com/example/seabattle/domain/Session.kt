@@ -13,12 +13,8 @@ class Session(private val securePrefs: SecurePrefsData) {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
-    private val _currentRoom = MutableStateFlow<Room?>(null)
-    val currentRoom: StateFlow<Room?> = _currentRoom
-
-    private val _currentGame = MutableStateFlow<Game?>(null)
-    val currentGame: StateFlow<Game?> = _currentGame
-
+    private var currentRoom: Room? = null
+    private var currentGame: Game? = null
 
     init{
         // Initialize the current user from secure prefs.
@@ -60,15 +56,15 @@ class Session(private val securePrefs: SecurePrefsData) {
     // Repository of the current room.
     //
     fun setCurrentRoom(room: Room) {
-        _currentRoom.value = room
+        currentRoom = room
     }
 
     fun getCurrentRoom() : Room? {
-        return _currentRoom.value
+        return currentRoom
     }
 
     fun clearCurrentRoom() {
-        _currentRoom.value = null
+        currentRoom = null
     }
 
 
@@ -76,17 +72,18 @@ class Session(private val securePrefs: SecurePrefsData) {
     // Repository of the current game.
     //
     fun setCurrentGame(game: Game) {
-        _currentGame.value = game
+        currentGame = game
     }
 
     fun getCurrentGame() : Game? {
-        return _currentGame.value
+        return currentGame
     }
+
     fun getCurrentGameId(): String {
-        return _currentGame.value?.gameId ?: ""
+        return currentGame?.gameId ?: ""
     }
 
     fun clearCurrentGame() {
-        _currentGame.value = null
+        currentGame = null
     }
 }

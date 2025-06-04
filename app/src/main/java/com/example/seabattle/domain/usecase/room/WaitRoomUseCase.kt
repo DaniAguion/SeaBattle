@@ -109,11 +109,11 @@ class WaitRoomUseCase(
                             )
                         }
 
-                        // Update the room state to GAME_STARTING and join the game.
-                        roomRepository.updateRoomFields(roomId, ::joinGame).getOrThrow()
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(room.gameId).getOrThrow()
                         session.setCurrentGame(game)
+                        // Update the room state to GAME_STARTING and join the game.
+                        roomRepository.updateRoomFields(roomId, ::joinGame).getOrThrow()
                     }
                 }
 
@@ -130,7 +130,7 @@ class WaitRoomUseCase(
             }
         }
         .onFailure { e ->
-            Timber.e(e, "WaitRoomUseCase failed for room state: ${session.getCurrentRoom()?.roomState}.")
+            Timber.e(e, "WaitRoomUseCase failed.")
         }
         .recoverCatching { throwable ->
             if (throwable is RoomError) throw throwable
