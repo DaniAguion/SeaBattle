@@ -25,7 +25,7 @@ val domainModule = module {
     factory { RegisterUserUseCase(get(), get(), get(), get())}
     factory { CheckUserAuthUseCase(get())}
     // Room Use cases
-    factory { GetRoomsUseCase(get()) }
+    factory { GetRoomsUseCase(get(), get()) }
     factory { CreateRoomUseCase(get(), get(), get(), get())}
     factory { ListenRoomUseCase(get(), get(), get())}
     factory { JoinRoomUseCase(get(), get(), get(), get())}

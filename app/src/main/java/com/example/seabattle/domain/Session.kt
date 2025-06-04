@@ -41,7 +41,6 @@ class Session(private val securePrefs: SecurePrefsData) {
         /// If the userId is null, it means that the user is not logged in.
         /// Return an user to blank to avoid null pointer exception.
         val user = _currentUser.value
-        println("Session: Get user: $user")
         if (user == null) {
             return User()
         }

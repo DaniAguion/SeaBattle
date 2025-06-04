@@ -33,19 +33,20 @@ class GameRepositoryImpl(
 ) : GameRepository {
     private val roomsCollection = db.collection("rooms")
     private val gamesCollection = db.collection("games")
+    val listenerOptions = SnapshotListenOptions.Builder()
+        .setMetadataChanges(MetadataChanges.INCLUDE)
+        .build()
 
 
     // Function to listen for game updates
     override fun listenGameUpdates(gameId: String) : Flow<Result<Game>>
     = callbackFlow {
-        val options = SnapshotListenOptions.Builder()
-            .setMetadataChanges(MetadataChanges.INCLUDE)
-            .build()
 
         val listener = gamesCollection
             .document(gameId)
-            .addSnapshotListener(options) { snapshot, error ->
+            .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
+                    Timber.e(error, "Error listening to game updates for gameId: $gameId")
                     trySend(Result.failure(error.toGameError()))
                     return@addSnapshotListener
                 }
@@ -60,7 +61,6 @@ class GameRepositoryImpl(
                         trySend(Result.failure(e.toRoomError()))
                         return@addSnapshotListener
                     }
-
                     trySend(Result.success(gameEntity))
                 }
             }

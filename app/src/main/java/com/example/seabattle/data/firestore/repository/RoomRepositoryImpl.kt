@@ -26,14 +26,20 @@ class RoomRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : RoomRepository {
     private val roomsCollection = db.collection("rooms")
+    private val listenerOptions = SnapshotListenOptions.Builder()
+        .setMetadataChanges(MetadataChanges.INCLUDE)
+        .build()
+    // This variable is used to determine if the user is offline or online
+    private var sourceIsServer: Boolean = true
 
 
     // Function to fetch all rooms with only one player
-    override fun fetchRooms() : Flow<Result<List<Room>>> = callbackFlow {
+    override fun fetchRooms(userId: String) : Flow<Result<List<Room>>> = callbackFlow {
         val listener = roomsCollection
             .whereEqualTo("numberOfPlayers", 1)
             .whereEqualTo("roomState", RoomState.WAITING_FOR_PLAYER.name)
-            .addSnapshotListener { snapshot, error ->
+            .limit(25)
+            .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
                     trySend(Result.failure(error.toRoomError()))
                     return@addSnapshotListener
@@ -44,14 +50,24 @@ class RoomRepositoryImpl(
                     return@addSnapshotListener
                 }
 
-                val rooms = snapshot.documents.mapNotNull { document ->
-                    try {
-                        document.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
-                    } catch (e: Exception) {
-                        trySend(Result.failure(e.toRoomError()))
-                        return@addSnapshotListener
-                    }
+                if (snapshot.metadata.isFromCache) {
+                    sourceIsServer = false
+                } else {
+                    sourceIsServer = true
                 }
+
+                val rooms = snapshot.documents
+                    .mapNotNull { document ->
+                        try {
+                            document.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
+                        } catch (e: Exception) {
+                            trySend(Result.failure(e.toRoomError()))
+                            return@addSnapshotListener
+                        }
+                    }
+                    // Exclude rooms created by the current user
+                    // Didn't filtered in the query to avoid build a firestore index
+                    .filter { room -> room.player1.userId != userId }
                 trySend(Result.success(rooms))
             }
         awaitClose { listener.remove() }
@@ -62,13 +78,9 @@ class RoomRepositoryImpl(
     // Function to listen for updates on a specific room
     override fun listenRoomUpdates(roomId: String) : Flow<Result<Room?>>
     = callbackFlow {
-        val options = SnapshotListenOptions.Builder()
-            .setMetadataChanges(MetadataChanges.INCLUDE)
-            .build()
-
         val listener = roomsCollection
             .document(roomId)
-            .addSnapshotListener(options) { snapshot, error ->
+            .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
                     trySend(Result.failure(error.toRoomError()))
                     return@addSnapshotListener
@@ -77,14 +89,18 @@ class RoomRepositoryImpl(
                     trySend(Result.success(null))
                     return@addSnapshotListener
                 }
-                if (!snapshot.metadata.isFromCache) {
+                // If the snapshot is from cache, we assume the user is offline
+                // and we don't update the room entity
+                if (snapshot.metadata.isFromCache) {
+                    sourceIsServer = false
+                } else {
+                    sourceIsServer = true
                     val roomEntity = try {
                         snapshot.toObject(RoomDto::class.java)?.toRoomEntity() ?: throw RoomError.RoomNotValid()
                     } catch (e: Exception) {
                         trySend(Result.failure(e.toRoomError()))
                         return@addSnapshotListener
                     }
-
                     trySend(Result.success(roomEntity))
                 }
             }
@@ -97,6 +113,10 @@ class RoomRepositoryImpl(
     override suspend fun createRoom(room: Room) : Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
+            if (!sourceIsServer) {
+                throw RoomError.NetworkConnection()
+            }
+
             val roomDto = RoomCreationDto(
                 roomId = room.roomId,
                 roomName = room.roomName,
@@ -136,8 +156,10 @@ class RoomRepositoryImpl(
     override suspend fun updateRoomFields(roomId: String, logicFunction: (Room) -> Map<String, Any>): Result<Unit>
             = withContext(ioDispatcher) {
         runCatching {
+            if (!sourceIsServer) {
+                throw RoomError.NetworkConnection()
+            }
             val document = roomsCollection.document(roomId)
-
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(document)
                 val fetchedGameDto = snapshot.toObject(RoomDto::class.java) ?: throw RoomError.RoomNotValid()
