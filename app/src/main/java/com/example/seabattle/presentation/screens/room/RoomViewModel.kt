@@ -40,15 +40,15 @@ class RoomViewModel(
                             .onSuccess { room ->
                                 // If the room is not null, update the UI state and react to the room updates
                                 if (room != null) {
-                                    _uiState.value = RoomUiState(room = room)
+                                    _uiState.value = _uiState.value.copy(room = room)
                                     waitRoomUseCase.invoke()
                                         .onFailure { e ->
-                                            _uiState.value = RoomUiState(errorMessage = e.message)
+                                            _uiState.value = _uiState.value.copy(errorMessage = e.message)
                                         }
                                 }
                             }
                             .onFailure { e ->
-                                _uiState.value = RoomUiState(errorMessage = e.message)
+                                _uiState.value = _uiState.value.copy(errorMessage = e.message)
                             }
                     }
             }
@@ -61,10 +61,11 @@ class RoomViewModel(
         viewModelScope.launch {
             closeRoomUseCase.invoke()
                 .onSuccess {
-                    _uiState.value = RoomUiState(room = null)
+                    stopListening() // Stop listening to the room updates before clearing the room
+                    _uiState.value = _uiState.value.copy(room = null)
                 }
                 .onFailure { e ->
-                    _uiState.value = RoomUiState(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }

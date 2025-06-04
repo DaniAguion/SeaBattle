@@ -31,7 +31,7 @@ class GameViewModel(
     init{
         // Initialize the UI state with the current user ID
         val userId = session.getCurrentUserId()
-        _uiState.value = GameUiState(userId = userId)
+        _uiState.value = _uiState.value.copy(userId = userId)
 
         // Observe the current game
         listenGameJob = viewModelScope.launch {
@@ -42,10 +42,10 @@ class GameViewModel(
                     .collect { result ->
                         result
                             .onSuccess { game ->
-                                _uiState.value = GameUiState(game = game)
+                                _uiState.value = _uiState.value.copy(game = game)
                             }
                             .onFailure { e ->
-                                _uiState.value = GameUiState(errorMessage = e.message)
+                                _uiState.value = _uiState.value.copy(errorMessage = e.message)
                             }
                     }
             }
@@ -57,7 +57,7 @@ class GameViewModel(
         viewModelScope.launch {
             userReadyUseCase.invoke()
                 .onFailure { e ->
-                    _uiState.value = GameUiState(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }
@@ -79,10 +79,11 @@ class GameViewModel(
         viewModelScope.launch {
             leaveGameUseCase.invoke()
                 .onSuccess {
-                    _uiState.value = GameUiState(game = null)
+                    stopListening() // Stop listening to the game updates before clearing the game
+                    _uiState.value = _uiState.value.copy(game = null)
                 }
                 .onFailure { e ->
-                    _uiState.value = GameUiState(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }
@@ -91,7 +92,7 @@ class GameViewModel(
         viewModelScope.launch {
             makeMoveUseCase.invoke(x, y)
                 .onFailure { e ->
-                    _uiState.value = GameUiState(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
     }
