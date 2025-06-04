@@ -129,7 +129,7 @@ class GameRepositoryImpl(
 
 
     // Function to update the game data validating the game state.
-    override suspend fun updateGameFields(gameId: String, logicFunction: (Game) -> Map<String, Any>): Result<Unit>
+    override suspend fun updateGameFields(gameId: String, logicFunction: (Game) -> Map<String, Any?>): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             val document = gamesCollection.document(gameId)

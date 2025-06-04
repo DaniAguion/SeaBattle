@@ -28,14 +28,13 @@ class MakeMoveUseCase(
             }
 
             // Function to validate game state, make a move and calculate the result
-            fun makeMove(game: Game) : Map<String, Any> {
+            fun makeMove(game: Game) : Map<String, Any?> {
                 if (game.gameState != GameState.IN_PROGRESS.name) {
                     throw GameError.InvalidGameState()
                 }
                 if (game.currentPlayer != userId) {
                     throw UserError.UserProfileNotFound()
                 }
-
                 if (game.player1.userId != userId && game.player2.userId != userId) {
                     throw GameError.GameNotValid()
                 }
@@ -47,7 +46,8 @@ class MakeMoveUseCase(
                     game.player1Ships
                 }
                 var updatedShips: List<Ship> = currentShips
-
+                var gameState = game.gameState
+                var winnerId = game.winnerId
                 // Deep copy of game board and ships and convert them to mutable maps
                 // This is necessary to avoid modifying the original game object
                 // Its converted to mutable maps to allow modifications
@@ -76,9 +76,10 @@ class MakeMoveUseCase(
                         nextPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
                     }
 
-                    1 -> { // Hit. Player continues. Check if ship is sunk.
+                    1 -> { // Hit. Player continues. Update the game board and the ships status
                         gameBoard[x.toString()]?.put(y.toString(), 3)
                         nextPlayer = game.currentPlayer
+                        // Update the ship status
                         updatedShips = currentShips.map { ship ->
                             val newShipBody = ship.shipBody.map { piece ->
                                 if (piece.x.toString() == x.toString() && piece.y.toString() == y.toString()) {
@@ -90,19 +91,35 @@ class MakeMoveUseCase(
                             val isSunk = newShipBody.all { it.touched }
                             ship.copy(shipBody = newShipBody, sunk = isSunk)
                         }
+                        // Check if the are any ships left
+                        if (updatedShips.all { it.sunk }) {
+                            gameState = GameState.GAME_FINISHED.name
+                            winnerId = game.currentPlayer
+                        }
                     }
                     else -> {
                         throw GameError.Unknown()
                     }
                 }
 
-                return mapOf(
-                    "boardForPlayer1" to if (game.currentPlayer == game.player1.userId) gameBoard else game.boardForPlayer1,
-                    "player1Ships" to if (game.currentPlayer == game.player1.userId) updatedShips else game.player1Ships,
-                    "boardForPlayer2" to if (game.currentPlayer == game.player2.userId) gameBoard else game.boardForPlayer2,
-                    "player2Ships" to if (game.currentPlayer == game.player2.userId) updatedShips else game.player2Ships,
+                val movementData = if (game.currentPlayer == game.player1.userId) {
+                    mapOf(
+                        "boardForPlayer1" to gameBoard,
+                        "player2Ships" to updatedShips,
+                    )
+                } else {
+                    mapOf(
+                        "boardForPlayer2" to gameBoard,
+                        "player1Ships" to updatedShips,
+                    )
+                }
+
+
+                return movementData + mapOf(
                     "currentTurn" to game.currentTurn + 1,
-                    "currentPlayer" to nextPlayer
+                    "currentPlayer" to nextPlayer,
+                    "gameState" to gameState,
+                    "winnerId" to winnerId,
                 )
             }
             gameRepository.updateGameFields(gameId = gameId, logicFunction = ::makeMove).getOrThrow()
