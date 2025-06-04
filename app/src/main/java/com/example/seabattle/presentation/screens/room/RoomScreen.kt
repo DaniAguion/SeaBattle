@@ -28,7 +28,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Room
-import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.SeaBattleScreen
 import org.koin.androidx.compose.koinViewModel

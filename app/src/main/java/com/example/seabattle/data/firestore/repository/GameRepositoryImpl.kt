@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.onFailure
 
 
 class GameRepositoryImpl(

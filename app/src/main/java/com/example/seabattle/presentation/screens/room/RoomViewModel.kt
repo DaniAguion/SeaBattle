@@ -3,7 +3,6 @@ package com.example.seabattle.presentation.screens.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.RoomState
 import com.example.seabattle.domain.usecase.room.CheckGameUseCase
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
