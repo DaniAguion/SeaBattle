@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.collections.plus
 
 class RoomRepositoryImpl(
@@ -190,6 +191,7 @@ class RoomRepositoryImpl(
 
                 if (document.exists()) {
                     transaction.delete(document.reference)
+                    Timber.d("Room with ID $roomId deleted successfully.")
                 }
                 return@runTransaction
             }.await()
