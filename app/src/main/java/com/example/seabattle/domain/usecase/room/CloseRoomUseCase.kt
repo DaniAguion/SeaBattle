@@ -15,6 +15,7 @@ class CloseRoomUseCase(
 ) {
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
+            Timber.d("CloseRoomUseCase invoked.")
             val roomId = session.getCurrentRoom()?.roomId
 
             if (roomId != null && roomId.isNotEmpty()){

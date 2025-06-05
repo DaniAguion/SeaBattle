@@ -45,6 +45,8 @@ class RoomViewModel(
                                         .onFailure { e ->
                                             _uiState.value = _uiState.value.copy(errorMessage = e.message)
                                         }
+                                } else {
+                                    _uiState.value = _uiState.value.copy(room = null)
                                 }
                             }
                             .onFailure { e ->

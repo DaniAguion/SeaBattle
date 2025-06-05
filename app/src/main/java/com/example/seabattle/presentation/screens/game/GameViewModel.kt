@@ -13,7 +13,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
@@ -42,29 +41,33 @@ class GameViewModel(
         // Observe the current game
         listenGameJob = viewModelScope.launch {
             val game = session.getCurrentGame()
-            var joinedGame : Boolean = false
+            var joinedGame = false
             // If the game is not null, start listening for updates
             if (game != null && game.gameId.isNotEmpty()) {
                 listenGameUseCase.invoke(game.gameId)
                     .collect { result ->
                         result
                             .onSuccess { game ->
+                                // If the game is in "CHECK_READY" state, join the game if not already joined
                                 if (joinedGame == false) {
                                     joinGameUseCase.invoke()
                                         .onSuccess {
                                             val game = session.getCurrentGame()
                                             if (game?.gameState == "CHECK_READY") {
+                                                // If joined successfully, and the game is in "CHECK_READY" state, close the room
+                                                // Because both players have already joined
                                                 closeRoomUseCase.invoke()
                                                     .onFailure { e ->
                                                         _uiState.value = _uiState.value.copy(errorMessage = e.message)
                                                     }
                                             }
+                                            joinedGame = true
                                         }
                                         .onFailure { e ->
                                             _uiState.value = _uiState.value.copy(errorMessage = e.message)
                                         }
-                                    joinedGame = true
                                 }
+                                // Update the UI state with the latest game data
                                 _uiState.value = _uiState.value.copy(game = game)
                             }
                             .onFailure { e ->

@@ -50,7 +50,7 @@ class JoinGameUseCase(
             gameRepository.updateGameFields(gameId = gameId, logicFunction = ::setUserJoined).getOrThrow()
         }
         .onFailure { e ->
-            Timber.e(e, "UserReadyUseCase failed.")
+            Timber.e(e, "JoinGameUseCase failed.")
         }
         .recoverCatching { throwable ->
             if (throwable is GameError) throw throwable

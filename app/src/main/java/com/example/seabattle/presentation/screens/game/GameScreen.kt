@@ -1,7 +1,6 @@
 package com.example.seabattle.presentation.screens.game
 
 
-import android.R.attr.bottom
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
