@@ -37,10 +37,10 @@ class RoomViewModel(
                 listenRoomUseCase.invoke(room.roomId)
                     .collect { result ->
                         result
-                            .onSuccess { room ->
+                            .onSuccess { collectedRoom ->
                                 // If the room is not null, update the UI state and react to the room updates
-                                if (room != null) {
-                                    _uiState.value = _uiState.value.copy(room = room)
+                                if (collectedRoom != null) {
+                                    _uiState.value = _uiState.value.copy(room = collectedRoom)
                                     waitRoomUseCase.invoke()
                                         .onFailure { e ->
                                             _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -48,6 +48,7 @@ class RoomViewModel(
                                 }
                             }
                             .onFailure { e ->
+                                _uiState.value = _uiState.value.copy(room = null)
                                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
                             }
                     }

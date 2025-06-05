@@ -9,34 +9,14 @@ fun GameDto.toGameEntity(): Game {
     return Game(
         gameId = gameId,
         player1 = player1,
-        boardForPlayer2 = boardForPlayer2,
+        player1Joined = player1Joined,
         player1Ready = player1Ready,
+        boardForPlayer1 = boardForPlayer1,
         player1Ships = player1Ships,
         player2 = player2,
-        boardForPlayer1 = boardForPlayer1,
+        player2Joined = player2Joined,
         player2Ready = player2Ready,
-        player2Ships = player2Ships,
-        currentTurn = currentTurn,
-        currentPlayer = currentPlayer,
-        gameState = gameState,
-        winnerId = winnerId,
-        createdAt = createdAt,
-        updatedAt = updatedAt
-    )
-}
-
-
-// Function to convert Game Entity to Game DTO
-fun Game.toGameDto(): GameDto {
-    return GameDto(
-        gameId = gameId,
-        player1 = player1,
         boardForPlayer2 = boardForPlayer2,
-        player1Ready = player1Ready,
-        player1Ships = player1Ships,
-        player2 = player2,
-        boardForPlayer1 = boardForPlayer1,
-        player2Ready = player2Ready,
         player2Ships = player2Ships,
         currentTurn = currentTurn,
         currentPlayer = currentPlayer,

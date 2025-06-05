@@ -73,7 +73,7 @@ class WaitRoomUseCase(
                                 player2 = room.player2,
                                 boardForPlayer2 = boardForPlayer2,
                                 player2Ships = player2Ships,
-                                gameState = GameState.CHECK_READY.name,
+                                gameState = GameState.WAITING_FOR_PLAYERS.name,
                                 currentPlayer = listOf(room.player1.userId, room.player2.userId).random(),
                             )
                             return game
@@ -116,16 +116,10 @@ class WaitRoomUseCase(
                         roomRepository.updateRoomFields(roomId, ::joinGame).getOrThrow()
                     }
                 }
-
-
-                // 4th State: If the game is starting, the room is not needed anymore, it can be deleted.
-                RoomState.GAME_STARTING.name, RoomState.ROOM_ABANDONED.name  -> {
-                    // Delete the room if it wasn't deleted yet and clear the room from the session.
-                    val room = roomRepository.getRoom(roomId).getOrNull()
-                    if (room != null) {
-                        roomRepository.deleteRoom(roomId).getOrThrow()
-                    }
-                    session.clearCurrentRoom()
+                // 4th State: If the game is starting, the room is not needed anymore, it will be deleted.
+                else  -> {
+                    // Once both players have joined the game, the room will be deleted with closeRoomUseCase.
+                    // If the game was abandoned, the room will be deleted by the Firebase Cloud Function.
                 }
             }
         }

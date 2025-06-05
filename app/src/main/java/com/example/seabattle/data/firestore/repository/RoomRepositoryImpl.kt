@@ -85,6 +85,7 @@ class RoomRepositoryImpl(
                     trySend(Result.failure(error.toRoomError()))
                     return@addSnapshotListener
                 }
+                // If the snapshot is null, it means the room does not exist or has been deleted
                 if (snapshot == null || !snapshot.exists()) {
                     trySend(Result.success(null))
                     return@addSnapshotListener

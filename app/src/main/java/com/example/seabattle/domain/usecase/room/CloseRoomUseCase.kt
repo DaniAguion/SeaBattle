@@ -17,14 +17,12 @@ class CloseRoomUseCase(
         runCatching {
             val roomId = session.getCurrentRoom()?.roomId
 
-            if (roomId == null || roomId.isEmpty()){
-                throw RoomError.RoomNotFound()
-            }
-
-            // Delete the room if it wasn't deleted yet and clear the session
-            val room = roomRepository.getRoom(roomId).getOrNull()
-            if (room != null) {
-                roomRepository.deleteRoom(roomId).getOrThrow()
+            if (roomId != null && roomId.isNotEmpty()){
+                // Delete the room if it wasn't deleted yet and clear the session
+                val room = roomRepository.getRoom(roomId).getOrNull()
+                if (room != null) {
+                    roomRepository.deleteRoom(roomId).getOrThrow()
+                }
             }
             session.clearCurrentRoom()
         }
