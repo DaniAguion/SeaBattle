@@ -3,6 +3,7 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-
+import timber.log.Timber
 
 
 class GameViewModel(
@@ -32,7 +33,7 @@ class GameViewModel(
 
     // Listeners used to observe the room updates
     private var listenGameJob: Job? = null
-    private var closedRoom = false
+    private var lastGameState: String? = null
 
     init{
         // Initialize the UI state with the current user ID
@@ -47,43 +48,40 @@ class GameViewModel(
             if ( game != null && game.gameId.isNotEmpty()) {
                 // First indicate that the user has joined the game
                 listenGameUseCase.invoke(game.gameId)
-                    .first()
-                    .onSuccess { collectedGame ->
-                        _uiState.value = _uiState.value.copy(game = collectedGame)
-                        joinGameUseCase.invoke()
-                            .onFailure { e ->
-                                _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                            }
-                    }
-                    .onFailure { e ->
-                        _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                    }
-
+                    .first().fold(
+                        onSuccess = { collectedGame ->
+                            _uiState.value = _uiState.value.copy(game = collectedGame)
+                            joinGameUseCase.invoke()
+                                .onFailure { e ->
+                                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                                }
+                        },
+                        onFailure = { e ->
+                            _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                        }
+                    )
 
                 listenGameUseCase.invoke(game.gameId)
                     .collect { result ->
-                        result
-                            .onSuccess { collectedGame ->
-                                // Update the UI state with the latest game data
-                                _uiState.value = _uiState.value.copy(game = collectedGame)
-                                // If both player has joined the game is in "CHECK_READY" state
-                                // The room can be closed
-
-                                if (collectedGame.gameState == "CHECK_READY"){
-                                    if (!closedRoom) {
-                                        closeRoomUseCase.invoke()
-                                            .onSuccess {
-                                                closedRoom = true
-                                            }
-                                            .onFailure { e ->
-                                                _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                                            }
-                                    }
+                        result.fold(
+                            onSuccess = { collectedGame ->
+                                /*
+                                // When the game state changes to CHECK_READY, close the room
+                                if (collectedGame.gameState != lastGameState &&
+                                    collectedGame.gameState == GameState.CHECK_READY.name) {
+                                    closeRoomUseCase.invoke()
+                                        .onFailure { e ->
+                                            _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                                        }
                                 }
-                            }
-                            .onFailure { e ->
+                                lastGameState = collectedGame.gameState
+                                 */
+                                _uiState.value = _uiState.value.copy(game = collectedGame)
+                            },
+                            onFailure = { e ->
                                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
                             }
+                        )
                     }
             }
         }

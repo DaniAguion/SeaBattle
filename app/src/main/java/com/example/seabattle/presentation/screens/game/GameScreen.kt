@@ -59,6 +59,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.platform.LocalContext
+import timber.log.Timber
 
 @Composable
 fun GameScreen(
