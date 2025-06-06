@@ -21,6 +21,7 @@ fun GameDto.toGameEntity(): Game {
         gameState = gameState,
         winnerId = winnerId,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        expireAt = expireAt
     )
 }

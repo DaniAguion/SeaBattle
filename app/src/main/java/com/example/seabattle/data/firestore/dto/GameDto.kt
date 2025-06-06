@@ -26,6 +26,7 @@ data class GameCreationDto(
     val winnerId: String? = null,
     val createdAt: FieldValue = FieldValue.serverTimestamp(),
     val updatedAt: FieldValue = FieldValue.serverTimestamp(),
+    val expireAt: FieldValue = FieldValue.serverTimestamp(),
 )
 
 /**
@@ -47,5 +48,6 @@ data class GameDto(
     var winnerId: String? = null,
     val createdAt: Date = Date(),
     var updatedAt: Date = Date(),
+    var expireAt: Date = Date()
 )
 

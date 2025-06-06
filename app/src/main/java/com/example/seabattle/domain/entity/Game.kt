@@ -17,7 +17,8 @@ data class Game(
     val gameState: String = "",
     val winnerId: String? = null,
     val createdAt: Date = Date(),
-    val updatedAt: Date = Date()
+    val updatedAt: Date = Date(),
+    val expireAt: Date = Date()
 )
 
 
