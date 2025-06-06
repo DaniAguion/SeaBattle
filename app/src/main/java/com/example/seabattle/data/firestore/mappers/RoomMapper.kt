@@ -15,7 +15,8 @@ fun RoomDto.toRoomEntity(): Room {
         player2 = player2,
         gameId = gameId,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        expireAt = expireAt
     )
 }
 

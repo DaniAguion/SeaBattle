@@ -19,6 +19,7 @@ data class RoomCreationDto(
     val gameId: String? = null,
     val createdAt: FieldValue = FieldValue.serverTimestamp(),
     val updatedAt: FieldValue = FieldValue.serverTimestamp(),
+    val expireAt: FieldValue = FieldValue.serverTimestamp(),
 )
 
 /**
@@ -34,5 +35,6 @@ data class RoomDto(
     val gameId: String? = null,
     val createdAt: Date? = Date(),
     val updatedAt: Date? = Date(),
+    val expireAt: Date? = Date(),
 )
 

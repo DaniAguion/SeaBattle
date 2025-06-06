@@ -11,7 +11,8 @@ data class Room(
     val player2: UserBasic? = null,
     val gameId: String? = null,
     val createdAt: Date? = Date(),
-    val updatedAt: Date? = Date()
+    val updatedAt: Date? = Date(),
+    val expireAt: Date? = Date(),
 )
 
 enum class RoomState {
