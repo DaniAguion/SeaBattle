@@ -34,12 +34,10 @@ data class GameCreationDto(
 data class GameDto(
     val gameId: String = "",
     val player1: UserBasic = UserBasic(),
-    var player1Joined: Boolean = false,
     var player1Ready: Boolean = false,
     var boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),
     val player1Ships: List<Ship> = emptyList(),
     val player2: UserBasic = UserBasic(),
-    var player2Joined: Boolean = false,
     var player2Ready: Boolean = false,
     var boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
     val player2Ships: List<Ship> = emptyList(),

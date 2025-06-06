@@ -9,12 +9,10 @@ fun GameDto.toGameEntity(): Game {
     return Game(
         gameId = gameId,
         player1 = player1,
-        player1Joined = player1Joined,
         player1Ready = player1Ready,
         boardForPlayer1 = boardForPlayer1,
         player1Ships = player1Ships,
         player2 = player2,
-        player2Joined = player2Joined,
         player2Ready = player2Ready,
         boardForPlayer2 = boardForPlayer2,
         player2Ships = player2Ships,

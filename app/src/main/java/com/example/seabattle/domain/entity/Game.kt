@@ -6,12 +6,10 @@ data class Game(
     val gameId: String,
     val player1: UserBasic,
     val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),  // Board where the player 1 plays, it contains the ships of player 2.
-    val player1Joined: Boolean = false,
     val player1Ready: Boolean = false,
     val player1Ships: List<Ship> = emptyList(), // List of ships of player 1 and their state.
     val player2: UserBasic,
     val boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
-    val player2Joined: Boolean = false,
     val player2Ready: Boolean = false,
     val player2Ships: List<Ship> = emptyList(),
     val currentTurn: Int = 0,
@@ -27,7 +25,6 @@ data class Game(
 // The timeout and game abandoned states are used to handle cases where a player does not respond in time or leaves the game.
 // This cases are controlled by the server through cloud functions.
 enum class GameState {
-    WAITING_FOR_PLAYERS,
     CHECK_READY,
     GAME_ABORTED,
     IN_PROGRESS,

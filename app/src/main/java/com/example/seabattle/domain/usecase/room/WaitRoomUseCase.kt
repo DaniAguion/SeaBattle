@@ -73,7 +73,7 @@ class WaitRoomUseCase(
                                 player2 = room.player2,
                                 boardForPlayer2 = boardForPlayer2,
                                 player2Ships = player2Ships,
-                                gameState = GameState.WAITING_FOR_PLAYERS.name,
+                                gameState = GameState.CHECK_READY.name,
                                 currentPlayer = listOf(room.player1.userId, room.player2.userId).random(),
                             )
                             return game

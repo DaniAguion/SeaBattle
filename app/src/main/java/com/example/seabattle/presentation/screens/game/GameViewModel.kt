@@ -3,26 +3,19 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
-import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class GameViewModel(
     private val session: Session,
-    private val joinGameUseCase: JoinGameUseCase,
-    private val closeRoomUseCase: CloseRoomUseCase,
     private val userReadyUseCase: UserReadyUseCase,
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
@@ -33,49 +26,21 @@ class GameViewModel(
 
     // Listeners used to observe the room updates
     private var listenGameJob: Job? = null
-    private var lastGameState: String? = null
 
     init{
         // Initialize the UI state with the current user ID
         val userId = session.getCurrentUserId()
         _uiState.value = _uiState.value.copy(userId = userId)
 
-
         // Observe the current game
         listenGameJob = viewModelScope.launch {
             val game = session.getCurrentGame()
             // If the game is not null, start listening for updates
             if ( game != null && game.gameId.isNotEmpty()) {
-                // First indicate that the user has joined the game
-                listenGameUseCase.invoke(game.gameId)
-                    .first().fold(
-                        onSuccess = { collectedGame ->
-                            _uiState.value = _uiState.value.copy(game = collectedGame)
-                            joinGameUseCase.invoke()
-                                .onFailure { e ->
-                                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                                }
-                        },
-                        onFailure = { e ->
-                            _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                        }
-                    )
-
                 listenGameUseCase.invoke(game.gameId)
                     .collect { result ->
                         result.fold(
                             onSuccess = { collectedGame ->
-                                /*
-                                // When the game state changes to CHECK_READY, close the room
-                                if (collectedGame.gameState != lastGameState &&
-                                    collectedGame.gameState == GameState.CHECK_READY.name) {
-                                    closeRoomUseCase.invoke()
-                                        .onFailure { e ->
-                                            _uiState.value = _uiState.value.copy(errorMessage = e.message)
-                                        }
-                                }
-                                lastGameState = collectedGame.gameState
-                                 */
                                 _uiState.value = _uiState.value.copy(game = collectedGame)
                             },
                             onFailure = { e ->

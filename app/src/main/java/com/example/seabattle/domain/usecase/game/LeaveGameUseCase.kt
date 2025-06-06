@@ -42,7 +42,7 @@ class LeaveGameUseCase(
             } else {
                 // If the game is in progress or waiting, the game state has to be updated to reflect the user leaving
                 fun leaveGame(game: Game): Map<String, Any> {
-                    if (game.gameState == GameState.WAITING_FOR_PLAYERS.name || game.gameState == GameState.CHECK_READY.name) {
+                    if (game.gameState == GameState.CHECK_READY.name) {
                         return mapOf(
                             "gameState" to GameState.GAME_ABORTED.name,
                         )

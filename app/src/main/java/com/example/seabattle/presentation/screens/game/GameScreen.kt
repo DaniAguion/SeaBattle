@@ -196,7 +196,7 @@ fun GameScreenContent(
         }
 
         // Screen waiting for players to be ready
-        if (game.gameState == GameState.WAITING_FOR_PLAYERS.name || game.gameState == GameState.CHECK_READY.name) {
+        if (game.gameState == GameState.CHECK_READY.name) {
             item {
                 ReadyCheckSection(
                     game = game,

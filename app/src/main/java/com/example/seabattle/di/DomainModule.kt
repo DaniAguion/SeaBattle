@@ -5,7 +5,6 @@ import com.example.seabattle.domain.usecase.auth.LoginUserUseCase
 import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
 import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
 import com.example.seabattle.domain.usecase.auth.RegisterUserUseCase
-import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
@@ -36,7 +35,6 @@ val domainModule = module {
     factory { CheckGameUseCase(get())}
     // Game Use cases
     factory { ListenGameUseCase(get(), get(), get())}
-    factory { JoinGameUseCase(get(), get(), get())}
     factory { UserReadyUseCase(get(), get(), get())}
     factory { LeaveGameUseCase(get(), get(), get())}
     factory { MakeMoveUseCase(get(), get(), get())}
