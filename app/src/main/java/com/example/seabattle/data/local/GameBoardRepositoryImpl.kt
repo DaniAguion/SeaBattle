@@ -1,11 +1,10 @@
-package com.example.seabattle.data
+package com.example.seabattle.data.local
 
-import com.example.seabattle.domain.entity.ShipPosition
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipDirection
 import com.example.seabattle.domain.entity.ShipPiece
+import com.example.seabattle.domain.entity.ShipPosition
 import com.example.seabattle.domain.repository.GameBoardRepository
-
 
 // This repository is responsible for managing the game board and ship positions.
 // It initializes a game board of size 10x10 and places ships of various sizes on it.
@@ -61,7 +60,7 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
                     shipBody[i] = shipBody[i].copy(x = position.x + i, y = position.y)
                 }
             }
-        return Ship (
+        return Ship(
             size = shipSize,
             shipBody = shipBody.toList(),
             sunk = false

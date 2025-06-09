@@ -1,14 +1,17 @@
 package com.example.seabattle.di
 
-import com.example.seabattle.data.GameBoardRepositoryImpl
+import com.example.seabattle.data.local.GameBoardRepositoryImpl
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.data.firebase.AuthRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserRepositoryImpl
 import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
+import com.example.seabattle.data.realtimedb.PresenceRepoImpl
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.PresenceRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +19,18 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single<CoroutineDispatcher>{ Dispatchers.IO }
-    // Firebase
+
+    // Firebase Authentication
     single { FirebaseAuth.getInstance() }
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
-    // Firestore
+
+    // Firebase Realtime Database
+    single { FirebaseDatabase.getInstance() }
+
+    // Firebase Firestore
     single { FirebaseFirestore.getInstance() }
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<GameRepository> { GameRepositoryImpl(get(), get()) }
+    single<PresenceRepository> { PresenceRepoImpl(get(), get()) }
     single<GameBoardRepository> { GameBoardRepositoryImpl() }
 }
