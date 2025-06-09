@@ -11,9 +11,9 @@ import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.room.CheckGameUseCase
 import com.example.seabattle.domain.usecase.room.CloseRoomUseCase
-import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
-import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
-import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
+import com.example.seabattle.domain.usecase.game.CreateGameUseCase
+import com.example.seabattle.domain.usecase.game.GetGamesUseCase
+import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.room.ListenRoomUseCase
 import com.example.seabattle.domain.usecase.room.WaitRoomUseCase
 import org.koin.dsl.module
@@ -26,10 +26,10 @@ val domainModule = module {
     factory { RegisterUserUseCase(get(), get(), get(), get())}
     factory { CheckUserAuthUseCase(get())}
     // Room Use cases
-    factory { GetRoomsUseCase(get(), get()) }
-    factory { CreateRoomUseCase(get(), get(), get(), get())}
+    factory { GetGamesUseCase(get(), get()) }
+    factory { CreateGameUseCase(get(), get(), get(), get(), get())}
     factory { ListenRoomUseCase(get(), get(), get())}
-    factory { JoinRoomUseCase(get(), get(), get(), get())}
+    factory { JoinGameUseCase(get(), get(), get(), get())}
     factory { WaitRoomUseCase(get(), get(), get(), get(), get())}
     factory { CloseRoomUseCase(get(), get(), get())}
     factory { CheckGameUseCase(get())}

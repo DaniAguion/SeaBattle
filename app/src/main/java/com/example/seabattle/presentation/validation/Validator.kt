@@ -28,7 +28,7 @@ object Validator {
         return validatePassword(password)
     }
 
-    fun validateRoomName(roomName: String): ValidationError? {
+    fun validateGameName(roomName: String): ValidationError? {
         if (roomName.isBlank()) return ValidationError.EmptyRoomName
         if (roomName.length < 4) return ValidationError.RoomNameShort
         return null

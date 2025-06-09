@@ -18,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.seabattle.domain.entity.Room
-import com.example.seabattle.domain.entity.User
-import com.example.seabattle.domain.entity.toBasic
+import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.Ship
+import com.example.seabattle.domain.entity.ShipPiece
+import com.example.seabattle.domain.entity.UserBasic
 
 @Composable
-fun RoomCard(
-    room: Room,
-    roomClick: (String) -> Unit,
+fun GameCard(
+    game: Game,
+    gameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -49,17 +51,17 @@ fun RoomCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = room.roomName,
+                    text = game.gameName,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "Play against: ${room.player1.displayName}",
+                    text = "Play against: ${game.player1.displayName}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
             Button (
-                onClick = { roomClick(room.roomId) },
+                onClick = { gameClick(game.gameId) },
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .width(100.dp)
@@ -72,18 +74,9 @@ fun RoomCard(
 
 @Preview
 @Composable
-fun RoomCardPreview() {
-    RoomCard(
-        room = Room(
-            roomId = "1",
-            roomName = "Room 1",
-            roomState = "WAITING_FOR_PLAYER",
-            numberOfPlayers = 2,
-            player1 = User(
-                userId = "1",
-                displayName = "Peter",
-            ).toBasic()
-        ),
-        roomClick = {}
+fun GameCardPreview() {
+    GameCard(
+        game = gameSample1,
+        gameClick = {}
     )
 }

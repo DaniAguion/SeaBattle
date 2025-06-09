@@ -67,6 +67,7 @@ class WaitRoomUseCase(
                             val player1Ships = gameBoardRepository.getShipList()
                             var game = Game(
                                 gameId = gameId,
+                                gameName = room.roomName,
                                 player1 = room.player1,
                                 boardForPlayer1 = boardForPlayer1,
                                 player1Ships = player1Ships,
@@ -86,7 +87,7 @@ class WaitRoomUseCase(
                         )
 
                         // Update the room in the database and create a game.
-                        gameRepository.createGame(roomId, ::createGame, updatedRoomData).getOrThrow()
+                        //gameRepository.createGame(roomId, ::createGame, updatedRoomData).getOrThrow()
                         // Fetch the game and set it in the session.
                         val game = gameRepository.getGame(gameId).getOrThrow()
                         session.setCurrentGame(game)

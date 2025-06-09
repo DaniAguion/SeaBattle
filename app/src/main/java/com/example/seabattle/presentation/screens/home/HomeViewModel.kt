@@ -2,9 +2,9 @@ package com.example.seabattle.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.usecase.room.CreateRoomUseCase
-import com.example.seabattle.domain.usecase.room.GetRoomsUseCase
-import com.example.seabattle.domain.usecase.room.JoinRoomUseCase
+import com.example.seabattle.domain.usecase.game.CreateGameUseCase
+import com.example.seabattle.domain.usecase.game.GetGamesUseCase
+import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.presentation.validation.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,34 +14,34 @@ import kotlinx.coroutines.launch
 
 
 class HomeViewModel(
-    private val createRoomUseCase: CreateRoomUseCase,
-    private val getRoomsUseCase: GetRoomsUseCase,
-    private val joinRoomUseCase: JoinRoomUseCase
+    private val createGameUseCase: CreateGameUseCase,
+    private val getGamesUseCase: GetGamesUseCase,
+    private val joinGameUseCase: JoinGameUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState(roomList = emptyList()))
+    private val _uiState = MutableStateFlow(HomeUiState(gamesList = emptyList()))
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     // Active listener use get the updated room list
-    private var getRoomsJob: Job? = null
+    private var getGamesJob: Job? = null
 
     init {
         _uiState.value = _uiState.value.copy(loadingList = true)
 
-        getRoomsJob = viewModelScope.launch {
-            getRoomsUseCase.invoke()
+        getGamesJob = viewModelScope.launch {
+            getGamesUseCase.invoke()
             . collect { result ->
                 result
-                .onSuccess { rooms ->
+                .onSuccess { games ->
                     _uiState.value = _uiState.value.copy(
-                        roomList = rooms,
+                        gamesList = games,
                         errorList = false,
                         loadingList = false
                     )
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
-                        roomList = emptyList(),
+                        gamesList = emptyList(),
                         errorList = true,
                         loadingList = false,
                         errorMessage = e.message
@@ -51,20 +51,20 @@ class HomeViewModel(
         }
     }
 
-    fun onRoomNameUpdate(roomName: String) {
-        val validationResult = Validator.validateRoomName(roomName)
-        _uiState.value = _uiState.value.copy(roomNameError = validationResult)
-        _uiState.value = _uiState.value.copy(roomName = roomName)
+    fun onGameNameUpdate(gameName: String) {
+        val validationResult = Validator.validateGameName(gameName)
+        _uiState.value = _uiState.value.copy(gameNameError = validationResult)
+        _uiState.value = _uiState.value.copy(gameName = gameName)
     }
 
 
-    fun onClickCreateRoom(roomName: String) {
-        onRoomNameUpdate(roomName = roomName)
-        if (uiState.value.roomNameError != null){
+    fun onClickCreateGame(gameName: String) {
+        onGameNameUpdate(gameName = gameName)
+        if (uiState.value.gameNameError != null){
             return
         }
         viewModelScope.launch {
-            createRoomUseCase.invoke(roomName = roomName)
+            createGameUseCase.invoke(gameName = gameName)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
@@ -75,9 +75,9 @@ class HomeViewModel(
     }
 
 
-    fun onClickJoinRoom(roomId: String) {
+    fun onClickJoinGame(roomId: String) {
         viewModelScope.launch {
-            joinRoomUseCase.invoke(roomId)
+            joinGameUseCase.invoke(roomId)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
@@ -93,7 +93,7 @@ class HomeViewModel(
     }
 
     fun stopListening() {
-        getRoomsJob?.cancel()
-        getRoomsJob = null
+        getGamesJob?.cancel()
+        getGamesJob = null
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
+import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.UserBasic
 
@@ -101,10 +102,6 @@ fun ReadyCheckSection(
 @Composable
 fun ReadyCheckSectionPreview(){
     ReadyCheckSection(
-        game = Game(
-            gameId = "123",
-            player1 = UserBasic("userId", "Daniel"),
-            player2 = UserBasic("userId", "PedroPablo80"),
-        )
+        game = gameSample1
     )
 }

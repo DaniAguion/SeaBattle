@@ -1,16 +1,14 @@
 package com.example.seabattle.data.firestore.repository
 
-import com.example.seabattle.data.firestore.dto.GameCreationDto
+
 import com.example.seabattle.data.firestore.dto.GameDto
-import com.example.seabattle.data.firestore.dto.RoomDto
 import com.example.seabattle.data.firestore.errors.toGameError
 import com.example.seabattle.data.firestore.errors.toRoomError
 import com.example.seabattle.data.firestore.mappers.toGameEntity
-import com.example.seabattle.data.firestore.mappers.toRoomEntity
+import com.example.seabattle.data.firestore.mappers.toGameCreationDto
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.Room
+import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.errors.GameError
-import com.example.seabattle.domain.errors.RoomError
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,11 +28,57 @@ class GameRepositoryImpl(
     private val db: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher
 ) : GameRepository {
-    private val roomsCollection = db.collection("rooms")
     private val gamesCollection = db.collection("games")
     val listenerOptions = SnapshotListenOptions.Builder()
         .setMetadataChanges(MetadataChanges.INCLUDE)
         .build()
+    // This variable is used to determine if the user is offline or online
+    private var sourceIsServer: Boolean = true
+
+
+    // Function to fetch all games with only one player
+    override fun fetchGames(userId: String) : Flow<Result<List<Game>>> = callbackFlow {
+        val listener = gamesCollection
+            .whereEqualTo("numberOfPlayers", 1)
+            .whereEqualTo("gameState", GameState.WAITING_FOR_PLAYER.name)
+            .limit(25)
+            .addSnapshotListener(listenerOptions) { snapshot, error ->
+                if (error != null) {
+                    trySend(Result.failure(error.toGameError()))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot == null) {
+                    trySend(Result.success(emptyList()))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot.metadata.isFromCache) {
+                    sourceIsServer = false
+                } else {
+                    sourceIsServer = true
+                }
+
+                val games = snapshot.documents
+                    .mapNotNull { document ->
+                        try {
+                            document.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.GameNotValid()
+                        } catch (e: Exception) {
+                            trySend(Result.failure(e.toGameError()))
+                            return@addSnapshotListener
+                        }
+                    }
+                    // Exclude rooms created by the current user
+                    // Didn't filtered in the query to avoid build a firestore index
+                    .filter { game -> game.player1.userId != userId }
+                trySend(Result.success(games))
+            }
+        awaitClose {
+            Timber.d("Closing listener for fetchGames")
+            listener.remove()
+        }
+    }.flowOn(ioDispatcher)
+
 
 
     // Function to listen for game updates
@@ -67,44 +111,19 @@ class GameRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-
-    // Function to create a new game from the room
-    override suspend fun createGame(roomId: String, logicFunction: (Room) -> Game, updatedRoomData: Map<String, Any>) : Result<String>
-            = withContext(ioDispatcher) {
+    // Function to create a new game
+    override suspend fun createGame(game: Game) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            db.runTransaction {  transaction ->
-                val roomDocument = roomsCollection.document(roomId)
-                val roomSnapshot = transaction.get(roomDocument)
-                if (!roomSnapshot.exists()) { throw RoomError.RoomNotFound() }
+            if (!sourceIsServer) {
+                throw GameError.NetworkConnection()
+            }
+            val gameDto = game.toGameCreationDto()
 
-                val room = roomSnapshot.toObject(RoomDto::class.java)?.toRoomEntity()
-                    ?: throw RoomError.RoomNotValid()
-
-                val game = logicFunction(room)
-
-                // Create the game document
-                val gameCreationDto = GameCreationDto(
-                    gameId = game.gameId,
-                    player1 = game.player1,
-                    boardForPlayer1 = game.boardForPlayer1,
-                    player1Ships = game.player1Ships,
-                    player2 = game.player2,
-                    boardForPlayer2 = game.boardForPlayer2,
-                    player2Ships = game.player2Ships,
-                    gameState = game.gameState,
-                    currentPlayer = game.currentPlayer,
-                )
-                transaction.set(gamesCollection.document(game.gameId), gameCreationDto)
-
-                // Update the room document to indicate the game has been created
-                val updateData = updatedRoomData + mapOf("updatedAt" to FieldValue.serverTimestamp())
-                transaction.update(roomDocument, updateData)
-                return@runTransaction game.gameId
-            }.await()
+            gamesCollection.document(game.gameId).set(gameDto).await()
+            return@runCatching
         }
         .recoverCatching { throwable ->
-            // The errors that can be thrown here are related to the room data
-            throw throwable.toRoomError()
+            throw throwable.toGameError()
         }
     }
 

@@ -1,0 +1,60 @@
+package com.example.seabattle.domain.usecase.game
+
+import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.entity.toBasic
+import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.GameError
+import com.example.seabattle.domain.errors.UserError
+import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.UserRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+
+
+class JoinGameUseCase(
+    val gameRepository: GameRepository,
+    val userRepository: UserRepository,
+    val ioDispatcher: CoroutineDispatcher,
+    val session: Session,
+) {
+    suspend operator fun invoke(gameId: String): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val userId = session.getCurrentUserId()
+            val user = userRepository.getUser(userId).getOrThrow()
+
+            // Function to validate the game state and join the game.
+            fun joinGame(game: Game): Map<String, Any> {
+                if (game.player1.userId == user.userId || game.numberOfPlayers == 2 ||
+                    game.gameState != GameState.WAITING_FOR_PLAYER.name) {
+                    throw GameError.InvalidGameState()
+                }
+
+                // Update the game state and add the second player
+                return mapOf(
+                    "numberOfPlayers" to 2,
+                    "player2" to user.toBasic(),
+                    "gameState" to GameState.CHECK_READY.name,
+                    "currentPlayer" to listOf(game.player1.userId, game.player2.userId).random()
+                )
+            }
+
+            // Update the game state
+            gameRepository.updateGameFields(gameId, ::joinGame).getOrThrow()
+
+            // Fetch the updated game and set it in the session
+            val game = gameRepository.getGame(gameId).getOrThrow()
+            session.setCurrentGame(game)
+        }
+            .onFailure { e ->
+                Timber.e(e, "JoinGameUseCase failed.")
+            }
+            .recoverCatching { throwable ->
+                if (throwable is GameError) throw throwable
+                else if (throwable is UserError) throw throwable
+                else throw DomainError.Unknown(throwable)
+            }
+    }
+}

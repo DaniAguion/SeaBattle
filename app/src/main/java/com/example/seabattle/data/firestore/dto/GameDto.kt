@@ -12,6 +12,8 @@ import java.util.Date
  */
 data class GameCreationDto(
     val gameId: String = "",
+    val gameName: String = "",
+    val numberOfPlayers: Int = 1,
     val player1: UserBasic = UserBasic(),
     val player1Ready: Boolean = false,
     val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),
@@ -34,6 +36,8 @@ data class GameCreationDto(
  */
 data class GameDto(
     val gameId: String = "",
+    val gameName: String = "",
+    val numberOfPlayers: Int = 1,
     val player1: UserBasic = UserBasic(),
     var player1Ready: Boolean = false,
     var boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),
@@ -46,8 +50,8 @@ data class GameDto(
     var currentPlayer: String = "",
     var gameState: String = "",
     var winnerId: String? = null,
-    val createdAt: Date = Date(),
-    var updatedAt: Date = Date(),
-    var expireAt: Date = Date()
+    val createdAt: Date? = null,
+    var updatedAt: Date? = null,
+    var expireAt: Date? = null,
 )
 

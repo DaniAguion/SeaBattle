@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.domain.entity.Room
-import com.example.seabattle.domain.entity.UserBasic
+import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.SeaBattleScreen
 import com.example.seabattle.presentation.validation.ValidationError
 import org.koin.androidx.compose.koinViewModel
@@ -69,15 +69,15 @@ fun HomeScreen(
     HomeScreenContent(
         modifier = modifier,
         navController = navController,
-        roomName = homeUiState.roomName,
-        roomNameError = homeUiState.roomNameError,
-        roomList = homeUiState.roomList,
+        gameName = homeUiState.gameName,
+        gameNameError = homeUiState.gameNameError,
+        gameList = homeUiState.gamesList,
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
         hasJoined = homeUiState.hasJoined,
-        onRoomNameUpdate = homeViewModel::onRoomNameUpdate,
-        onClickCreateRoom = homeViewModel::onClickCreateRoom,
-        onClickJoinRoom = homeViewModel::onClickJoinRoom,
+        onGameNameUpdate = homeViewModel::onGameNameUpdate,
+        onClickCreateGame = homeViewModel::onClickCreateGame,
+        onClickJoinGame = homeViewModel::onClickJoinGame,
     )
 }
 
@@ -86,20 +86,20 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    roomName : String,
-    roomNameError : ValidationError?,
-    roomList : List<Room>,
+    gameName : String,
+    gameNameError : ValidationError?,
+    gameList : List<Game>,
     errorList : Boolean,
     loadingList : Boolean,
     hasJoined: Boolean,
-    onRoomNameUpdate: (String) -> Unit,
-    onClickCreateRoom: (String) -> Unit,
-    onClickJoinRoom: (String) -> Unit,
+    onGameNameUpdate: (String) -> Unit,
+    onClickCreateGame: (String) -> Unit,
+    onClickJoinGame: (String) -> Unit,
 ) {
-    // Navigate to Room screen when the user has joined a room
+    // Navigate to Game screen when the user joins a game
     LaunchedEffect(key1 = hasJoined) {
         if (hasJoined) {
-            navController.navigate(SeaBattleScreen.Room.title)
+            navController.navigate(SeaBattleScreen.Game.title)
         }
     }
 
@@ -130,7 +130,7 @@ fun HomeScreenContent(
         }
 
 
-        // Create Room
+        // Create Game
         item {
             Column(
                 modifier = Modifier
@@ -155,13 +155,13 @@ fun HomeScreenContent(
                         verticalArrangement = Arrangement.Center
                     ) {
                         OutlinedTextField(
-                            value = roomName,
-                            onValueChange = onRoomNameUpdate,
+                            value = gameName,
+                            onValueChange = onGameNameUpdate,
                             label = { Text(stringResource(R.string.roomName)) },
                             singleLine = true,
-                            isError = roomNameError != null,
+                            isError = gameNameError != null,
                             supportingText = {
-                                roomNameError?.let {
+                                gameNameError?.let {
                                     Text(
                                         text = stringResource(R.string.error_room_name),
                                         color = MaterialTheme.colorScheme.error
@@ -176,7 +176,7 @@ fun HomeScreenContent(
                             modifier = Modifier.fillMaxWidth()
                         )
                         Button(
-                            onClick = { onClickCreateRoom(roomName) },
+                            onClick = { onClickCreateGame(gameName) },
                             modifier = Modifier
                                 .padding(top = dimensionResource(R.dimen.padding_small))
                         ) {
@@ -214,10 +214,10 @@ fun HomeScreenContent(
                 }
             }
             !errorList -> {
-                items(items = roomList, key = { it.roomId }) { room ->
-                    RoomCard(
-                        room = room,
-                        roomClick = onClickJoinRoom,
+                items(items = gameList, key = { it.gameId }) { game ->
+                    GameCard(
+                        game = game,
+                        gameClick = onClickJoinGame,
                         modifier = Modifier
                     )
                 }
@@ -243,37 +243,14 @@ fun HomeScreenPreview(){
     HomeScreenContent(
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
-        roomName = "Test Room",
-        roomNameError = null,
+        gameName = "Test Room",
+        gameNameError = null,
         errorList = false,
         loadingList = false,
         hasJoined = false,
-        roomList = listOf(
-            Room(
-                roomId = "1",
-                roomName = "Room 1",
-                roomState = "WAITING_FOR_PLAYER",
-                numberOfPlayers = 1,
-                player1 = UserBasic(
-                    userId = "1",
-                    displayName = "Player 1",
-                    photoUrl = "",
-                )
-            ),
-            Room(
-                roomId = "2",
-                roomName = "Room 2",
-                roomState = "WAITING_FOR_PLAYER",
-                numberOfPlayers = 1,
-                player1 = UserBasic(
-                    userId = "1",
-                    displayName = "Player 1",
-                    photoUrl = "",
-                )
-            )
-        ),
-        onClickCreateRoom = { },
-        onClickJoinRoom = { },
-        onRoomNameUpdate = { },
+        gameList = listOf(gameSample1, gameSample1),
+        onClickCreateGame = { },
+        onClickJoinGame = { },
+        onGameNameUpdate = { },
     )
 }
