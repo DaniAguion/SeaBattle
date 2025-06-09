@@ -12,6 +12,7 @@ import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
+import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -29,4 +30,5 @@ val domainModule = module {
     factory { UserReadyUseCase(get(), get(), get())}
     factory { LeaveGameUseCase(get(), get(), get())}
     factory { MakeMoveUseCase(get(), get(), get())}
+    factory { SetPresenceUseCase(get(), get(), get()) }
 }

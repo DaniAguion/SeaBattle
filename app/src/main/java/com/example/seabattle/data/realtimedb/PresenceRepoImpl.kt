@@ -5,9 +5,7 @@ import com.example.seabattle.domain.repository.PresenceRepository
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -24,37 +22,35 @@ class PresenceRepoImpl(
 
 
     // Set user presence status to online
-    override suspend fun definePresence(userId: String) = withContext(ioDispatcher) {
-        val userStatusRef = realtimeDB.getReference("presence/${userId}")
-        val lastOnlineRef = realtimeDB.getReference("presence/${userId}/lastOnline")
+    override suspend fun definePresence(userId: String) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val userStatusRef = realtimeDB.getReference("presence/${userId}/status")
+            // Set user status to online and update last online timestamp
+            userStatusRef.setValue("online").await()
 
-        // Set user status to online and update last online timestamp
-        userStatusRef.setValue("online").await()
-        lastOnlineRef.setValue(ServerValue.TIMESTAMP).await()
-
-        // Set up onDisconnect handlers to update status when user disconnects
-        // This will be saved in the Realtime Database as 'task' to do when the user disconnects
-        userStatusRef.onDisconnect().setValue("offline")
-        lastOnlineRef.onDisconnect().setValue(ServerValue.TIMESTAMP)
+            // Set up onDisconnect handlers to update status when user disconnects
+            // This will be saved in the Realtime Database as 'task' to do when the user disconnects
+            userStatusRef.onDisconnect().setValue("offline")
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw DomainError.PresenceError()
+        }
     }
 
 
 
     // Listen user presence status
-    override fun listenUserPresence(userId: String): Flow<Result<Boolean>> = callbackFlow {
-        val presenceRef = realtimeDB.getReference("presence/${userId}/status")
+    // It is necessary to listen to the presence of the user
+    // If there is no listener, the app will be disconnected from the Realtime Database
+    override fun listenUserPresence(userId: String): Flow<Result<String>> = callbackFlow {
+        val userStatusRef = realtimeDB.getReference("presence/${userId}/status")
 
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val statusString = dataSnapshot.getValue(String::class.java)
-                if (statusString != null) {
-                    when (statusString) {
-                        "online" -> trySend(Result.success(true))
-                        "offline" -> trySend(Result.success(false))
-                        else -> {
-                            trySend(Result.failure(DomainError.PresenceError()))
-                        }
-                    }
+                if (statusString == "online" || statusString == "offline") {
+                    trySend(Result.success(statusString))
                 } else {
                     trySend(Result.failure(DomainError.PresenceError()))
                 }
@@ -64,11 +60,11 @@ class PresenceRepoImpl(
                 trySend(Result.failure(DomainError.PresenceError()))
             }
         }
-        presenceRef.addValueEventListener(listener)
+        userStatusRef.addValueEventListener(listener)
 
         awaitClose {
             Timber.d("Closing listener for presence of user: $userId")
-            presenceRef.removeEventListener(listener)
+            userStatusRef.removeEventListener(listener)
         }
     }.flowOn(ioDispatcher)
 }

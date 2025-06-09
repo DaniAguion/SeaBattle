@@ -13,7 +13,7 @@ class SeaBattleApplication : Application() {
         // Enable Debug logging with Timber if the build is a debug build.
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            }
+        }
 
         startKoin {
             androidContext(this@SeaBattleApplication)

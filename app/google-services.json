@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "535888489443",
+    "firebase_url": "https://battleship-49b16-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "battleship-49b16",
     "storage_bucket": "battleship-49b16.firebasestorage.app"
   },
