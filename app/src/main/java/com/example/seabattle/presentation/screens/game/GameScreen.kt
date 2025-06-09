@@ -59,7 +59,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.platform.LocalContext
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
-import timber.log.Timber
 
 @Composable
 fun GameScreen(
@@ -363,6 +362,6 @@ fun GameScreenPreview(){
     GameScreenContent(
         modifier = Modifier.fillMaxSize(),
         game = gameSample1,
-        userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2"
+        userId = gameSample1.player1.userId,
     )
 }

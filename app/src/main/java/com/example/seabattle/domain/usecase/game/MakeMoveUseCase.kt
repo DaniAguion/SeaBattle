@@ -4,18 +4,13 @@ import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Ship
-import com.example.seabattle.domain.entity.UserBasic
-import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
-import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.GameRepository
-import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.UUID
 
 
 class MakeMoveUseCase(

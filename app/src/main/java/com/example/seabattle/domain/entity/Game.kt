@@ -1,7 +1,5 @@
 package com.example.seabattle.domain.entity
 
-import java.util.Date
-
 data class Game(
     val gameId: String,
     val gameName: String,

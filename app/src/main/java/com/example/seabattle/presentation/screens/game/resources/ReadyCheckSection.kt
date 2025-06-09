@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.UserBasic
+
 
 @Composable
 fun ReadyCheckSection(

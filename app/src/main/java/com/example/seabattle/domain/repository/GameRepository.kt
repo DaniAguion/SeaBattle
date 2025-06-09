@@ -1,7 +1,6 @@
 package com.example.seabattle.domain.repository
 
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.Room
 import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {

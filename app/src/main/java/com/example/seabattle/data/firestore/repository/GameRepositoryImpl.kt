@@ -3,7 +3,6 @@ package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.errors.toGameError
-import com.example.seabattle.data.firestore.errors.toRoomError
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.data.firestore.mappers.toGameCreationDto
 import com.example.seabattle.domain.entity.Game
@@ -101,7 +100,7 @@ class GameRepositoryImpl(
                     val gameEntity = try {
                         snapshot.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.GameNotValid()
                     } catch (e: Exception) {
-                        trySend(Result.failure(e.toRoomError()))
+                        trySend(Result.failure(e.toGameError()))
                         return@addSnapshotListener
                     }
                     trySend(Result.success(gameEntity))

@@ -3,10 +3,8 @@ package com.example.seabattle.presentation.screens.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.usecase.auth.CheckUserAuthUseCase
 import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
-import com.example.seabattle.presentation.screens.room.RoomUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

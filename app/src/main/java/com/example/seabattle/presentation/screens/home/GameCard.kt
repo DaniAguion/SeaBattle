@@ -20,9 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.Ship
-import com.example.seabattle.domain.entity.ShipPiece
-import com.example.seabattle.domain.entity.UserBasic
+
 
 @Composable
 fun GameCard(

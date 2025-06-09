@@ -3,7 +3,6 @@ package com.example.seabattle.data.firestore.mappers
 import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.domain.entity.Game
-import kotlin.Int
 
 
 // Function to convert Game DTO to Game Entity

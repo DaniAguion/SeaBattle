@@ -37,7 +37,7 @@ class JoinGameUseCase(
                     "numberOfPlayers" to 2,
                     "player2" to user.toBasic(),
                     "gameState" to GameState.CHECK_READY.name,
-                    "currentPlayer" to listOf(game.player1.userId, game.player2.userId).random()
+                    "currentPlayer" to listOf(game.player1.userId, userId).random()
                 )
             }
 
