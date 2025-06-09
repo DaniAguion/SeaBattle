@@ -120,7 +120,7 @@ fun HomeScreenContent(
                     .padding(top = 20.dp, bottom = 14.dp)
             )
             Text(
-                text = "Join a room or create a new one to start playing",
+                text = "Join a game or create a new one to start playing",
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -140,7 +140,7 @@ fun HomeScreenContent(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    stringResource(R.string.create_room_title),
+                    stringResource(R.string.create_game_title),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -157,13 +157,13 @@ fun HomeScreenContent(
                         OutlinedTextField(
                             value = gameName,
                             onValueChange = onGameNameUpdate,
-                            label = { Text(stringResource(R.string.roomName)) },
+                            label = { Text(stringResource(R.string.gameName)) },
                             singleLine = true,
                             isError = gameNameError != null,
                             supportingText = {
                                 gameNameError?.let {
                                     Text(
-                                        text = stringResource(R.string.error_room_name),
+                                        text = stringResource(R.string.error_gameName),
                                         color = MaterialTheme.colorScheme.error
                                     )
                                 }
@@ -181,7 +181,7 @@ fun HomeScreenContent(
                                 .padding(top = dimensionResource(R.dimen.padding_small))
                         ) {
                             Text(
-                                text = stringResource(R.string.create_room),
+                                text = stringResource(R.string.create_game),
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 modifier = Modifier.padding(4.dp)
                             )
@@ -193,17 +193,15 @@ fun HomeScreenContent(
 
 
 
-        // Rooms List Header
+        // Games List
         item {
             Text(
-                stringResource(R.string.list_rooms_title),
+                stringResource(R.string.list_games_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
         }
-
-        // Rooms List Header
         when {
             loadingList -> {
                 item {
@@ -225,7 +223,7 @@ fun HomeScreenContent(
             else -> {
                 item {
                     Text(
-                        text = stringResource(R.string.error_get_rooms),
+                        text = stringResource(R.string.error_get_games),
                         modifier = Modifier.padding(8.dp),
                         color = MaterialTheme.colorScheme.error
                     )
@@ -243,7 +241,7 @@ fun HomeScreenPreview(){
     HomeScreenContent(
         modifier = Modifier.fillMaxSize(),
         navController = NavHostController(context = LocalContext.current),
-        gameName = "Test Room",
+        gameName = "Test Game",
         gameNameError = null,
         errorList = false,
         loadingList = false,

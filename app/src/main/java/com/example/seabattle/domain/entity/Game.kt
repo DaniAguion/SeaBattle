@@ -12,7 +12,7 @@ data class Game(
     val boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
     val player2Ready: Boolean = false,
     val player2Ships: List<Ship> = emptyList(),
-    val currentTurn: Int = 0,
+    val currentMove: Int = 0,
     val currentPlayer: String = "",
     val gameState: String = "",
     val winnerId: String? = null

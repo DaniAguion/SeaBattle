@@ -19,11 +19,11 @@ class ProfileViewModel(
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState())
     var uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    // Listeners use to observe the room updates
+    // Listeners use to observe the game updates
     private var updateUIJob: Job? = null
 
     init {
-        // Observe the current room from the session and update the UI state
+        // Observe the current game from the session and update the UI state
         updateUIJob = viewModelScope.launch {
             session.currentUser.collect { user ->
                 if (user != null) {

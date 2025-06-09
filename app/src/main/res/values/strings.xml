@@ -30,16 +30,13 @@
     <string name="error_splash_screen">Error, it wasnt possible to retrieve user information.</string>
     <string name="loading_splash_screen">Checking session..</string>
     <string name="username">Username</string>
-    <string name="error_get_rooms">Error getting rooms from server</string>
-    <string name="list_rooms_title">Available rooms</string>
+    <string name="error_get_games">Error getting games from server</string>
+    <string name="list_games_title">Available games</string>
     <string name="error_action">Action has failed</string>
-    <string name="create_room_title">Create a new room</string>
-    <string name="roomName">Room Name</string>
-    <string name="error_room_name">Room Name is too short</string>
-    <string name="error_invalid_roomname">Room Name too short\n</string>
-    <string name="error_empty_roomname">Please, name the new room.</string>
-    <string name="create_room">Create Room</string>
-
-    // Unordered strings
-
+    <string name="create_game_title">Create a new game</string>
+    <string name="gameName">Game Name</string>
+    <string name="error_gameName">Game Name is too short</string>
+    <string name="error_invalid_gameName">Game Name too short</string>
+    <string name="error_empty_gameName">Please, name the new game.</string>
+    <string name="create_game">Create Game</string>
 </resources>

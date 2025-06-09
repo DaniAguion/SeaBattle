@@ -10,6 +10,6 @@ sealed class ValidationError(val idString: Int) {
     object EmptyPassword : ValidationError(R.string.error_empty_password)
     object PasswordShort : ValidationError(R.string.error_short_password)
     object PasswordWeak : ValidationError(R.string.weak_password)
-    object EmptyRoomName : ValidationError(R.string.error_empty_roomname)
-    object RoomNameShort : ValidationError(R.string.error_invalid_roomname)
+    object EmptyGameName : ValidationError(R.string.error_empty_gameName)
+    object GameNameShort : ValidationError(R.string.error_invalid_gameName)
 }

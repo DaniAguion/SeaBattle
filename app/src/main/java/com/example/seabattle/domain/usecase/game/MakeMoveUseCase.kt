@@ -116,7 +116,7 @@ class MakeMoveUseCase(
 
 
                 return movementData + mapOf(
-                    "currentTurn" to game.currentTurn + 1,
+                    "currentMove" to game.currentMove + 1,
                     "currentPlayer" to nextPlayer,
                     "gameState" to gameState,
                     "winnerId" to winnerId,

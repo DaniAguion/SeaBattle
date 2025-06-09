@@ -136,7 +136,7 @@ val gameSample1 = Game(
             sunk = false
         )
     ),
-    currentTurn=1,
+    currentMove=1,
     currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
     gameState="USER_LEFT",
     winnerId=null

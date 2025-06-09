@@ -62,7 +62,7 @@ class CreateGameUseCase(
             return@runCatching
         }
             .onFailure { e ->
-                Timber.e(e, "CreateRoomUseCase failed.")
+                Timber.e(e, "CreateGameUseCase failed.")
             }
             .recoverCatching { throwable ->
                 if (throwable is GameError) throw throwable

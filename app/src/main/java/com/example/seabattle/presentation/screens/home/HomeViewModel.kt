@@ -22,7 +22,7 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState(gamesList = emptyList()))
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    // Active listener use get the updated room list
+    // Active listener use get the updated game list
     private var getGamesJob: Job? = null
 
     init {
@@ -75,9 +75,9 @@ class HomeViewModel(
     }
 
 
-    fun onClickJoinGame(roomId: String) {
+    fun onClickJoinGame(gameId: String) {
         viewModelScope.launch {
-            joinGameUseCase.invoke(roomId)
+            joinGameUseCase.invoke(gameId)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }

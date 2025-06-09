@@ -67,7 +67,7 @@ class GameRepositoryImpl(
                             return@addSnapshotListener
                         }
                     }
-                    // Exclude rooms created by the current user
+                    // Exclude games created by the current user
                     // Didn't filtered in the query to avoid build a firestore index
                     .filter { game -> game.player1.userId != userId }
                 trySend(Result.success(games))
@@ -106,7 +106,10 @@ class GameRepositoryImpl(
                     trySend(Result.success(gameEntity))
                 }
             }
-        awaitClose { listener.remove() }
+        awaitClose {
+            Timber.d("Closing listener for updates on gameId: $gameId")
+            listener.remove()
+        }
     }.flowOn(ioDispatcher)
 
 
