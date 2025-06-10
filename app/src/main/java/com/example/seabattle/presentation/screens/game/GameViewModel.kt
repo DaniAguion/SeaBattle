@@ -3,6 +3,7 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
@@ -19,7 +20,8 @@ class GameViewModel(
     private val userReadyUseCase: UserReadyUseCase,
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
-    private val leaveGameUseCase: LeaveGameUseCase
+    private val leaveGameUseCase: LeaveGameUseCase,
+    private val claimVictoryUseCase: ClaimVictoryUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -116,6 +118,21 @@ class GameViewModel(
             return true
         }
         else return false
+    }
+
+
+    fun checkUserAFK() : Boolean {
+        val userId = session.getCurrentUserId()
+        val game = uiState.value.game ?: return false
+
+        claimVictoryUseCase.claimVictoryConditions(userId = userId, game = game).let { conditionsMet ->
+            if (conditionsMet) {
+                TODO("User is AFK, claim victory")
+                // If the conditions are met, indicate in the UI that the user is AFK
+                // and it is possible to claim victory
+                return true
+            } else return false
+        }
     }
 
 

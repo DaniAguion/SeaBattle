@@ -57,7 +57,6 @@ fun WaitGameSection(
     }
 
 
-
     Column(
         modifier = Modifier
             .padding(dimensionResource(R.dimen.padding_medium))

@@ -38,7 +38,7 @@ class GameRepositoryImpl(
     // Function to fetch all games with only one player
     override fun fetchGames(userId: String) : Flow<Result<List<Game>>> = callbackFlow {
         val listener = gamesCollection
-            .whereEqualTo("numberOfPlayers", 1)
+            .whereEqualTo("player1.status", "online")
             .whereEqualTo("gameState", GameState.WAITING_FOR_PLAYER.name)
             .limit(25)
             .addSnapshotListener(listenerOptions) { snapshot, error ->
