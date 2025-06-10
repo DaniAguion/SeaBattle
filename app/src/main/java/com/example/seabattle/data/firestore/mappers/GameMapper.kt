@@ -22,7 +22,10 @@ fun GameDto.toGameEntity(): Game {
         currentMove = currentMove,
         currentPlayer = currentPlayer,
         gameState = gameState,
-        winnerId = winnerId
+        winnerId = winnerId,
+        createdAt = createdAt,
+        expireAt = expireAt,
+        updatedAt = updatedAt,
     )
 }
 
@@ -44,6 +47,6 @@ fun Game.toGameCreationDto(): GameCreationDto {
         currentMove = currentMove,
         currentPlayer = currentPlayer,
         gameState = gameState,
-        winnerId = winnerId,
+        winnerId = winnerId
     )
 }

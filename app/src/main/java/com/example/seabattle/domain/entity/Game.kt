@@ -1,5 +1,7 @@
 package com.example.seabattle.domain.entity
 
+import java.util.Date
+
 data class Game(
     val gameId: String,
     val gameName: String,
@@ -15,7 +17,10 @@ data class Game(
     val currentMove: Int = 0,
     val currentPlayer: String = "",
     val gameState: String = "",
-    val winnerId: String? = null
+    val winnerId: String? = null,
+    val createdAt: Date? = Date(),
+    val expireAt: Date? = Date(),
+    val updatedAt: Date? = Date(),
 )
 
 
