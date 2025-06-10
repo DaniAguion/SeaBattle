@@ -5,6 +5,7 @@ data class User(
     val displayName: String = "",
     val email: String = "",
     val photoUrl: String = "",
+    val status: String = "offline",
     val score: Int = 0
 )
 

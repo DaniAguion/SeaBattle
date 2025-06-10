@@ -10,6 +10,7 @@ fun User.toUserDto(): UserDto =
         displayName = displayName,
         email = email,
         photoUrl = photoUrl,
+        status = status,
         score = score
     )
 
@@ -20,5 +21,6 @@ fun UserDto.toUserEntity(): User =
         displayName = displayName,
         email = email,
         photoUrl = photoUrl,
+        status = status,
         score = score
     )
