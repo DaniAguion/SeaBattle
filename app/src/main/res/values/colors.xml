@@ -15,4 +15,5 @@
     <color name="ship_color">#5D5C5C</color>
     <color name="target_color">#929090</color>
     <color name="hit_color">#CFC50404</color>
+    <color name="user_online_color">#61A807</color>
 </resources>

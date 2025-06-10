@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,8 +54,13 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
 
@@ -326,30 +330,44 @@ fun CardPlayer(
                 .sizeIn(
                     minWidth = 150.dp
                 ),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ){
-            if (player.photoUrl.isEmpty()) {
-                Image(
-                    painter = painterResource(id = R.drawable.account_box_40px),
-                    contentDescription = "User photo",
-                    modifier = Modifier.size(40.dp)
-                )
-            } else {
-                AsyncImage(
-                    model = player.photoUrl,
-                    contentDescription = "User photo",
-                    modifier = Modifier.size(40.dp),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.account_box_40px),
-                )
-            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (player.photoUrl.isEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.account_box_40px),
+                        contentDescription = "User photo",
+                        modifier = Modifier.size(40.dp)
+                    )
+                } else {
+                    AsyncImage(
+                        model = player.photoUrl,
+                        contentDescription = "User photo",
+                        modifier = Modifier.size(40.dp),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.account_box_40px),
+                    )
+                }
 
-            Text(
-                text = player.displayName,
-                fontSize = 16.sp,
-                fontWeight = SemiBold,
+                Text(
+                    text = player.displayName,
+                    fontSize = 16.sp,
+                    fontWeight = SemiBold,
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                )
+
+            }
+            Box(
                 modifier = Modifier
-                    .padding(start = dimensionResource(R.dimen.padding_small))
+                    .size(16.dp)
+                    .background(
+                        color = if (player.status == "online") colorResource(id = R.color.user_online_color) else Color.Gray,
+                        shape = CircleShape
+                    )
             )
         }
     }
