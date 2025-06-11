@@ -10,7 +10,6 @@ fun GameDto.toGameEntity(): Game {
     return Game(
         gameId = gameId,
         gameName = gameName,
-        numberOfPlayers = numberOfPlayers,
         player1 = player1,
         player1Ready = player1Ready,
         boardForPlayer1 = boardForPlayer1,
@@ -35,7 +34,6 @@ fun Game.toGameCreationDto(): GameCreationDto {
     return GameCreationDto(
         gameId = gameId,
         gameName = gameName,
-        numberOfPlayers = numberOfPlayers,
         player1 = player1,
         player1Ready = player1Ready,
         boardForPlayer1 = boardForPlayer1,

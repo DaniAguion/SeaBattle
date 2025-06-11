@@ -9,7 +9,6 @@ import com.example.seabattle.domain.entity.UserBasic
 val gameSample1 = Game(
     gameId="f074ffb3-2bdd-4edc-97b4-8a423d3705af",
     gameName = "Test Game",
-    numberOfPlayers = 1,
     player1=UserBasic(userId="dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName="MeuPixel", photoUrl=""),
     boardForPlayer2 = mapOf(
         "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),

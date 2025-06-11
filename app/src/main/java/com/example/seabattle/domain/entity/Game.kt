@@ -5,7 +5,6 @@ import java.util.Date
 data class Game(
     val gameId: String,
     val gameName: String,
-    val numberOfPlayers: Int = 1,
     val player1: UserBasic,
     val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),  // Board where the player 1 plays, it contains the ships of player 2.
     val player1Ready: Boolean = false,

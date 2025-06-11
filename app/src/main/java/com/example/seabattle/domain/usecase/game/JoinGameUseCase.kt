@@ -36,7 +36,6 @@ class JoinGameUseCase(
 
                 // Update the game state and add the second player
                 return mapOf(
-                    "numberOfPlayers" to 2,
                     "player2" to user.toBasic(),
                     "gameState" to GameState.CHECK_READY.name,
                     "currentPlayer" to listOf(game.player1.userId, userId).random()
