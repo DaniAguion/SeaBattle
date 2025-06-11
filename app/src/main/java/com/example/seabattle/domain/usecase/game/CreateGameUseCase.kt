@@ -58,7 +58,7 @@ class CreateGameUseCase(
 
             // Fetch the updated game and set it in the session
             game = gameRepository.getGame(gameId).getOrThrow()
-            session.setCurrentGame(game)
+            session.setCurrentGameId(gameId)
             return@runCatching
         }
             .onFailure { e ->

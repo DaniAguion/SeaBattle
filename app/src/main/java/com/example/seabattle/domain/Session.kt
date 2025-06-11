@@ -1,7 +1,6 @@
 package com.example.seabattle.domain
 
 import com.example.seabattle.data.local.SecurePrefsData
-import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +11,7 @@ class Session(private val securePrefs: SecurePrefsData) {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
-    private var currentGame: Game? = null
+    private var currentGameId: String? = null
 
     init{
         // Initialize the current user from secure prefs.
@@ -51,21 +50,17 @@ class Session(private val securePrefs: SecurePrefsData) {
 
 
     //
-    // Repository of the current game.
+    // Repository of the current gameId.
     //
-    fun setCurrentGame(game: Game) {
-        currentGame = game
-    }
-
-    fun getCurrentGame() : Game? {
-        return currentGame
+    fun setCurrentGameId(gameId: String) {
+        currentGameId = gameId
     }
 
     fun getCurrentGameId(): String {
-        return currentGame?.gameId ?: ""
+        return currentGameId ?: ""
     }
 
     fun clearCurrentGame() {
-        currentGame = null
+        currentGameId = null
     }
 }

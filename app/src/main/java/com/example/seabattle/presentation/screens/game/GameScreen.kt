@@ -324,9 +324,6 @@ fun GameScreenContent(
                 }
             }
         }
-
-        //TO DO: "Add more sections for different game states"
-
     }
 }
 

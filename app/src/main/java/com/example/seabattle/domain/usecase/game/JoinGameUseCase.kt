@@ -45,9 +45,8 @@ class JoinGameUseCase(
             // Update the game state
             gameRepository.updateGameFields(gameId, ::joinGame).getOrThrow()
 
-            // Fetch the updated game and set it in the session
-            val game = gameRepository.getGame(gameId).getOrThrow()
-            session.setCurrentGame(game)
+            // Register the gameId in the session
+            session.setCurrentGameId(gameId)
         }
             .onFailure { e ->
                 Timber.e(e, "JoinGameUseCase failed.")

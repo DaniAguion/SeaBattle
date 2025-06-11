@@ -17,24 +17,19 @@ class LeaveGameUseCase(
     val session: Session,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(userId:String, game: Game?): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val userId = session.getCurrentUserId()
-            val gameId = session.getCurrentGameId()
-            val game = session.getCurrentGame()
-
             if (userId.isEmpty()) {
                 throw UserError.UserProfileNotFound()
             }
 
-            if (gameId.isEmpty() || game == null) {
+            if (game ==null || game.gameId.isEmpty()) {
                 throw GameError.GameNotFound()
             }
 
-            if (game.gameState == GameState.WAITING_FOR_PLAYER.name ||
-                game.gameState == GameState.CHECK_READY.name ||
-                game.gameState == GameState.IN_PROGRESS.name){
-                // If the game is in progress or waiting, the game state has to be updated to reflect the user leaving
+            // If the games is not aborted or finished, it is necessary to update the game state
+            if (game.gameState != GameState.GAME_ABORTED.name && game.gameState != GameState.GAME_FINISHED.name) {
+
                 fun leaveGame(game: Game): Map<String, Any> {
                     if (game.gameState == GameState.WAITING_FOR_PLAYER.name || game.gameState == GameState.CHECK_READY.name) {
                         return mapOf(
@@ -50,8 +45,9 @@ class LeaveGameUseCase(
                         throw GameError.InvalidGameState()
                     }
                 }
-                gameRepository.updateGameFields(gameId = gameId, logicFunction = ::leaveGame).getOrThrow()
+                gameRepository.updateGameFields(gameId = game.gameId, logicFunction = ::leaveGame).getOrThrow()
             }
+
             session.clearCurrentGame()
         }
         .onFailure { e ->

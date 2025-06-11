@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
 import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.usecase.game.CheckClaimUseCase
+import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
+import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
 import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
@@ -23,11 +24,12 @@ import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val session: Session,
+    private val enableReadyUseCase: EnableReadyUseCase,
     private val userReadyUseCase: UserReadyUseCase,
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase,
-    private val checkClaimUseCase: CheckClaimUseCase,
+    private val enableClaimUseCase: EnableClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
@@ -46,10 +48,10 @@ class GameViewModel(
         // Start listening the current game looking for updates
         // and checking if the opponent is AFK
         listenGameJob = viewModelScope.launch {
-            val game = session.getCurrentGame()
+            val gameId = session.getCurrentGameId()
 
-            if ( game != null && game.gameId.isNotEmpty()) {
-                listenGameUseCase.invoke(game.gameId)
+            if (gameId.isNotEmpty()) {
+                listenGameUseCase.invoke(gameId)
                     .collect { result ->
                         result.fold(
                             onSuccess = { collectedGame ->
@@ -81,16 +83,11 @@ class GameViewModel(
                 .collectLatest { latestGame ->
                     val game = latestGame ?: return@collectLatest
                     while (isActive && game.gameState == GameState.IN_PROGRESS.name && game.winnerId == null) {
-                        checkClaimUseCase.invoke()
-                            .onSuccess { result ->
-                                _uiState.value = _uiState.value.copy(showClaimDialog = result)
-                            }
-                            .onFailure { e ->
-                                _uiState.value = _uiState.value.copy(
-                                    showClaimDialog = false,
-                                    errorMessage = e.message
-                                )
-                            }
+                        val claimConditions = enableClaimUseCase.invoke(
+                            userId= _uiState.value.userId,
+                            game = game
+                        )
+                        _uiState.value = _uiState.value.copy(showClaimDialog = claimConditions)
                         delay(10000)
                     }
                 }
@@ -121,17 +118,10 @@ class GameViewModel(
 
     // This function checks if the "Ready" button should be enabled
     fun enableReadyButton() : Boolean {
-        val userId = session.getCurrentUserId()
-        if (uiState.value.game?.gameState != "CHECK_READY") {
-            return false
-        }
-        if (userId == uiState.value.game?.player1?.userId && uiState.value.game?.player1Ready == true) {
-            return false
-        } else if (userId == uiState.value.game?.player2?.userId && uiState.value.game?.player2Ready == true) {
-            return false
-        } else {
-            return true
-        }
+        return enableReadyUseCase.invoke(
+            userId = _uiState.value.userId,
+            game = _uiState.value.game ?: return false
+        )
     }
 
 
@@ -140,7 +130,10 @@ class GameViewModel(
     fun onUserLeave() {
         viewModelScope.launch {
             stopListening() // Stop listening to the game updates before clearing the game
-            leaveGameUseCase.invoke()
+            leaveGameUseCase.invoke(
+                userId = _uiState.value.userId,
+                game = _uiState.value.game
+            )
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(game = null)
                 }
