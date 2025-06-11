@@ -31,11 +31,7 @@ class LeaveGameUseCase(
                 throw GameError.GameNotFound()
             }
 
-            if (game.gameState == GameState.GAME_ABORTED.name ||
-                game.gameState == GameState.USER_LEFT.name ||
-                game.gameState == GameState.GAME_FINISHED.name ||
-                game.gameState == GameState.GAME_ABANDONED.name
-                ) {
+            if (game.gameState == GameState.GAME_ABORTED.name || game.gameState == GameState.GAME_FINISHED.name) {
                 // If the game is already finished or aborted, we can just delete it
                 gameRepository.deleteGame(gameId).getOrThrow()
 
@@ -49,7 +45,7 @@ class LeaveGameUseCase(
                     } else if (game.gameState == GameState.IN_PROGRESS.name) {
                         val winnerId = if (game.player1.userId == userId) game.player2.userId else game.player1.userId
                         return mapOf(
-                            "gameState" to GameState.USER_LEFT.name,
+                            "gameState" to GameState.GAME_FINISHED.name,
                             "winnerId" to winnerId
                         )
                     } else {

@@ -305,7 +305,7 @@ fun GameScreenContent(
                     }
                 }
             }
-        } else if (game.gameState == GameState.USER_LEFT.name && game.winnerId == userId) {
+        } else if (game.gameState == GameState.GAME_FINISHED.name && game.winnerId == userId) {
             // Screen showing the case when the opponent has left the game and the user is the winner
             item {
                 Column(

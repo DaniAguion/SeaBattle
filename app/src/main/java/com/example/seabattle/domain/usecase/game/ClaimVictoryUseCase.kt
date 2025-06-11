@@ -36,7 +36,7 @@ class ClaimVictoryUseCase(
             fun checkUserAFK(game: Game) : Map<String, Any> {
                 if (CheckerService.claimVictoryConditions(userId = userId, game = game)) {
                     return mapOf(
-                        "gameState" to GameState.USER_LEFT.name,
+                        "gameState" to GameState.GAME_FINISHED.name,
                         "winnerId" to userId,
                     )
                 } else throw GameError.InvalidGameState()

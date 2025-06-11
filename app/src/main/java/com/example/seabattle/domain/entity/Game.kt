@@ -25,16 +25,12 @@ data class Game(
 
 
 // This enum represents the possible states of a game.
-// The timeout and game abandoned states are used to handle cases where a player does not respond in time or leaves the game.
-// This cases are controlled by the server through cloud functions.
 enum class GameState {
     WAITING_FOR_PLAYER,
     CHECK_READY,
     GAME_ABORTED,
     IN_PROGRESS,
-    USER_LEFT,
-    GAME_FINISHED,
-    GAME_ABANDONED // This state is set by the server when there is no changes in the game for a long time.
+    GAME_FINISHED
 }
 
 
