@@ -31,11 +31,9 @@ class LeaveGameUseCase(
                 throw GameError.GameNotFound()
             }
 
-            if (game.gameState == GameState.GAME_ABORTED.name || game.gameState == GameState.GAME_FINISHED.name) {
-                // If the game is already finished or aborted, we can just delete it
-                gameRepository.deleteGame(gameId).getOrThrow()
-
-            } else {
+            if (game.gameState == GameState.WAITING_FOR_PLAYER.name ||
+                game.gameState == GameState.CHECK_READY.name ||
+                game.gameState == GameState.IN_PROGRESS.name){
                 // If the game is in progress or waiting, the game state has to be updated to reflect the user leaving
                 fun leaveGame(game: Game): Map<String, Any> {
                     if (game.gameState == GameState.WAITING_FOR_PLAYER.name || game.gameState == GameState.CHECK_READY.name) {

@@ -305,7 +305,7 @@ fun GameScreenContent(
                     }
                 }
             }
-        } else if (game.gameState == GameState.GAME_FINISHED.name && game.winnerId == userId) {
+        } else if (game.gameState == GameState.GAME_FINISHED.name) {
             // Screen showing the case when the opponent has left the game and the user is the winner
             item {
                 Column(
@@ -316,14 +316,10 @@ fun GameScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "You have won!!",
+                        text = if(game.winnerId == userId) "You have won!!" else "You have lost!",
                         fontSize = 24.sp,
                         fontWeight = SemiBold,
                         modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
-                    )
-                    Text(
-                        text = "The opponent has left the game.",
-                        fontSize = 18.sp
                     )
                 }
             }

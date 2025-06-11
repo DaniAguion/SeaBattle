@@ -2,8 +2,6 @@ package com.example.seabattle.domain.usecase.game
 
 import com.example.seabattle.domain.CheckerService
 import com.example.seabattle.domain.Session
-import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
