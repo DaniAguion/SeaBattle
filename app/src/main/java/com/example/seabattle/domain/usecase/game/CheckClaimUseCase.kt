@@ -13,13 +13,13 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
-class ClaimVictoryUseCase(
+class CheckClaimUseCase(
     val gameRepository: GameRepository,
     val session: Session,
     val ioDispatcher: CoroutineDispatcher,
 ) {
 
-    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(): Result<Boolean> = withContext(ioDispatcher) {
         runCatching {
             val userId = session.getCurrentUserId()
             val gameId = session.getCurrentGameId()
@@ -32,20 +32,11 @@ class ClaimVictoryUseCase(
                 throw GameError.GameNotFound()
             }
 
-            // Check if the game is in the correct state for user readiness and change the state accordingly
-            fun checkUserAFK(game: Game) : Map<String, Any> {
-                if (CheckerService.claimVictoryConditions(userId = userId, game = game)) {
-                    return mapOf(
-                        "gameState" to GameState.USER_LEFT.name,
-                        "winnerId" to userId,
-                    )
-                } else throw GameError.InvalidGameState()
-            }
-
-            gameRepository.updateGameFields(gameId = gameId, logicFunction = ::checkUserAFK).getOrThrow()
+            val game = gameRepository.getGame(gameId).getOrThrow()
+            CheckerService.claimVictoryConditions(userId = userId, game = game)
         }
         .onFailure { e ->
-            Timber.e(e, "ClaimVictoryUseCase failed.")
+            Timber.e(e, "CheckClaimUseCase failed.")
         }
         .recoverCatching { throwable ->
             if (throwable is GameError) throw throwable

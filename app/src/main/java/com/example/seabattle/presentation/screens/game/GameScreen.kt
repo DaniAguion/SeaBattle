@@ -74,7 +74,6 @@ fun GameScreen(
     val context = LocalContext.current
     var showLeaveDialog by remember { mutableStateOf(false) }
 
-
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
         onDispose {
@@ -151,6 +150,40 @@ fun GameScreen(
                     }
                 ) {
                     Text("Cancel")
+                }
+            }
+        )
+    }
+
+
+    // Show a dialog to let
+    if (gameUiState.showClaimDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                gameViewModel.onDismissClaimDialog()
+            },
+            title = {
+                Text("Opponent is AFK")
+            },
+            text = {
+                Text("¿Do you want to claim victory?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        gameViewModel.onClaimVictory()
+                    }
+                ) {
+                    Text("Claim Victory")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        gameViewModel.onDismissClaimDialog()
+                    }
+                ) {
+                    Text("Continue Playing")
                 }
             }
         )

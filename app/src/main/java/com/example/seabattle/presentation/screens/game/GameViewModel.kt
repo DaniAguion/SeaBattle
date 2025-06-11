@@ -3,15 +3,21 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.usecase.game.CheckClaimUseCase
 import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
@@ -21,29 +27,38 @@ class GameViewModel(
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase,
+    private val checkClaimUseCase: CheckClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    // Listeners used to observe the game updates
+
     private var listenGameJob: Job? = null
+    private var checkClaimJob: Job? = null
+
 
     init{
         // Initialize the UI state with the current user ID
         val userId = session.getCurrentUserId()
         _uiState.value = _uiState.value.copy(userId = userId)
 
-        // Observe the current game
+        // Start listening the current game looking for updates
+        // and checking if the opponent is AFK
         listenGameJob = viewModelScope.launch {
             val game = session.getCurrentGame()
-            // If the game is not null, start listening for updates
+
             if ( game != null && game.gameId.isNotEmpty()) {
                 listenGameUseCase.invoke(game.gameId)
                     .collect { result ->
                         result.fold(
                             onSuccess = { collectedGame ->
                                 _uiState.value = _uiState.value.copy(game = collectedGame)
+                                if (collectedGame.gameState == GameState.IN_PROGRESS.name && collectedGame.winnerId == null) {
+                                    startCheckUserAFK()
+                                } else {
+                                    cancelCheckUserAFK()
+                                }
                             },
                             onFailure = { e ->
                                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -55,6 +70,44 @@ class GameViewModel(
     }
 
 
+
+    // This function checks if the opponent is AFK (Away From Keyboard)
+    // and if the conditions to claim victory are met it shows a dialog to the user.
+    // This condition are checked every 10 seconds
+    private fun startCheckUserAFK() : Unit {
+        checkClaimJob?.cancel()
+        checkClaimJob = viewModelScope.launch {
+            _uiState.map { it.game }
+                .collectLatest { latestGame ->
+                    val game = latestGame ?: return@collectLatest
+                    while (isActive && game.gameState == GameState.IN_PROGRESS.name && game.winnerId == null) {
+                        checkClaimUseCase.invoke()
+                            .onSuccess { result ->
+                                _uiState.value = _uiState.value.copy(showClaimDialog = result)
+                            }
+                            .onFailure { e ->
+                                _uiState.value = _uiState.value.copy(
+                                    showClaimDialog = false,
+                                    errorMessage = e.message
+                                )
+                            }
+                        delay(10000)
+                    }
+                }
+        }
+    }
+
+
+    // This function cancels the job that checks if the opponent is AFK
+    private fun cancelCheckUserAFK() {
+        checkClaimJob?.cancel()
+        checkClaimJob = null
+        _uiState.value = _uiState.value.copy(showClaimDialog = false)
+    }
+
+
+
+    // This function is called when the user clicks on the "Ready" button
     fun onClickReady() {
         viewModelScope.launch {
             userReadyUseCase.invoke()
@@ -65,6 +118,8 @@ class GameViewModel(
     }
 
 
+
+    // This function checks if the "Ready" button should be enabled
     fun enableReadyButton() : Boolean {
         val userId = session.getCurrentUserId()
         if (uiState.value.game?.gameState != "CHECK_READY") {
@@ -80,11 +135,13 @@ class GameViewModel(
     }
 
 
+
+    // This function is called when the user leaves the game
     fun onUserLeave() {
         viewModelScope.launch {
+            stopListening() // Stop listening to the game updates before clearing the game
             leaveGameUseCase.invoke()
                 .onSuccess {
-                    stopListening() // Stop listening to the game updates before clearing the game
                     _uiState.value = _uiState.value.copy(game = null)
                 }
                 .onFailure { e ->
@@ -93,6 +150,9 @@ class GameViewModel(
         }
     }
 
+
+
+    // This function is called when the user clicks on a cell in the game board
     fun onClickCell(x: Int, y: Int){
         viewModelScope.launch {
             makeMoveUseCase.invoke(x, y)
@@ -102,6 +162,9 @@ class GameViewModel(
         }
     }
 
+
+
+    // This function checks if the user can click on a cell
     fun enableClickCell(gameBoardOwner: String) : Boolean {
         val userId = session.getCurrentUserId()
         if (
@@ -121,28 +184,40 @@ class GameViewModel(
     }
 
 
-    fun checkUserAFK() : Boolean {
-        val userId = session.getCurrentUserId()
-        val game = uiState.value.game ?: return false
 
-        claimVictoryUseCase.claimVictoryConditions(userId = userId, game = game).let { conditionsMet ->
-            if (conditionsMet) {
-                TODO("User is AFK, claim victory")
-                // If the conditions are met, indicate in the UI that the user is AFK
-                // and it is possible to claim victory
-                return true
-            } else return false
+    // This function is called when the user clicks on the "Claim Victory" button
+    fun onClaimVictory() {
+        viewModelScope.launch {
+            claimVictoryUseCase.invoke()
+                .onSuccess {
+                    _uiState.value = _uiState.value.copy(showClaimDialog = false)
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                }
         }
     }
 
 
+    fun onDismissClaimDialog() {
+        _uiState.value = _uiState.value.copy(showClaimDialog = false)
+    }
+
+
+
+    // This function is called when the error message is shown to the user
+    // It clears the error message from the UI state
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
 
+
+    // It's used when the user leaves the game screen to clear the jobs
     fun stopListening() {
         listenGameJob?.cancel()
         listenGameJob = null
+        checkClaimJob?.cancel()
+        checkClaimJob = null
     }
 }
