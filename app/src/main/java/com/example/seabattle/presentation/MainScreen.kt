@@ -15,7 +15,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,11 +25,10 @@ import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
 import com.example.seabattle.presentation.screens.profile.ProfileScreen
 import com.example.seabattle.presentation.screens.welcome.WelcomeScreen
-import com.example.seabattle.presentation.theme.SeaBattleTheme
 import com.example.seabattle.presentation.screens.splash.SplashScreen
 
 
-enum class SeaBattleScreen(val title: String) {
+internal enum class SeaBattleScreen(val title: String) {
     Splash(title = "Splash"),
     Welcome(title = "Welcome"),
     Home(title = "Home"),
@@ -49,7 +47,7 @@ enum class TabItem(
 }
 
 @Composable
-fun SeaBattleApp() {
+fun MainScreen() {
     val navController = rememberNavController()
 
     Scaffold(
@@ -142,13 +140,4 @@ fun SeaBattleTopBar() {
             titleContentColor = MaterialTheme.colorScheme.onPrimary
         )
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SeaBattleTheme {
-        SeaBattleApp()
-    }
 }

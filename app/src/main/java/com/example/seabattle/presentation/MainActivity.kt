@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SeaBattleTheme {
-                SeaBattleApp()
+                MainScreen()
             }
         }
     }

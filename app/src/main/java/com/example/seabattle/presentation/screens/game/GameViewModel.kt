@@ -76,7 +76,7 @@ class GameViewModel(
     // This function checks if the opponent is AFK (Away From Keyboard)
     // and if the conditions to claim victory are met it shows a dialog to the user.
     // This condition are checked every 10 seconds
-    private fun startCheckUserAFK() : Unit {
+    private fun startCheckUserAFK() {
         checkClaimJob?.cancel()
         checkClaimJob = viewModelScope.launch {
             _uiState.map { it.game }
