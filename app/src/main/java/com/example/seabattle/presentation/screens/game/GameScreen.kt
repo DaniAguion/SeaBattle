@@ -115,7 +115,8 @@ fun GameScreen(
         enableReadyButton = gameViewModel::enableReadyButton,
         onClickLeave = { showLeaveDialog = true },
         onClickCell = gameViewModel::onClickCell,
-        enableClickCell = gameViewModel::enableClickCell
+        enableClickCell = gameViewModel::enableClickCell,
+        enableSeeShips = gameViewModel::enableSeeShips
     )
 
     // Show a dialog to confirm the user wants to leave the game
@@ -199,7 +200,8 @@ fun GameScreenContent(
     enableReadyButton: () -> Boolean = { true },
     onClickLeave: () -> Unit = {},
     onClickCell: (row: Int, col: Int) -> Unit = { _, _ -> },
-    enableClickCell: (gameBoardOwner: String) -> Boolean = { true }
+    enableClickCell: (gameBoardOwner: String) -> Boolean = { true },
+    enableSeeShips: (watcher: String) -> Boolean = { false }
 ) {
     if (game == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -293,12 +295,14 @@ fun GameScreenContent(
                     if (delayedCurrentPlayer == game.player1.userId) {
                         GameBoard(
                             gameBoard = game.boardForPlayer1,
+                            cellsUnhidden = enableSeeShips("player2"),
                             onClickCell = onClickCell,
                             clickEnabled = enableClickCell("player1")
                         )
                     } else {
                         GameBoard(
                             gameBoard = game.boardForPlayer2,
+                            cellsUnhidden = enableSeeShips("player1"),
                             onClickCell = onClickCell,
                             clickEnabled = enableClickCell("player2")
                         )

@@ -177,6 +177,17 @@ class GameViewModel(
     }
 
 
+    // This function checks if the user can see the ships positions
+    fun enableSeeShips(watcher: String) : Boolean {
+        val userId = session.getCurrentUserId()
+        return when (watcher) {
+            "player1" -> userId == uiState.value.game?.player1?.userId
+            "player2" -> userId == uiState.value.game?.player2?.userId
+            else -> false
+        }
+    }
+
+
 
     // This function is called when the user clicks on the "Claim Victory" button
     fun onClaimVictory() {

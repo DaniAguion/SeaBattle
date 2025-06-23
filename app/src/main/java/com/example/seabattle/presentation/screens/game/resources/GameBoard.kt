@@ -1,5 +1,9 @@
 package com.example.seabattle.presentation.screens.game.resources
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateSizeAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +17,10 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +32,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getColor
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun GameBoard(
     gameBoard: Map<String, Map<String, Int>>,
+    cellsUnhidden: Boolean = false,
     onClickCell: (row: Int, col: Int) -> Unit,
     clickEnabled: Boolean
 ) {
@@ -49,6 +59,7 @@ fun GameBoard(
                     for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
                         Cell(
                             cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
+                            cellUnhidden = cellsUnhidden,
                             onClickCell = { onClickCell(i, j) },
                             clickEnabled = clickEnabled
                         )
@@ -63,25 +74,67 @@ fun GameBoard(
 @Composable
 fun Cell(
     cellValue: Int,
+    cellUnhidden : Boolean,
     onClickCell: () -> Unit,
     clickEnabled: Boolean
 ) {
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
 
-    val cellStyle: CellStyle =
-        when(cellValue){
-            0, 1 -> CellStyle.Target
-            2 -> CellStyle.Water
-            3 -> CellStyle.Hit
-            4 -> CellStyle.Ship
-            else -> CellStyle.Water
+    val finalCellStyle: CellStyle =
+        if (cellUnhidden) {
+            when(cellValue){
+                0, 2 -> CellStyle.Water
+                1, 4 -> CellStyle.Ship
+                3 -> CellStyle.Hit
+                else -> CellStyle.Water
+            }
+        } else {
+            when(cellValue){
+                0, 1 -> CellStyle.Unknown
+                2 -> CellStyle.Water
+                3 -> CellStyle.Hit
+                4 -> CellStyle.Ship
+                else -> CellStyle.Water
+            }
         }
 
-    val cellClickable = if (clickEnabled) cellStyle.clickable else false
-    val cellColor : Color = colorResource(id = cellStyle.backgroundColor)
-    val targetColorId = cellStyle.targetColor
-    val targetSize = dimensionResource(cellStyle.targetSize)
+    val cellClickable = if (clickEnabled) finalCellStyle.clickable else false
+
+    val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
+
+    // Introduce the Target Cell Style Animation in between the change of cell styles
+    LaunchedEffect(finalCellStyle) {
+        if (currentAnimateCellStyle != finalCellStyle) {
+            setCurrentAnimateCellStyle(CellStyle.Target)
+            delay(1000)
+            setCurrentAnimateCellStyle(finalCellStyle)
+        }
+    }
+
+    val animatedCellColor by animateColorAsState(
+        targetValue = colorResource(id = currentAnimateCellStyle.backgroundColor),
+        animationSpec = tween(durationMillis = 500),
+        label = "cellBackgroundColorAnimation"
+    )
+
+    val animatedTargetColor by animateColorAsState(
+        targetValue = Color(getColor(context, currentAnimateCellStyle.targetColor)),
+        animationSpec = tween(durationMillis = 500),
+        label = "targetColorAnimation"
+    )
+
+    val animatedTargetSize by animateDpAsState(
+        targetValue = dimensionResource(currentAnimateCellStyle.targetSize),
+        animationSpec =
+            if(currentAnimateCellStyle.targetSize < finalCellStyle.targetSize) {
+                tween(durationMillis = 0)
+            } else {
+                tween(durationMillis = 1000)
+            }
+        ,
+        label = "targetSizeAnimation"
+    )
 
     Surface(
         modifier = Modifier
@@ -98,13 +151,13 @@ fun Cell(
             modifier = Modifier.size(cellSize)
         ) {
             drawRect(
-                color = cellColor,
+                color = animatedCellColor,
                 size = size,
             )
 
             drawCircle(
-                color = Color(getColor(context, targetColorId)),
-                radius = targetSize.value,
+                color = animatedTargetColor,
+                radius = animatedTargetSize.value,
                 center = center,
             )
         }
@@ -123,6 +176,7 @@ fun Cell(
 fun PlayingSectionPreview(){
     GameBoard(
         gameBoard = gameSample1.boardForPlayer1,
+        cellsUnhidden = true,
         onClickCell = { row, col -> },
         clickEnabled = true
     )

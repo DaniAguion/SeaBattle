@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Sea Battle</string>
-    <string name="default_web_client_id">535888489443-plcatcaacbg8b5a2v8abu9l7kireo4pi.apps.googleusercontent.com</string>
 
     // Login Page and Register Page
     <string name="welcome_page_title">Welcome!</string>
