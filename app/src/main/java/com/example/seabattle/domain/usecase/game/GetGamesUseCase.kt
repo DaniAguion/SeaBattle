@@ -1,7 +1,7 @@
 package com.example.seabattle.domain.usecase.game
 
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
@@ -15,10 +15,10 @@ import timber.log.Timber
 
 class GetGamesUseCase(
     val gameRepository: GameRepository,
-    val session: Session,
+    val sessionService: SessionService,
 ) {
     operator fun invoke(): Flow<Result<List<Game>>> {
-        val userId = session.getCurrentUserId()
+        val userId = sessionService.getCurrentUserId()
 
         if (userId == "") {
             return flowOf(Result.failure(UserError.UserProfileNotFound()))

@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.game
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.toBasic
@@ -18,11 +18,11 @@ class JoinGameUseCase(
     val gameRepository: GameRepository,
     val userRepository: UserRepository,
     val ioDispatcher: CoroutineDispatcher,
-    val session: Session,
+    val sessionService: SessionService,
 ) {
     suspend operator fun invoke(gameId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val userId = session.getCurrentUserId()
+            val userId = sessionService.getCurrentUserId()
             val user = userRepository.getUser(userId).getOrThrow()
 
             // Function to validate the game state and join the game.
@@ -46,7 +46,7 @@ class JoinGameUseCase(
             gameRepository.updateGameFields(gameId, ::joinGame).getOrThrow()
 
             // Register the gameId in the session
-            session.setCurrentGameId(gameId)
+            sessionService.setCurrentGameId(gameId)
         }
             .onFailure { e ->
                 Timber.e(e, "JoinGameUseCase failed.")

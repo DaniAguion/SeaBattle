@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.presentation.Screen
+import com.example.seabattle.presentation.screens.Screen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

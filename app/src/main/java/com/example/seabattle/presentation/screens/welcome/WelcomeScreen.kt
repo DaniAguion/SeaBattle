@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.presentation.Tabs
+import com.example.seabattle.presentation.screens.Tabs
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

@@ -2,7 +2,7 @@ package com.example.seabattle.presentation.screens.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
 import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 
 class GameViewModel(
-    private val session: Session,
+    private val sessionService: SessionService,
     private val enableReadyUseCase: EnableReadyUseCase,
     private val userReadyUseCase: UserReadyUseCase,
     private val makeMoveUseCase: MakeMoveUseCase,
@@ -42,13 +42,13 @@ class GameViewModel(
 
     init{
         // Initialize the UI state with the current user ID
-        val userId = session.getCurrentUserId()
+        val userId = sessionService.getCurrentUserId()
         _uiState.value = _uiState.value.copy(userId = userId)
 
         // Start listening the current game looking for updates
         // and checking if the opponent is AFK
         listenGameJob = viewModelScope.launch {
-            val gameId = session.getCurrentGameId()
+            val gameId = sessionService.getCurrentGameId()
 
             if (gameId.isNotEmpty()) {
                 listenGameUseCase.invoke(gameId)
@@ -159,7 +159,7 @@ class GameViewModel(
 
     // This function checks if the user can click on a cell
     fun enableClickCell(gameBoardOwner: String) : Boolean {
-        val userId = session.getCurrentUserId()
+        val userId = sessionService.getCurrentUserId()
         if (
             gameBoardOwner == "player1"
             && (userId == uiState.value.game?.player1?.userId)
@@ -179,7 +179,7 @@ class GameViewModel(
 
     // This function checks if the user can see the ships positions
     fun enableSeeShips(watcher: String) : Boolean {
-        val userId = session.getCurrentUserId()
+        val userId = sessionService.getCurrentUserId()
         return when (watcher) {
             "player1" -> userId == uiState.value.game?.player1?.userId
             "player2" -> userId == uiState.value.game?.player2?.userId

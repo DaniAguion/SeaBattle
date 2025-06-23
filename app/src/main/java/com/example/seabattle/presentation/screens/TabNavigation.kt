@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation
+package com.example.seabattle.presentation.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

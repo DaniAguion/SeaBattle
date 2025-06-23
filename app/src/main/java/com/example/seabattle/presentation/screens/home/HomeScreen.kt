@@ -38,7 +38,7 @@ import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.presentation.Screen
+import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.validation.ValidationError
 import org.koin.androidx.compose.koinViewModel
 

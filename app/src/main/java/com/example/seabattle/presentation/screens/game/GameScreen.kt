@@ -46,7 +46,7 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.UserBasic
-import com.example.seabattle.presentation.Screen
+import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import kotlinx.coroutines.delay

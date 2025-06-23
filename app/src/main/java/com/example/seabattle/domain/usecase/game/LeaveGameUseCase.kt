@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.game
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.errors.DomainError
@@ -14,7 +14,7 @@ import timber.log.Timber
 
 class LeaveGameUseCase(
     val gameRepository: GameRepository,
-    val session: Session,
+    val sessionService: SessionService,
     val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(userId:String, game: Game?): Result<Unit> = withContext(ioDispatcher) {
@@ -48,7 +48,7 @@ class LeaveGameUseCase(
                 gameRepository.updateGameFields(gameId = game.gameId, logicFunction = ::leaveGame).getOrThrow()
             }
 
-            session.clearCurrentGame()
+            sessionService.clearCurrentGame()
         }
         .onFailure { e ->
             Timber.e(e, "LeaveGameUseCase failed.")

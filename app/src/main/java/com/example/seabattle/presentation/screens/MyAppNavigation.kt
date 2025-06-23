@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation
+package com.example.seabattle.presentation.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,6 +30,7 @@ fun MyAppNavigation() {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
+
     Scaffold(
         topBar = { SeaBattleTopBar() },
         bottomBar = {
@@ -38,7 +39,7 @@ fun MyAppNavigation() {
                     TabBar(navController)
                 }
                 else -> {
-                    // No bottom bar for other screens
+                    // No tab bar for Splash or Welcome screens
                 }
             }
         },

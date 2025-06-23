@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.game
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.errors.DomainError
@@ -14,7 +14,7 @@ import timber.log.Timber
 
 class ClaimVictoryUseCase(
     val gameRepository: GameRepository,
-    val session: Session,
+    val sessionService: SessionService,
     val ioDispatcher: CoroutineDispatcher,
 ) {
 
@@ -35,8 +35,8 @@ class ClaimVictoryUseCase(
 
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val userId = session.getCurrentUserId()
-            val gameId = session.getCurrentGameId()
+            val userId = sessionService.getCurrentUserId()
+            val gameId = sessionService.getCurrentGameId()
 
             if (userId.isEmpty()) {
                 throw UserError.UserProfileNotFound()

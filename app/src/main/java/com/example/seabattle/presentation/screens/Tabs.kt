@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation
+package com.example.seabattle.presentation.screens
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle

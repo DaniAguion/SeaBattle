@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.game
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.UserBasic
@@ -22,11 +22,11 @@ class CreateGameUseCase(
     val userRepository: UserRepository,
     val gameBoardRepository: GameBoardRepository,
     val ioDispatcher: CoroutineDispatcher,
-    val session: Session,
+    val sessionService: SessionService,
 ) {
     suspend operator fun invoke(gameName: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val userId = session.getCurrentUserId()
+            val userId = sessionService.getCurrentUserId()
             val user = userRepository.getUser(userId).getOrThrow()
 
             // Create the game in the repository
@@ -58,7 +58,7 @@ class CreateGameUseCase(
 
             // Fetch the updated game and set it in the session
             game = gameRepository.getGame(gameId).getOrThrow()
-            session.setCurrentGameId(gameId)
+            sessionService.setCurrentGameId(gameId)
             return@runCatching
         }
             .onFailure { e ->

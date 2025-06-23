@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.presence
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.repository.PresenceRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -9,12 +9,12 @@ import timber.log.Timber
 
 class SetPresenceUseCase (
     private val presenceRepo: PresenceRepository,
-    private val session: Session,
+    private val sessionService: SessionService,
     private val ioDispatcher: CoroutineDispatcher
 ) {
-    operator suspend fun invoke(): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            val userId = session.getCurrentUserId()
+            val userId = sessionService.getCurrentUserId()
             presenceRepo.definePresence(userId = userId).getOrThrow()
             presenceRepo.listenUserPresence(userId).collect { result ->
                 result.onSuccess { status ->

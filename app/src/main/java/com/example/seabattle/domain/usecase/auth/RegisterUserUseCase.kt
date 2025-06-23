@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.auth
 
-import com.example.seabattle.domain.Session
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,7 +10,7 @@ import timber.log.Timber
 class RegisterUserUseCase (
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val session: Session,
+    private val sessionService: SessionService,
     private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(
@@ -27,7 +27,7 @@ class RegisterUserUseCase (
             val userProfile = authRepository.getAuthUserProfile().getOrThrow()
 
             userRepository.createUser(userProfile).getOrThrow()
-            session.setCurrentUser(userProfile)
+            sessionService.setCurrentUser(userProfile)
             return@runCatching true
         }
         .onFailure { e ->

@@ -28,7 +28,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.User
-import com.example.seabattle.presentation.Screen
+import com.example.seabattle.presentation.screens.Screen
 import org.koin.androidx.compose.koinViewModel
 
 
