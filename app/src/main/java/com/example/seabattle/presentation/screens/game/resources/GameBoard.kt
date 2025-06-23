@@ -86,6 +86,7 @@ fun Cell(
                 0, 2 -> CellStyle.Water
                 1, 4 -> CellStyle.Ship
                 3 -> CellStyle.Hit
+                5 -> CellStyle.Sunk
                 else -> CellStyle.Water
             }
         } else {
@@ -94,6 +95,7 @@ fun Cell(
                 2 -> CellStyle.Water
                 3 -> CellStyle.Hit
                 4 -> CellStyle.Ship
+                5 -> CellStyle.Sunk
                 else -> CellStyle.Water
             }
         }
@@ -105,8 +107,22 @@ fun Cell(
     // Introduce the Target Cell Style Animation in between the change of cell styles
     LaunchedEffect(finalCellStyle) {
         if (currentAnimateCellStyle != finalCellStyle) {
-            setCurrentAnimateCellStyle(CellStyle.Target)
-            delay(1000)
+            // Show only animation of target cell style if the cell was a target
+            // It cannot be a target if it was already hit
+            if (finalCellStyle == CellStyle.Sunk) {
+                // If the cell is Sunk, it was Hit before, so we need to show the Hit style first
+                if (currentAnimateCellStyle != CellStyle.Hit) {
+                    setCurrentAnimateCellStyle(CellStyle.Target)
+                    delay(1000)
+                    setCurrentAnimateCellStyle(CellStyle.Hit)
+                    delay(500)
+                } else {
+                    delay(1500)
+                }
+            } else {
+                setCurrentAnimateCellStyle(CellStyle.Target)
+                delay(1000)
+            }
             setCurrentAnimateCellStyle(finalCellStyle)
         }
     }

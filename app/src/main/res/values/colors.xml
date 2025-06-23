@@ -11,7 +11,8 @@
 
     <color name="none_color">#00FFFFFF</color>
     <color name="cloud_color">#D9D9D9</color>
-    <color name="water_color">#2A7ACC</color>
+    <color name="water_color">#467DC8</color>
+    <color name="sunk_ship_color">#092742</color>
     <color name="ship_color">#5D5C5C</color>
     <color name="target_color">#72626262</color>
     <color name="hit_color">#CFC50404</color>

@@ -76,10 +76,9 @@ class MakeMoveUseCase(
                         nextPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
                     }
 
-                    1 -> { // Hit. Player continues. Update the game board and the ships status
+                    1 -> { // Hit. Player continues. Update the game board and the ships status.
                         gameBoard[x.toString()]?.put(y.toString(), 3)
                         nextPlayer = game.currentPlayer
-                        // Update the ship status
                         updatedShips = currentShips.map { ship ->
                             val newShipBody = ship.shipBody.map { piece ->
                                 if (piece.x.toString() == x.toString() && piece.y.toString() == y.toString()) {
@@ -89,8 +88,17 @@ class MakeMoveUseCase(
                                 }
                             }
                             val isSunk = newShipBody.all { it.touched }
+
+                            // If the ship was sunk, update all the pieces of the ship on the game board
+                            if (isSunk) {
+                                newShipBody.forEach { piece ->
+                                    gameBoard[piece.x.toString()]?.put(piece.y.toString(), 5)
+                                }
+                            }
+
                             ship.copy(shipBody = newShipBody, sunk = isSunk)
                         }
+
                         // Check if the are any ships left
                         if (updatedShips.all { it.sunk }) {
                             gameState = GameState.GAME_FINISHED.name

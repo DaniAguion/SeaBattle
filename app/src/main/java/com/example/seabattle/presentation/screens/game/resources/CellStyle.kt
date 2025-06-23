@@ -20,12 +20,6 @@ sealed class CellStyle(
         targetSize = R.dimen.target_size,
         backgroundColor = R.color.none_color
     )
-    object Ship : CellStyle(
-        clickable = false,
-        targetColor = R.color.none_color,
-        targetSize = R.dimen.none_size,
-        backgroundColor = R.color.ship_color
-    )
     object Hit : CellStyle(
         clickable = false,
         targetColor = R.color.hit_color,
@@ -37,5 +31,17 @@ sealed class CellStyle(
         targetColor = R.color.none_color,
         targetSize = R.dimen.none_size,
         backgroundColor = R.color.water_color
+    )
+    object Ship : CellStyle(
+        clickable = false,
+        targetColor = R.color.none_color,
+        targetSize = R.dimen.none_size,
+        backgroundColor = R.color.ship_color
+    )
+    object Sunk : CellStyle(
+        clickable = false,
+        targetColor = R.color.none_color,
+        targetSize = R.dimen.none_size,
+        backgroundColor = R.color.sunk_ship_color
     )
 }
