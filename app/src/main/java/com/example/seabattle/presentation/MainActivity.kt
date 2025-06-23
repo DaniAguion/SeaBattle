@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SeaBattleTheme {
-                MainScreen()
+                MyAppNavigation()
             }
         }
     }

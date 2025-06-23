@@ -46,7 +46,7 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.UserBasic
-import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.Screen
 import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import kotlinx.coroutines.delay
@@ -100,7 +100,7 @@ fun GameScreen(
         val game = gameUiState.game
         if (game!= null && game.gameState == GameState.GAME_ABORTED.name) {
             gameViewModel.onUserLeave()
-            navController.navigate(SeaBattleScreen.Home.title){
+            navController.navigate(Screen.Home.title){
                 popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }
         }
@@ -136,7 +136,7 @@ fun GameScreen(
                     onClick = {
                         showLeaveDialog = false
                         gameViewModel.onUserLeave()
-                        navController.navigate(SeaBattleScreen.Home.title){
+                        navController.navigate(Screen.Home.title){
                             popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
                         }
                     }

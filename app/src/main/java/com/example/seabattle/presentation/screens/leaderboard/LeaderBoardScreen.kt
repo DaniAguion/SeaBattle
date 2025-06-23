@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.battleplan
+package com.example.seabattle.presentation.screens.leaderboard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,14 +8,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun BattlePlanScreen(
+fun LeaderBoardScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
         Text(
-            text = "BattlePlan Screen"
+            text = "Leader Board Screen"
         )
     }
 }
@@ -23,8 +23,8 @@ fun BattlePlanScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun BattlePlanPreview(){
-    BattlePlanScreen(
+fun LeaderBoardPreview(){
+    LeaderBoardScreen(
         modifier = Modifier.fillMaxSize(),
     )
 }

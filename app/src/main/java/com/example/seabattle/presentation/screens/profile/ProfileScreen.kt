@@ -28,7 +28,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.User
-import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.Screen
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -49,7 +49,7 @@ fun ProfileScreen(
 
     LaunchedEffect(key1 = profileUiState.userLoggedIn) {
         if (!profileUiState.userLoggedIn) {
-            navController.navigate(SeaBattleScreen.Welcome.title)
+            navController.navigate(Screen.Welcome.title)
         }
     }
     ProfileScreenContent(

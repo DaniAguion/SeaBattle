@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.presentation.TabItem
+import com.example.seabattle.presentation.Tabs
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -63,7 +63,7 @@ fun WelcomeScreen(
     // Navigate to Home screen if user is already logged in
     LaunchedEffect(key1 = welcomeUiState.isLoggedIn) {
         if (welcomeUiState.isLoggedIn) {
-            navController.navigate(TabItem.Home.title)
+            navController.navigate(Tabs.Home.title)
         }
     }
 

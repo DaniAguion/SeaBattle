@@ -38,7 +38,7 @@ import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.Screen
 import com.example.seabattle.presentation.validation.ValidationError
 import org.koin.androidx.compose.koinViewModel
 
@@ -99,7 +99,7 @@ fun HomeScreenContent(
     // Navigate to Game screen when the user joins a game
     LaunchedEffect(key1 = hasJoined) {
         if (hasJoined) {
-            navController.navigate(SeaBattleScreen.Game.title)
+            navController.navigate(Screen.Game.title)
         }
     }
 

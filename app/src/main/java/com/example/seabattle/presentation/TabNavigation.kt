@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 @Composable
 fun TabNavigation(
     modifier: Modifier = Modifier,
-    tabs: List<TabItem>,
-    onTabSelected: (TabItem) -> Unit,
-    initialTab: TabItem
+    tabs: List<Tabs>,
+    onTabSelected: (Tabs) -> Unit,
+    initialTab: Tabs
 ) {
 
     var tabIndex by remember { mutableStateOf(tabs.indexOf(initialTab)) }

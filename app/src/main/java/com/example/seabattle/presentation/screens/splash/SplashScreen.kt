@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.presentation.SeaBattleScreen
+import com.example.seabattle.presentation.Screen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -31,12 +31,12 @@ fun SplashScreen(
         when (val state = uiState.value) {
             is SplashState.Success -> {
                 if (state.isLogged) {
-                    navController.navigate(SeaBattleScreen.Home.title) {
-                        popUpTo(SeaBattleScreen.Splash.title) { inclusive = true }
+                    navController.navigate(Screen.Home.title) {
+                        popUpTo(Screen.Splash.title) { inclusive = true }
                     }
                 } else {
-                    navController.navigate(SeaBattleScreen.Welcome.title) {
-                        popUpTo(SeaBattleScreen.Splash.title) { inclusive = true }
+                    navController.navigate(Screen.Welcome.title) {
+                        popUpTo(Screen.Splash.title) { inclusive = true }
                     }
                 }
             }
@@ -46,8 +46,8 @@ fun SplashScreen(
                     context.getString(R.string.error_splash_screen),
                     Toast.LENGTH_LONG
                 ).show()
-                navController.navigate(SeaBattleScreen.Welcome.title) {
-                    popUpTo(SeaBattleScreen.Splash.title) { inclusive = true }
+                navController.navigate(Screen.Welcome.title) {
+                    popUpTo(Screen.Splash.title) { inclusive = true }
                 }
             }
             SplashState.Loading -> {

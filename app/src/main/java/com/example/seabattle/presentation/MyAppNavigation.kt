@@ -2,10 +2,6 @@ package com.example.seabattle.presentation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -14,13 +10,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.seabattle.presentation.screens.battleplan.BattlePlanScreen
+import com.example.seabattle.presentation.screens.leaderboard.LeaderBoardScreen
 import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
 import com.example.seabattle.presentation.screens.profile.ProfileScreen
@@ -28,68 +23,62 @@ import com.example.seabattle.presentation.screens.welcome.WelcomeScreen
 import com.example.seabattle.presentation.screens.splash.SplashScreen
 
 
-internal enum class SeaBattleScreen(val title: String) {
-    Splash(title = "Splash"),
-    Welcome(title = "Welcome"),
-    Home(title = "Home"),
-    Profile(title = "Profile"),
-    BattlePlan(title = "Battle Plan"),
-    Game(title = "Game")
-}
-
-enum class TabItem(
-    val title: String,
-    val icon: ImageVector
-) {
-    Home(SeaBattleScreen.Home.title, Icons.Default.Home),
-    BattlePlan(SeaBattleScreen.BattlePlan.title, Icons.Default.GridOn),
-    Profile(SeaBattleScreen.Profile.title, Icons.Default.AccountCircle)
-}
 
 @Composable
-fun MainScreen() {
+fun MyAppNavigation() {
     val navController = rememberNavController()
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
 
     Scaffold(
         topBar = { SeaBattleTopBar() },
-        bottomBar = { TabBar(navController) },
+        bottomBar = {
+            when (currentRoute) {
+                Screen.LeaderBoard.title, Screen.Home.title, Screen.Profile.title -> {
+                    TabBar(navController)
+                }
+                else -> {
+                    // No bottom bar for other screens
+                }
+            }
+        },
         modifier = Modifier.fillMaxSize(),
     ) {
         innerPadding ->
 
         NavHost(
             navController = navController,
-            startDestination = SeaBattleScreen.Splash.title,
+            startDestination = Screen.Splash.title,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(route = SeaBattleScreen.Splash.title) {
+            composable(route = Screen.Splash.title) {
                 SplashScreen(
                     navController = navController
                 )
             }
-            composable(route = SeaBattleScreen.Welcome.title) {
+            composable(route = Screen.Welcome.title) {
                 WelcomeScreen(
                     navController = navController
                 )
             }
-            composable(route = SeaBattleScreen.BattlePlan.title) {
-                BattlePlanScreen(
+            composable(route = Screen.LeaderBoard.title) {
+                LeaderBoardScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            composable(route = SeaBattleScreen.Home.title) {
+            composable(route = Screen.Home.title) {
                 HomeScreen(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController
                 )
             }
-            composable(route = SeaBattleScreen.Profile.title) {
+            composable(route = Screen.Profile.title) {
                 ProfileScreen(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController
                 )
             }
-            composable(route = SeaBattleScreen.Game.title) {
+            composable(route = Screen.Game.title) {
                 GameScreen(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController
@@ -101,31 +90,21 @@ fun MainScreen() {
 
 @Composable
 fun TabBar(navController: NavHostController) {
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
-
-    if (currentRoute != SeaBattleScreen.BattlePlan.title &&
-        currentRoute != SeaBattleScreen.Home.title &&
-        currentRoute != SeaBattleScreen.Profile.title)
-    {
-        return
-    }
-
     TabNavigation(
         modifier = Modifier,
         tabs = listOf(
-            TabItem.BattlePlan,
-            TabItem.Home,
-            TabItem.Profile
+            Tabs.LeaderBoard,
+            Tabs.Home,
+            Tabs.Profile
         ),
         onTabSelected = { tabItem ->
             when (tabItem) {
-                TabItem.BattlePlan -> navController.navigate(TabItem.BattlePlan.title)
-                TabItem.Home -> navController.navigate(TabItem.Home.title)
-                TabItem.Profile -> navController.navigate(TabItem.Profile.title)
+                Tabs.LeaderBoard -> navController.navigate(Tabs.LeaderBoard.title)
+                Tabs.Home -> navController.navigate(Tabs.Home.title)
+                Tabs.Profile -> navController.navigate(Tabs.Profile.title)
             }
         },
-        initialTab = TabItem.Home
+        initialTab = Tabs.Home
     )
 }
 
