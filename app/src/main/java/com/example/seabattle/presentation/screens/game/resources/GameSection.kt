@@ -41,7 +41,6 @@ fun GameSection(
         delayedCurrentPlayer = game.currentPlayer
     }
 
-
     if (delayedCurrentPlayer == userId) {
         Text(
             text = "It's your turn!",

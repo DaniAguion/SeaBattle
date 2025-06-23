@@ -44,9 +44,11 @@ class GameViewModel(
         // Initialize the UI state with the current user ID
         val userId = sessionService.getCurrentUserId()
         _uiState.value = _uiState.value.copy(userId = userId)
+    }
 
-        // Start listening the current game looking for updates
-        // and checking if the opponent is AFK
+    // This function starts listening to the game updates
+    fun startListeningGame() {
+        if (listenGameJob?.isActive == true) return
         listenGameJob = viewModelScope.launch {
             val gameId = sessionService.getCurrentGameId()
 
@@ -56,6 +58,8 @@ class GameViewModel(
                         result.fold(
                             onSuccess = { collectedGame ->
                                 _uiState.value = _uiState.value.copy(game = collectedGame)
+
+                                // Check if the game has started to start checking for AFK
                                 if (collectedGame.gameState == GameState.IN_PROGRESS.name && collectedGame.winnerId == null) {
                                     startCheckUserAFK()
                                 } else {
@@ -72,12 +76,11 @@ class GameViewModel(
     }
 
 
-
     // This function checks if the opponent is AFK (Away From Keyboard)
     // and if the conditions to claim victory are met it shows a dialog to the user.
     // This condition are checked every 10 seconds
     private fun startCheckUserAFK() {
-        checkClaimJob?.cancel()
+        if (checkClaimJob?.isActive == true) return
         checkClaimJob = viewModelScope.launch {
             _uiState.map { it.game }
                 .collectLatest { latestGame ->
@@ -103,7 +106,6 @@ class GameViewModel(
     }
 
 
-
     // This function is called when the user clicks on the "Ready" button
     fun onClickReady() {
         viewModelScope.launch {
@@ -115,7 +117,6 @@ class GameViewModel(
     }
 
 
-
     // This function checks if the "Ready" button should be enabled
     fun enableReadyButton() : Boolean {
         return enableReadyUseCase.invoke(
@@ -123,7 +124,6 @@ class GameViewModel(
             game = _uiState.value.game ?: return false
         )
     }
-
 
 
     // This function is called when the user leaves the game
@@ -144,7 +144,6 @@ class GameViewModel(
     }
 
 
-
     // This function is called when the user clicks on a cell in the game board
     fun onClickCell(x: Int, y: Int){
         viewModelScope.launch {
@@ -154,7 +153,6 @@ class GameViewModel(
                 }
         }
     }
-
 
 
     // This function checks if the user can click on a cell
@@ -188,7 +186,6 @@ class GameViewModel(
     }
 
 
-
     // This function is called when the user clicks on the "Claim Victory" button
     fun onClaimVictory() {
         viewModelScope.launch {
@@ -203,10 +200,10 @@ class GameViewModel(
     }
 
 
+    // This function is called when the user clicks on the "Dismiss Claim Dialog" button
     fun onDismissClaimDialog() {
         _uiState.value = _uiState.value.copy(showClaimDialog = false)
     }
-
 
 
     // This function is called when the error message is shown to the user
@@ -214,7 +211,6 @@ class GameViewModel(
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
-
 
 
     // It's used when the user leaves the game screen to clear the jobs

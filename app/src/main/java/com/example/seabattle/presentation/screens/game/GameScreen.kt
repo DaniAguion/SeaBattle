@@ -3,11 +3,6 @@ package com.example.seabattle.presentation.screens.game
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.EaseOutQuart
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,17 +32,13 @@ import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.presentation.screens.Screen
-import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.platform.LocalContext
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.presentation.screens.game.resources.GameSection
 import com.example.seabattle.presentation.screens.game.resources.PlayersInfoHeader
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
 
@@ -63,6 +54,7 @@ fun GameScreen(
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
+        gameViewModel.startListeningGame()
         onDispose {
             gameViewModel.stopListening()
         }
@@ -197,14 +189,6 @@ fun GameScreenContent(
         return
     }
 
-    // Delayed current player variable used to delay the switch of game board
-    var delayedCurrentPlayer by remember { mutableStateOf(game.currentPlayer) }
-
-    LaunchedEffect(key1 = game.currentPlayer) {
-        delay(2000)
-        delayedCurrentPlayer = game.currentPlayer
-    }
-
     LazyColumn(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
@@ -248,53 +232,14 @@ fun GameScreenContent(
         // During the game, each player can click on the opponent's board to make a move
         if (game.gameState == GameState.IN_PROGRESS.name) {
             item {
-                if (delayedCurrentPlayer == userId) {
-                    Text(
-                        text = "It's your turn!",
-                        fontSize = 20.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-                    )
-                } else {
-                    Text(
-                        text = "It's your opponent's turn!",
-                        fontSize = 20.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-                    )
-                }
-            }
-            item {
-                AnimatedContent(
-                    targetState = delayedCurrentPlayer,
-                    transitionSpec = {
-                        if (targetState == game.player1.userId) {
-                            // If the board is for player 1, slide in from the left and slide out to the right
-                            slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeIn(tween(500)) togetherWith
-                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeOut(tween(500))
-                        } else {
-                            // If the board is for player 2, slide in from the right and slide out to the left
-                            slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeIn(tween(500)) togetherWith
-                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeOut(tween(500))
-                        }
-                    }, label = "GameBoardTransition"
-                ) { delayedCurrentPlayer ->
-                    if (delayedCurrentPlayer == game.player1.userId) {
-                        GameBoard(
-                            gameBoard = game.boardForPlayer1,
-                            cellsUnhidden = enableSeeShips("player2"),
-                            onClickCell = onClickCell,
-                            clickEnabled = enableClickCell("player1")
-                        )
-                    } else {
-                        GameBoard(
-                            gameBoard = game.boardForPlayer2,
-                            cellsUnhidden = enableSeeShips("player1"),
-                            onClickCell = onClickCell,
-                            clickEnabled = enableClickCell("player2")
-                        )
-                    }
-                }
+                GameSection(
+                    modifier = Modifier.fillMaxSize(),
+                    game = game,
+                    userId = userId,
+                    onClickCell = onClickCell,
+                    enableClickCell = enableClickCell,
+                    enableSeeShips = enableSeeShips,
+                )
             }
         } else if (game.gameState == GameState.GAME_FINISHED.name) {
             // Screen showing the case when the opponent has left the game and the user is the winner
@@ -325,6 +270,6 @@ fun GameScreenPreview(){
     GameScreenContent(
         modifier = Modifier.fillMaxSize(),
         game = gameSample1,
-        userId = gameSample1.player1.userId,
+        userId = gameSample1.player1.userId
     )
 }
