@@ -8,18 +8,13 @@ import androidx.compose.animation.core.EaseOutQuart
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,20 +27,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.entity.UserBasic
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.screens.game.resources.GameBoard
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
@@ -54,14 +44,11 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.presentation.screens.game.resources.PlayersInfoHeader
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
 
 @Composable
@@ -327,78 +314,6 @@ fun GameScreenContent(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PlayersInfoHeader(
-    modifier: Modifier,
-    player1: UserBasic,
-    player2: UserBasic
-) {
-    Row(
-        modifier = modifier
-            .padding(bottom = dimensionResource(R.dimen.padding_big)),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        CardPlayer(player = player1)
-        CardPlayer(player = player2)
-    }
-}
-
-
-@Composable
-fun CardPlayer(
-    player: UserBasic,
-){
-    Card {
-        Row(
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_small))
-                .sizeIn(
-                    minWidth = 150.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (player.photoUrl.isEmpty()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.account_box_40px),
-                        contentDescription = "User photo",
-                        modifier = Modifier.size(40.dp)
-                    )
-                } else {
-                    AsyncImage(
-                        model = player.photoUrl,
-                        contentDescription = "User photo",
-                        modifier = Modifier.size(40.dp),
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(id = R.drawable.account_box_40px),
-                    )
-                }
-
-                Text(
-                    text = player.displayName,
-                    fontSize = 16.sp,
-                    fontWeight = SemiBold,
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
-                )
-
-            }
-            Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .background(
-                        color = if (player.status == "online") colorResource(id = R.color.user_online_color) else Color.Gray,
-                        shape = CircleShape
-                    )
-            )
         }
     }
 }

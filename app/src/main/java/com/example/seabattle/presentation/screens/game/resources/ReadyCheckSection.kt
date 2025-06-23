@@ -26,13 +26,14 @@ import com.example.seabattle.domain.entity.Game
 
 @Composable
 fun ReadyCheckSection(
+    modifier: Modifier = Modifier,
     game: Game,
     onClickReady: () -> Unit = {},
     enableReadyButton : Boolean = true,
     onClickLeave: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(dimensionResource(R.dimen.padding_medium))
     ) {

@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun WaitGameSection(
+    modifier: Modifier = Modifier,
     game: Game,
     onClickLeave: () -> Unit = {}
 ) {
@@ -58,7 +59,7 @@ fun WaitGameSection(
 
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(dimensionResource(R.dimen.padding_medium))
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,22 +71,22 @@ fun WaitGameSection(
             text = "Waiting Player",
             fontSize = 20.sp,
             fontWeight = SemiBold,
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         Text(
             text = "Game Name: ${game.gameName}",
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         if (game.gameState == "WAITING_FOR_PLAYER") {
             Text(
                 text = "Waiting Time: ${formatTime(waitingTime)}",
                 fontSize = 18.sp,
                 color = if (waitingTime >= 300) Color.Red else Color.Black,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                modifier = modifier.padding(dimensionResource(R.dimen.padding_small))
             )
             Button(
                 onClick = onClickLeave,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
             ) {
                 Text(text = "Leave Game")
             }
