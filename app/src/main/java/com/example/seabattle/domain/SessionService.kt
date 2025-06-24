@@ -24,6 +24,10 @@ class SessionService() {
         return _currentUser.value?.userId ?: ""
     }
 
+    fun getUserScore(): Int {
+        return _currentUser.value?.score ?: 0
+    }
+
     fun clearCurrentUser() {
         _currentUser.value = null
     }

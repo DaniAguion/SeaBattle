@@ -3,7 +3,6 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.SessionService
-import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
 import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
@@ -46,7 +45,11 @@ class GameViewModel(
     init{
         // Initialize the UI state with the current user ID
         val userId = sessionService.getCurrentUserId()
-        _uiState.value = _uiState.value.copy(userId = userId)
+        val userScore = sessionService.getUserScore()
+        _uiState.value = _uiState.value.copy(
+            userId = userId,
+            userScore = userScore
+        )
     }
 
     // This function starts listening to the game updates
