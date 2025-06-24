@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -80,6 +80,8 @@ fun Cell(
     val context = LocalContext.current
     val cellSize = dimensionResource(R.dimen.cell_size)
 
+    val finalCellValue = cellValue
+
     val finalCellStyle: CellStyle =
         if (cellUnhidden) {
             when(cellValue){
@@ -100,52 +102,67 @@ fun Cell(
             }
         }
 
+    val finalTargetStyle: TargetStyle =
+        when(cellValue){
+            3 -> TargetStyle.Hit
+            else -> TargetStyle.None
+        }
+
+
     val cellClickable = if (clickEnabled) finalCellStyle.clickable else false
 
+    val (currentCellValue, setCurrentCellValue) = remember { mutableIntStateOf(finalCellValue) }
     val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
+    val (currentAnimateTargetStyle, setCurrentAnimateTargetStyle) = remember { mutableStateOf(finalTargetStyle) }
+    val animationDuration = 800
+    val animationDelay : Long = animationDuration.toLong()
 
-    // Introduce the Target Cell Style Animation in between the change of cell styles
-    LaunchedEffect(finalCellStyle) {
-        if (currentAnimateCellStyle != finalCellStyle) {
-            // Show only animation of target cell style if the cell was a target
-            // It cannot be a target if it was already hit
-            if (finalCellStyle == CellStyle.Sunk) {
-                // If the cell is Sunk, it was Hit before, so we need to show the Hit style first
-                if (currentAnimateCellStyle != CellStyle.Hit) {
-                    setCurrentAnimateCellStyle(CellStyle.Target)
-                    delay(1000)
-                    setCurrentAnimateCellStyle(CellStyle.Hit)
-                    delay(500)
-                } else {
-                    delay(1500)
-                }
-            } else {
-                setCurrentAnimateCellStyle(CellStyle.Target)
-                delay(1000)
+    // Introduce the target style animation and animate the change of the cell style
+    LaunchedEffect(finalCellValue) {
+        if (currentCellValue != finalCellValue) {
+            //If the ship wont be sunk, animate the target style to Target
+            if (finalCellStyle != CellStyle.Sunk) {
+                setCurrentAnimateTargetStyle(TargetStyle.Target)
+                delay(timeMillis = animationDelay)
+                setCurrentAnimateCellStyle(finalCellStyle)
             }
-            setCurrentAnimateCellStyle(finalCellStyle)
+            else {
+                // If the ship will be sunk, animate the target style if it was not Hit before
+                // if the cell was Hit before, just wait
+                if (currentAnimateCellStyle != CellStyle.Hit) {
+                    setCurrentAnimateTargetStyle(TargetStyle.Target)
+                    delay(timeMillis = animationDelay)
+                    setCurrentAnimateTargetStyle(TargetStyle.Hit)
+                    delay(timeMillis = animationDelay)
+                } else {
+                    delay(timeMillis = animationDelay*2)
+                }
+                setCurrentAnimateCellStyle(finalCellStyle)
+            }
+            setCurrentAnimateTargetStyle(finalTargetStyle)
         }
+        setCurrentCellValue(finalCellValue)
     }
 
     val animatedCellColor by animateColorAsState(
         targetValue = colorResource(id = currentAnimateCellStyle.backgroundColor),
-        animationSpec = tween(durationMillis = 500),
+        animationSpec = tween(durationMillis = animationDuration),
         label = "cellBackgroundColorAnimation"
     )
 
     val animatedTargetColor by animateColorAsState(
-        targetValue = Color(getColor(context, currentAnimateCellStyle.targetColor)),
-        animationSpec = tween(durationMillis = 500),
+        targetValue = Color(getColor(context, currentAnimateTargetStyle.targetColor)),
+        animationSpec = tween(durationMillis = animationDuration),
         label = "targetColorAnimation"
     )
 
     val animatedTargetSize by animateDpAsState(
-        targetValue = dimensionResource(currentAnimateCellStyle.targetSize),
+        targetValue = dimensionResource(currentAnimateTargetStyle.targetSize),
         animationSpec =
-            if(currentAnimateCellStyle.targetSize < finalCellStyle.targetSize) {
+            if(currentAnimateTargetStyle == TargetStyle.Target) {
+                tween(durationMillis = animationDuration)
+            }  else {
                 tween(durationMillis = 0)
-            } else {
-                tween(durationMillis = 1000)
             }
         ,
         label = "targetSizeAnimation"
@@ -175,12 +192,13 @@ fun Cell(
                 radius = animatedTargetSize.value,
                 center = center,
             )
+
+            drawCircle(
+                color = animatedTargetColor,
+                radius = animatedTargetSize.value,
+                center = center,
+            )
         }
-        Text(
-            text = cellValue.toString(),
-            modifier = Modifier
-                .size(cellSize)
-        )
     }
 }
 
