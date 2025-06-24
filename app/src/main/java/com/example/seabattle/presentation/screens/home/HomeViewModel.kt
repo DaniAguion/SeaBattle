@@ -28,8 +28,6 @@ class HomeViewModel(
     private var getGamesJob: Job? = null
 
     init {
-        _uiState.value = _uiState.value.copy(loadingList = true)
-
         // Set presence when the ViewModel is initialized
         viewModelScope.launch {
             setPresenceUseCase.invoke()
@@ -37,30 +35,39 @@ class HomeViewModel(
                     _uiState.value = _uiState.value.copy(errorMessage = error.message)
                 }
         }
+    }
 
-        // Start listening to game updates
+    fun startListeningList() {
+        _uiState.value = _uiState.value.copy(loadingList = true)
+        // Start listening to fetch games
         getGamesJob = viewModelScope.launch {
             getGamesUseCase.invoke()
-            . collect { result ->
-                result
-                .onSuccess { games ->
-                    _uiState.value = _uiState.value.copy(
-                        gamesList = games,
-                        errorList = false,
-                        loadingList = false
-                    )
+                . collect { result ->
+                    result
+                        .onSuccess { games ->
+                            _uiState.value = _uiState.value.copy(
+                                gamesList = games,
+                                errorList = false,
+                                loadingList = false
+                            )
+                        }
+                        .onFailure { e ->
+                            _uiState.value = _uiState.value.copy(
+                                gamesList = emptyList(),
+                                errorList = true,
+                                loadingList = false,
+                                errorMessage = e.message
+                            )
+                        }
                 }
-                .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(
-                        gamesList = emptyList(),
-                        errorList = true,
-                        loadingList = false,
-                        errorMessage = e.message
-                    )
-                }
-            }
         }
     }
+
+    fun stopListeningList() {
+        getGamesJob?.cancel()
+        getGamesJob = null
+    }
+
 
     fun onGameNameUpdate(gameName: String) {
         val validationResult = Validator.validateGameName(gameName)
@@ -101,10 +108,5 @@ class HomeViewModel(
 
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(errorMessage = null)
-    }
-
-    fun stopListening() {
-        getGamesJob?.cancel()
-        getGamesJob = null
     }
 }
