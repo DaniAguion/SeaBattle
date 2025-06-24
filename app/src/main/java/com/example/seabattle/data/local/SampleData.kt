@@ -3,13 +3,13 @@ package com.example.seabattle.data.local
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipPiece
-import com.example.seabattle.domain.entity.UserBasic
+import com.example.seabattle.domain.entity.User
 
 
 val gameSample1 = Game(
     gameId="f074ffb3-2bdd-4edc-97b4-8a423d3705af",
     gameName = "Test Game",
-    player1=UserBasic(userId="dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName="MeuPixel", photoUrl=""),
+    player1=User(userId="dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName="MeuPixel", photoUrl=""),
     boardForPlayer2 = mapOf(
         "0" to mapOf("0" to 1, "1" to 1, "2" to 1, "3" to 1, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
         "1" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 0, "7" to 0, "8" to 0, "9" to 0),
@@ -72,7 +72,7 @@ val gameSample1 = Game(
             sunk = false
         )
     ),
-    player2=UserBasic(userId="MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName="Daniel", photoUrl="https://lh3.googleusercontent.com/a/ACg8ocJNvKdeillcj8hhgyN3qMbyXCTUtC3Hcm5-p9HwRFHEos2tcsQ=s96-c"),
+    player2=User(userId="MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName="Daniel", photoUrl="https://lh3.googleusercontent.com/a/ACg8ocJNvKdeillcj8hhgyN3qMbyXCTUtC3Hcm5-p9HwRFHEos2tcsQ=s96-c"),
     player2Ready = false,
     boardForPlayer1 = mapOf(
         "0" to mapOf("0" to 0, "1" to 0, "2" to 0, "3" to 0, "4" to 0, "5" to 0, "6" to 1, "7" to 1, "8" to 1, "9" to 0),

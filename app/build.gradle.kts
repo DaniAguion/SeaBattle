@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
 
+    // Firebase Cloud Functions
+    implementation(libs.firebase.functions.ktx)
+
     // Credentials API
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)

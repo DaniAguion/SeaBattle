@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -98,8 +99,10 @@ fun WaitGameSection(
 @Preview(showBackground = true)
 @Composable
 fun WaitGameSectionPreview(){
-    WaitGameSection(
-        game = gameSample1,
-        onClickLeave = {}
-    )
+    SeaBattleTheme {
+        WaitGameSection(
+            game = gameSample1,
+            onClickLeave = {}
+        )
+    }
 }

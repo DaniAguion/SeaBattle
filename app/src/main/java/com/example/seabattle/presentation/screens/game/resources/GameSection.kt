@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -105,9 +106,11 @@ fun GameSection(
 @Preview(showBackground = true)
 @Composable
 fun GameSectionPreview(){
-    GameSection(
-        modifier = Modifier.fillMaxSize(),
-        game = gameSample1,
-        userId = gameSample1.player1.userId
-    )
+    SeaBattleTheme {
+        GameSection(
+            modifier = Modifier.fillMaxSize(),
+            game = gameSample1,
+            userId = gameSample1.player1.userId
+        )
+    }
 }

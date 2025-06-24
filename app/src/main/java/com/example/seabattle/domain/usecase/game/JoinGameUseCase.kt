@@ -3,7 +3,6 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.entity.toBasic
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
@@ -36,7 +35,7 @@ class JoinGameUseCase(
 
                 // Update the game state and add the second player
                 return mapOf(
-                    "player2" to user.toBasic(),
+                    "player2" to user,
                     "gameState" to GameState.CHECK_READY.name,
                     "currentPlayer" to listOf(game.player1.userId, userId).random()
                 )

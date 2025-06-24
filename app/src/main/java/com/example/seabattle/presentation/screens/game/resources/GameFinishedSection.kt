@@ -26,13 +26,16 @@ import com.example.seabattle.presentation.theme.SeaBattleTheme
 
 
 @Composable
-fun ReadyCheckSection(
+fun GameFinishedSection(
     modifier: Modifier = Modifier,
     game: Game,
-    onClickReady: () -> Unit = {},
-    enableReadyButton : Boolean = true,
+    userId: String,
+    userScore: Int,
     onClickLeave: () -> Unit = {}
 ) {
+
+    val initialScore = if (userId == game.player1.userId) game.player1.score else game.player2.score
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -46,53 +49,38 @@ fun ReadyCheckSection(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Confirm when you are ready!",
-                fontSize = 20.sp,
+                text = "Game Finished",
+                fontSize = 24.sp,
                 fontWeight = SemiBold,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
             Text(
-                text = "Waiting for players to be ready...",
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                text = if(game.winnerId == userId) "You have won!!" else "You have lost :(",
+                fontSize = 18.sp,
+                fontWeight = SemiBold,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
             Text(
-                text = "${game.player1.displayName} - ${if (game.player1Ready) "Ready" else "Not Ready"}",
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                text = "Initial Score: $initialScore",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
             Text(
-                text = "${game.player2.displayName} - ${if (game.player2Ready) "Ready" else "Not Ready"}",
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                text = "Final Score: $userScore",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
             Row {
                 Button(
                     onClick = onClickLeave,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ),
                     modifier = Modifier
                         .padding(dimensionResource(R.dimen.padding_small))
                         .sizeIn(minWidth = 150.dp)
                 ) {
                     Text(text = "Leave Game")
-                }
-                Button(
-                    onClick = onClickReady,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    enabled = enableReadyButton,
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
-                        .sizeIn(minWidth = 150.dp)
-                ) {
-                    Text(text = "Ready")
                 }
             }
         }
@@ -102,10 +90,13 @@ fun ReadyCheckSection(
 
 @Preview(showBackground = true)
 @Composable
-fun ReadyCheckSectionPreview(){
+fun GameFinishedSectionPreview(){
     SeaBattleTheme {
-        ReadyCheckSection(
-            game = gameSample1
+        GameFinishedSection(
+            modifier = Modifier,
+            game = gameSample1,
+            userId = "user1",
+            userScore = 1000,
         )
     }
 }

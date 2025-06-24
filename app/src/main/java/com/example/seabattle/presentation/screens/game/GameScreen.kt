@@ -23,9 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
@@ -35,9 +33,9 @@ import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.platform.LocalContext
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
 import com.example.seabattle.presentation.screens.game.resources.GameSection
 import com.example.seabattle.presentation.screens.game.resources.PlayersInfoHeader
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
@@ -90,6 +88,7 @@ fun GameScreen(
         modifier = modifier,
         game = gameUiState.game,
         userId = gameUiState.userId,
+        userScore = gameUiState.userScore,
         onClickReady = gameViewModel::onClickReady,
         enableReadyButton = gameViewModel::enableReadyButton,
         onClickLeave = { showLeaveDialog = true },
@@ -175,6 +174,7 @@ fun GameScreenContent(
     modifier: Modifier,
     game: Game?,
     userId: String,
+    userScore: Int,
     onClickReady: () -> Unit = {},
     enableReadyButton: () -> Boolean = { true },
     onClickLeave: () -> Unit = {},
@@ -245,21 +245,14 @@ fun GameScreenContent(
             }
         } else if (game.gameState == GameState.GAME_FINISHED.name) {
             // Screen showing the case when the opponent has left the game and the user is the winner
-            item {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium)),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = if(game.winnerId == userId) "You have won!!" else "You have lost!",
-                        fontSize = 24.sp,
-                        fontWeight = SemiBold,
-                        modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
-                    )
-                }
+            item{
+                GameFinishedSection(
+                    modifier = modifier.fillMaxSize(),
+                    game = game,
+                    userId = userId,
+                    userScore = userScore,
+                    onClickLeave = onClickLeave
+                )
             }
         }
     }
@@ -272,6 +265,7 @@ fun GameScreenPreview(){
     GameScreenContent(
         modifier = Modifier.fillMaxSize(),
         game = gameSample1,
-        userId = gameSample1.player1.userId
+        userId = gameSample1.player1.userId,
+        userScore = 100,
     )
 }

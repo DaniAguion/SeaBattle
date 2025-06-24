@@ -27,14 +27,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
-import com.example.seabattle.domain.entity.UserBasic
+import com.example.seabattle.domain.entity.User
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 
 
 @Composable
 fun PlayersInfoHeader(
     modifier: Modifier,
-    player1: UserBasic,
-    player2: UserBasic
+    player1: User,
+    player2: User
 ) {
     Row(
         modifier = modifier
@@ -50,7 +51,7 @@ fun PlayersInfoHeader(
 
 @Composable
 fun CardPlayer(
-    player: UserBasic,
+    player: User,
 ){
     Card {
         Row(
@@ -106,9 +107,11 @@ fun CardPlayer(
 @Preview(showBackground = true)
 @Composable
 fun PlayersInfoHeaderPreview(){
-    PlayersInfoHeader(
-        modifier = Modifier.fillMaxSize(),
-        player1 = gameSample1.player1,
-        player2 = gameSample1.player2
-    )
+    SeaBattleTheme {
+        PlayersInfoHeader(
+            modifier = Modifier.fillMaxSize(),
+            player1 = gameSample1.player1,
+            player2 = gameSample1.player2
+        )
+    }
 }

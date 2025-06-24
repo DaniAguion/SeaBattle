@@ -3,6 +3,7 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
 import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
@@ -10,6 +11,7 @@ import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
+import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,7 +32,8 @@ class GameViewModel(
     private val listenGameUseCase: ListenGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase,
     private val enableClaimUseCase: EnableClaimUseCase,
-    private val claimVictoryUseCase: ClaimVictoryUseCase
+    private val claimVictoryUseCase: ClaimVictoryUseCase,
+    private val setScoreUseCase: SetScoreUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -64,6 +67,10 @@ class GameViewModel(
                                     startCheckUserAFK()
                                 } else {
                                     cancelCheckUserAFK()
+                                }
+
+                                if (collectedGame.gameState == GameState.GAME_FINISHED.name) {
+                                    onGameFinished()
                                 }
                             },
                             onFailure = { e ->
@@ -103,6 +110,20 @@ class GameViewModel(
         checkClaimJob?.cancel()
         checkClaimJob = null
         _uiState.value = _uiState.value.copy(showClaimDialog = false)
+    }
+
+
+    private fun onGameFinished() {
+        val game = _uiState.value.game ?: return
+        viewModelScope.launch {
+            setScoreUseCase.invoke( gameId = game.gameId )
+                .onSuccess { score ->
+                    _uiState.value = _uiState.value.copy(userScore = score)
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                }
+        }
     }
 
 
