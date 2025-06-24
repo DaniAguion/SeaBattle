@@ -114,34 +114,30 @@ fun Cell(
     val (currentCellValue, setCurrentCellValue) = remember { mutableIntStateOf(finalCellValue) }
     val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
     val (currentAnimateTargetStyle, setCurrentAnimateTargetStyle) = remember { mutableStateOf(finalTargetStyle) }
-    val animationDuration = 800
+    val animationDuration = 1000
     val animationDelay : Long = animationDuration.toLong()
 
     // Introduce the target style animation and animate the change of the cell style
     LaunchedEffect(finalCellValue) {
         if (currentCellValue != finalCellValue) {
-            //If the ship wont be sunk, animate the target style to Target
-            if (finalCellStyle != CellStyle.Sunk) {
-                setCurrentAnimateTargetStyle(TargetStyle.Target)
-                delay(timeMillis = animationDelay)
-                setCurrentAnimateCellStyle(finalCellStyle)
-            }
-            else {
-                // If the ship will be sunk, animate the target style if it was not Hit before
-                // if the cell was Hit before, just wait
+            // If the ship will be sunk, animate the target style only if it was not Hit before
+            // If the ship wont be sunk, animate the target style to Target
+            if (finalCellStyle == CellStyle.Sunk) {
                 if (currentAnimateCellStyle != CellStyle.Hit) {
                     setCurrentAnimateTargetStyle(TargetStyle.Target)
                     delay(timeMillis = animationDelay)
-                    setCurrentAnimateTargetStyle(TargetStyle.Hit)
-                    delay(timeMillis = animationDelay)
                 } else {
-                    delay(timeMillis = animationDelay*2)
+                    delay(timeMillis = animationDelay)
                 }
-                setCurrentAnimateCellStyle(finalCellStyle)
             }
+            else {
+                setCurrentAnimateTargetStyle(TargetStyle.Target)
+                delay(timeMillis = animationDelay)
+            }
+            setCurrentAnimateCellStyle(finalCellStyle)
             setCurrentAnimateTargetStyle(finalTargetStyle)
+            setCurrentCellValue(finalCellValue)
         }
-        setCurrentCellValue(finalCellValue)
     }
 
     val animatedCellColor by animateColorAsState(
