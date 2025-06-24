@@ -208,6 +208,7 @@ fun GameScreenContent(
         if (game.gameState == GameState.WAITING_FOR_PLAYER.name) {
             item {
                 WaitGameSection(
+                    modifier = modifier.fillMaxSize(),
                     game = game,
                     onClickLeave = onClickLeave
                 )
@@ -220,6 +221,7 @@ fun GameScreenContent(
         if (game.gameState == GameState.CHECK_READY.name) {
             item {
                 ReadyCheckSection(
+                    modifier = modifier.fillMaxSize(),
                     game = game,
                     onClickReady = onClickReady,
                     enableReadyButton = enableReadyButton(),
@@ -233,7 +235,7 @@ fun GameScreenContent(
         if (game.gameState == GameState.IN_PROGRESS.name) {
             item {
                 GameSection(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = modifier.fillMaxSize(),
                     game = game,
                     userId = userId,
                     onClickCell = onClickCell,
@@ -245,7 +247,7 @@ fun GameScreenContent(
             // Screen showing the case when the opponent has left the game and the user is the winner
             item {
                 Column(
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     verticalArrangement = Arrangement.Center,

@@ -38,7 +38,7 @@ fun ReadyCheckSection(
             .padding(dimensionResource(R.dimen.padding_medium))
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,

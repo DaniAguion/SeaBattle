@@ -137,7 +137,7 @@ val gameSample1 = Game(
     ),
     currentMove=1,
     currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
-    gameState="USER_LEFT",
+    gameState="GAME_IN_PROGRESS",
     winnerId=null
 )
 

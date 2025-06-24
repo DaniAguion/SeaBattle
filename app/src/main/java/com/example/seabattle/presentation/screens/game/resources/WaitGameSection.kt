@@ -71,22 +71,22 @@ fun WaitGameSection(
             text = "Waiting Player",
             fontSize = 20.sp,
             fontWeight = SemiBold,
-            modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         Text(
             text = "Game Name: ${game.gameName}",
-            modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         if (game.gameState == "WAITING_FOR_PLAYER") {
             Text(
                 text = "Waiting Time: ${formatTime(waitingTime)}",
                 fontSize = 18.sp,
                 color = if (waitingTime >= 300) Color.Red else Color.Black,
-                modifier = modifier.padding(dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
             )
             Button(
                 onClick = onClickLeave,
-                modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             ) {
                 Text(text = "Leave Game")
             }

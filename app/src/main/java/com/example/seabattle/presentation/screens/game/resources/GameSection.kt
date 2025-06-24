@@ -8,6 +8,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +19,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
+import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
 import kotlinx.coroutines.delay
 
@@ -40,50 +46,68 @@ fun GameSection(
         delay(2000)
         delayedCurrentPlayer = game.currentPlayer
     }
-
-    if (delayedCurrentPlayer == userId) {
-        Text(
-            text = "It's your turn!",
-            fontSize = 20.sp,
-            fontWeight = SemiBold,
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-        )
-    } else {
-        Text(
-            text = "It's your opponent's turn!",
-            fontSize = 20.sp,
-            fontWeight = SemiBold,
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-        )
-    }
-    AnimatedContent(
-        targetState = delayedCurrentPlayer,
-        transitionSpec = {
-            if (targetState == game.player1.userId) {
-                // If the board is for player 1, slide in from the left and slide out to the right
-                slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeIn(tween(500)) togetherWith
-                        slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeOut(tween(500))
-            } else {
-                // If the board is for player 2, slide in from the right and slide out to the left
-                slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeIn(tween(500)) togetherWith
-                        slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeOut(tween(500))
-            }
-        }, label = "GameBoardTransition"
-    ) { delayedCurrentPlayer ->
-        if (delayedCurrentPlayer == game.player1.userId) {
-            GameBoard(
-                gameBoard = game.boardForPlayer1,
-                cellsUnhidden = enableSeeShips("player2"),
-                onClickCell = onClickCell,
-                clickEnabled = enableClickCell("player1")
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.padding_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (delayedCurrentPlayer == userId) {
+            Text(
+                text = "It's your turn!",
+                fontSize = 20.sp,
+                fontWeight = SemiBold,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
         } else {
-            GameBoard(
-                gameBoard = game.boardForPlayer2,
-                cellsUnhidden = enableSeeShips("player1"),
-                onClickCell = onClickCell,
-                clickEnabled = enableClickCell("player2")
+            Text(
+                text = "It's your opponent's turn!",
+                fontSize = 20.sp,
+                fontWeight = SemiBold,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
         }
+        AnimatedContent(
+            targetState = delayedCurrentPlayer,
+            transitionSpec = {
+                if (targetState == game.player1.userId) {
+                    // If the board is for player 1, slide in from the left and slide out to the right
+                    slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeIn(tween(500)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeOut(tween(500))
+                } else {
+                    // If the board is for player 2, slide in from the right and slide out to the left
+                    slideInHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> +fullWidth } + fadeIn(tween(500)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(700, easing = EaseOutQuart)) { fullWidth -> -fullWidth } + fadeOut(tween(500))
+                }
+            }, label = "GameBoardTransition"
+        ) { delayedCurrentPlayer ->
+            if (delayedCurrentPlayer == game.player1.userId) {
+                GameBoard(
+                    gameBoard = game.boardForPlayer1,
+                    cellsUnhidden = enableSeeShips("player2"),
+                    onClickCell = onClickCell,
+                    clickEnabled = enableClickCell("player1")
+                )
+            } else {
+                GameBoard(
+                    gameBoard = game.boardForPlayer2,
+                    cellsUnhidden = enableSeeShips("player1"),
+                    onClickCell = onClickCell,
+                    clickEnabled = enableClickCell("player2")
+                )
+            }
+        }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun GameSectionPreview(){
+    GameSection(
+        modifier = Modifier.fillMaxSize(),
+        game = gameSample1,
+        userId = gameSample1.player1.userId
+    )
 }
