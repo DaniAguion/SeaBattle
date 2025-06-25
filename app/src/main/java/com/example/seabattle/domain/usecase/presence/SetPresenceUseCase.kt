@@ -1,11 +1,8 @@
 package com.example.seabattle.domain.usecase.presence
 
-import com.example.seabattle.data.realtimedb.toPresenceError
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.errors.DomainError
-import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.PresenceError
-import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.PresenceRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

@@ -5,12 +5,6 @@ sealed class PresenceError(
     cause: Throwable? = null
 ) : Exception(errorMessage, cause) {
 
-    class SetPresenceFailed(cause: Throwable? = null) :
-        PresenceError("Failed to set user presence status.", cause)
-
-    class ListenPresenceFailed(cause: Throwable? = null) :
-        PresenceError("Failed to listen for user presence status.", cause)
-
     class InvalidStatusValue(cause: Throwable? = null) :
         PresenceError("Received an invalid status value from the database (expected 'online' or 'offline').", cause)
 

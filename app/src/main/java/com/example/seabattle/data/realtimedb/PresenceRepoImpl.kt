@@ -1,6 +1,5 @@
 package com.example.seabattle.data.realtimedb
 
-import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.PresenceError
 import com.example.seabattle.domain.repository.PresenceRepository
 import com.google.firebase.database.DataSnapshot
