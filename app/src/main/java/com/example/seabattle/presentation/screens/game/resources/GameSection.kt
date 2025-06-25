@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun GameSection(
     modifier: Modifier = Modifier,
@@ -49,8 +51,7 @@ fun GameSection(
     }
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(dimensionResource(R.dimen.padding_medium)),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,14 +89,16 @@ fun GameSection(
                     gameBoard = game.boardForPlayer1,
                     cellsUnhidden = enableSeeShips("player2"),
                     onClickCell = onClickCell,
-                    clickEnabled = enableClickCell("player1")
+                    clickEnabled = enableClickCell("player1"),
+                    modifier = modifier
                 )
             } else {
                 GameBoard(
                     gameBoard = game.boardForPlayer2,
                     cellsUnhidden = enableSeeShips("player1"),
                     onClickCell = onClickCell,
-                    clickEnabled = enableClickCell("player2")
+                    clickEnabled = enableClickCell("player2"),
+                    modifier = modifier
                 )
             }
         }
@@ -108,7 +111,7 @@ fun GameSection(
 fun GameSectionPreview(){
     SeaBattleTheme {
         GameSection(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             game = gameSample1,
             userId = gameSample1.player1.userId
         )

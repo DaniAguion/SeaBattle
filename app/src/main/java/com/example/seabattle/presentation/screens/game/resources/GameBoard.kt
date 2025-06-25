@@ -24,10 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getColor
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
@@ -37,19 +42,34 @@ import kotlinx.coroutines.delay
 @Composable
 fun GameBoard(
     gameBoard: Map<String, Map<String, Int>>,
-    cellsUnhidden: Boolean = false,
+    cellsUnhidden: Boolean,
     onClickCell: (row: Int, col: Int) -> Unit,
-    clickEnabled: Boolean
+    clickEnabled: Boolean,
+    modifier: Modifier = Modifier
 ) {
+    // Calculate screen width and height in dp
+    val density = LocalDensity.current
+    val windowSize = LocalWindowInfo.current.containerSize
+    val screenWidthDp = with(density) { windowSize.width.toDp() }
+    val screenHeightDp = with(density) { windowSize.height.toDp() }
+    val padding = dimensionResource(R.dimen.padding_medium)
+    val availableWidth = screenWidthDp - (padding * 2)
+    val availableHeight = screenHeightDp - (padding* 2)
+
+    // Calculate the cell size based on the available width and height
+    val boardSize = gameBoard.size
+    val calculatedCellSize = (minOf(availableWidth.value, availableHeight.value) / boardSize).dp
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_medium))
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(
+                    vertical = dimensionResource(R.dimen.padding_medium),
+                    horizontal = dimensionResource(R.dimen.padding_medium)
+                ),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -60,7 +80,8 @@ fun GameBoard(
                             cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
                             cellUnhidden = cellsUnhidden,
                             onClickCell = { onClickCell(i, j) },
-                            clickEnabled = clickEnabled
+                            clickEnabled = clickEnabled,
+                            cellSize = calculatedCellSize
                         )
                     }
                 }
@@ -75,10 +96,10 @@ fun Cell(
     cellValue: Int,
     cellUnhidden : Boolean,
     onClickCell: () -> Unit,
-    clickEnabled: Boolean
+    clickEnabled: Boolean,
+    cellSize: Dp
 ) {
     val context = LocalContext.current
-    val cellSize = dimensionResource(R.dimen.cell_size)
 
     val finalCellValue = cellValue
 
@@ -207,6 +228,7 @@ fun PlayingSectionPreview(){
         gameBoard = gameSample1.boardForPlayer1,
         cellsUnhidden = true,
         onClickCell = { row, col -> },
-        clickEnabled = true
+        clickEnabled = true,
+        modifier = Modifier.fillMaxWidth()
     )
 }
