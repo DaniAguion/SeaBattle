@@ -101,9 +101,6 @@ class GameViewModel(
                         return@collectLatest
                     }
 
-                    // Variable to track if the dialog has already been shown
-                    var alreadyShownDialog = false
-
                     // Variable to track if the job is still active and the conditions are met to show the dialog
                     while (isActive && game.gameState == GameState.IN_PROGRESS.name && game.winnerId == null) {
                         val claimConditions = enableClaimUseCase.invoke(
