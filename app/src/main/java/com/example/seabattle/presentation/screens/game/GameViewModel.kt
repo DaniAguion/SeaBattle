@@ -12,6 +12,7 @@ import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
+import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +33,8 @@ class GameViewModel(
     private val leaveGameUseCase: LeaveGameUseCase,
     private val enableClaimUseCase: EnableClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase,
-    private val setScoreUseCase: SetScoreUseCase
+    private val setScoreUseCase: SetScoreUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -44,12 +46,14 @@ class GameViewModel(
 
     init{
         // Initialize the UI state with the current user ID
-        val userId = sessionService.getCurrentUserId()
-        val userScore = sessionService.getUserScore()
-        _uiState.value = _uiState.value.copy(
-            userId = userId,
-            userScore = userScore
-        )
+        viewModelScope.launch {
+            val userId = sessionService.getCurrentUserId()
+            val userScore = getUserProfileUseCase.invoke().getOrNull()?.score ?: 0
+            _uiState.value = _uiState.value.copy(
+                userId = userId,
+                userScore = userScore
+            )
+        }
     }
 
     // This function starts listening to the game updates
@@ -111,12 +115,12 @@ class GameViewModel(
                         // If the dialog is shown, we store the time of the last dismissal
                         // To avoid showing it to often it will be set a cooldown period
                         val currentTime = System.currentTimeMillis()
-                        val timeSinceLastDismissal = currentTime - lastClaimDialogDismissalTime
-                        val COOLDOWN_PERIOD_MS = 30000L
+                        val timeSinceLastDismiss = currentTime - lastClaimDialogDismissalTime
+                        val cooldownMS = 30000L
 
 
                         val shouldShowDialog = (claimConditions &&
-                                (!_uiState.value.alreadyShownClaimDialog || timeSinceLastDismissal > COOLDOWN_PERIOD_MS))
+                                (!_uiState.value.alreadyShownClaimDialog || timeSinceLastDismiss > cooldownMS))
 
 
                         // Only update _uiState if the showClaimDialog value actually changes

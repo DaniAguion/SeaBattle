@@ -1,4 +1,4 @@
-package com.example.seabattle.domain.usecase.auth
+package com.example.seabattle.domain.usecase.user
 
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.LoginMethod

@@ -2,7 +2,7 @@ package com.example.seabattle.presentation.screens.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.usecase.auth.GetAuthUserUseCase
+import com.example.seabattle.domain.usecase.user.GetAuthUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

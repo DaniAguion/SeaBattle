@@ -1,5 +1,7 @@
 package com.example.seabattle.presentation.screens.game.resources
 
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -45,7 +48,7 @@ fun GameFinishedSection(
             modifier = modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -60,16 +63,48 @@ fun GameFinishedSection(
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
-            Text(
-                text = "Initial Score: $initialScore",
-                fontSize = 18.sp,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-            )
-            Text(
-                text = "Final Score: $userScore",
-                fontSize = 18.sp,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
-            )
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.padding_medium))
+            ){
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Initial Score: ",
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        text = "",
+                        fontSize = 18.sp,
+                    )
+                    Text(
+                        text = "Your Score: ",
+                        fontSize = 18.sp
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    AnimatedScoreDisplay(score = initialScore)
+                    Row {
+                        Text(
+                            text = if(initialScore < userScore) "+" else if(initialScore > userScore) "-" else "",
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small))
+                        )
+                        AnimatedScoreDisplay(score = userScore - initialScore)
+                    }
+                    AnimatedScoreDisplay(score = userScore)
+                }
+            }
             Row {
                 Button(
                     onClick = onClickLeave,
@@ -85,6 +120,20 @@ fun GameFinishedSection(
             }
         }
     }
+}
+
+
+@Composable
+fun AnimatedScoreDisplay(score: Int) {
+    val animatedScore by animateIntAsState(
+        targetValue = score,
+        animationSpec = tween(durationMillis = 1000)
+    )
+
+    Text(
+        text = "$animatedScore",
+        fontSize = 18.sp
+    )
 }
 
 

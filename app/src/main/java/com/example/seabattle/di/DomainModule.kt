@@ -1,11 +1,11 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.domain.SessionService
-import com.example.seabattle.domain.usecase.auth.GetAuthUserUseCase
-import com.example.seabattle.domain.usecase.auth.LoginUserUseCase
-import com.example.seabattle.domain.usecase.auth.LogoutUserUseCase
-import com.example.seabattle.domain.usecase.auth.ListenUserUseCase
-import com.example.seabattle.domain.usecase.auth.RegisterUserUseCase
+import com.example.seabattle.domain.usecase.user.GetAuthUserUseCase
+import com.example.seabattle.domain.usecase.user.LoginUserUseCase
+import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
+import com.example.seabattle.domain.usecase.user.ListenUserUseCase
+import com.example.seabattle.domain.usecase.user.RegisterUserUseCase
 import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
 import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
@@ -18,16 +18,18 @@ import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
+import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
     single { SessionService()}
-    // Auth Use cases
+    // User Use cases
     factory { LoginUserUseCase(get(), get(), get(), get())}
     factory { LogoutUserUseCase(get(), get())}
     factory { RegisterUserUseCase(get(), get(), get(), get())}
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
+    factory { GetUserProfileUseCase(get(), get(), get()) }
     // Game Use cases
     factory { GetGamesUseCase(get(), get()) }
     factory { CreateGameUseCase(get(), get(), get(), get(), get())}
