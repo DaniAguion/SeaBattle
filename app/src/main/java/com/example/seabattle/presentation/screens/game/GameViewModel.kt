@@ -40,7 +40,7 @@ class GameViewModel(
 
     private var listenGameJob: Job? = null
     private var checkClaimJob: Job? = null
-
+    private var lastClaimDialogDismissalTime: Long = 0L
 
     init{
         // Initialize the UI state with the current user ID
@@ -95,13 +95,41 @@ class GameViewModel(
             _uiState.map { it.game }
                 .collectLatest { latestGame ->
                     val game = latestGame ?: return@collectLatest
+
+                    if (game.gameState != GameState.IN_PROGRESS.name || game.winnerId != null) {
+                        _uiState.value = _uiState.value.copy(showClaimDialog = false)
+                        return@collectLatest
+                    }
+
+                    // Variable to track if the dialog has already been shown
+                    var alreadyShownDialog = false
+
+                    // Variable to track if the job is still active and the conditions are met to show the dialog
                     while (isActive && game.gameState == GameState.IN_PROGRESS.name && game.winnerId == null) {
                         val claimConditions = enableClaimUseCase.invoke(
                             userId= _uiState.value.userId,
                             game = game
                         )
-                        _uiState.value = _uiState.value.copy(showClaimDialog = claimConditions)
-                        delay(10000)
+
+                        // If the dialog is shown, we store the time of the last dismissal
+                        // To avoid showing it to often it will be set a cooldown period
+                        val currentTime = System.currentTimeMillis()
+                        val timeSinceLastDismissal = currentTime - lastClaimDialogDismissalTime
+                        val COOLDOWN_PERIOD_MS = 30000L
+
+
+                        val shouldShowDialog = (claimConditions &&
+                                (!_uiState.value.alreadyShownClaimDialog || timeSinceLastDismissal > COOLDOWN_PERIOD_MS))
+
+
+                        // Only update _uiState if the showClaimDialog value actually changes
+                        if (_uiState.value.showClaimDialog != shouldShowDialog) {
+                            _uiState.value = _uiState.value.copy(showClaimDialog = shouldShowDialog)
+                        }
+
+                        // Delay for 10 seconds before checking again
+                        // This delay wont cause problems with an update of the game cause the loop will break
+                        delay(10000L)
                     }
                 }
         }
@@ -112,7 +140,10 @@ class GameViewModel(
     private fun cancelCheckUserAFK() {
         checkClaimJob?.cancel()
         checkClaimJob = null
-        _uiState.value = _uiState.value.copy(showClaimDialog = false)
+        _uiState.value = _uiState.value.copy(
+            showClaimDialog = false,
+            alreadyShownClaimDialog = true
+        )
     }
 
 
@@ -215,7 +246,10 @@ class GameViewModel(
         viewModelScope.launch {
             claimVictoryUseCase.invoke()
                 .onSuccess {
-                    _uiState.value = _uiState.value.copy(showClaimDialog = false)
+                    _uiState.value = _uiState.value.copy(
+                        showClaimDialog = false,
+                        alreadyShownClaimDialog = true
+                    )
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -226,7 +260,11 @@ class GameViewModel(
 
     // This function is called when the user clicks on the "Dismiss Claim Dialog" button
     fun onDismissClaimDialog() {
-        _uiState.value = _uiState.value.copy(showClaimDialog = false)
+        lastClaimDialogDismissalTime = System.currentTimeMillis()
+        _uiState.value = _uiState.value.copy(
+            showClaimDialog = false,
+            alreadyShownClaimDialog = true
+        )
     }
 
 

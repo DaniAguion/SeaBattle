@@ -80,20 +80,6 @@ fun GameScreen(
         }
     }
 
-
-    GameScreenContent(
-        modifier = modifier,
-        game = gameUiState.game,
-        userId = gameUiState.userId,
-        userScore = gameUiState.userScore,
-        onClickReady = gameViewModel::onClickReady,
-        enableReadyButton = gameViewModel::enableReadyButton,
-        onClickLeave = { showLeaveDialog = true },
-        onClickCell = gameViewModel::onClickCell,
-        enableClickCell = gameViewModel::enableClickCell,
-        enableSeeShips = gameViewModel::enableSeeShips
-    )
-
     // Show a dialog to confirm the user wants to leave the game
     if (showLeaveDialog) {
         AlertDialog(
@@ -132,7 +118,6 @@ fun GameScreen(
     }
 
 
-    // Show a dialog to let
     if (gameUiState.showClaimDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -164,6 +149,19 @@ fun GameScreen(
             }
         )
     }
+
+    GameScreenContent(
+        modifier = modifier,
+        game = gameUiState.game,
+        userId = gameUiState.userId,
+        userScore = gameUiState.userScore,
+        onClickReady = gameViewModel::onClickReady,
+        enableReadyButton = gameViewModel::enableReadyButton,
+        onClickLeave = { showLeaveDialog = true },
+        onClickCell = gameViewModel::onClickCell,
+        enableClickCell = gameViewModel::enableClickCell,
+        enableSeeShips = gameViewModel::enableSeeShips
+    )
 }
 
 @Composable

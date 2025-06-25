@@ -8,4 +8,5 @@ data class GameUiState (
     val userId: String = "",
     val userScore: Int = 0,
     val showClaimDialog: Boolean = false,
+    val alreadyShownClaimDialog: Boolean = false
 )
