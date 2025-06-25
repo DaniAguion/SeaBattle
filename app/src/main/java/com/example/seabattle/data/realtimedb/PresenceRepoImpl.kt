@@ -1,6 +1,7 @@
 package com.example.seabattle.data.realtimedb
 
 import com.example.seabattle.domain.errors.DomainError
+import com.example.seabattle.domain.errors.PresenceError
 import com.example.seabattle.domain.repository.PresenceRepository
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,7 +35,7 @@ class PresenceRepoImpl(
             return@runCatching
         }
         .recoverCatching { throwable ->
-            throw DomainError.PresenceError()
+            throw throwable.toPresenceError()
         }
     }
 
@@ -52,12 +53,14 @@ class PresenceRepoImpl(
                 if (statusString == "online" || statusString == "offline") {
                     trySend(Result.success(statusString))
                 } else {
-                    trySend(Result.failure(DomainError.PresenceError()))
+                    trySend(Result.failure(
+                        PresenceError.InvalidStatusValue(IllegalStateException("Unexpected presence status value: $statusString")))
+                    )
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                trySend(Result.failure(DomainError.PresenceError()))
+                trySend(Result.failure(error.toPresenceError()))
             }
         }
         userStatusRef.addValueEventListener(listener)

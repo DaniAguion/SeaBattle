@@ -5,13 +5,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 // This class is used as repository of the state.
-// It is used to store the current game and user in cache.
+// It is used to store the current game and authenticated user in cache.
 class SessionService() {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
     private var currentGameId: String? = null
-
 
     //
     // Repository of the current user.
@@ -22,10 +21,6 @@ class SessionService() {
 
     fun getCurrentUserId(): String {
         return _currentUser.value?.userId ?: ""
-    }
-
-    fun getUserScore(): Int {
-        return _currentUser.value?.score ?: 0
     }
 
     fun clearCurrentUser() {
