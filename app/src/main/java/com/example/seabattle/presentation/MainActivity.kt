@@ -3,6 +3,7 @@ package com.example.seabattle.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
 import com.example.seabattle.presentation.screens.MyAppNavigation
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 
