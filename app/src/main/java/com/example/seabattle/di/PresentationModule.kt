@@ -1,6 +1,6 @@
 package com.example.seabattle.di
 
-import com.example.seabattle.presentation.screens.leaderboard.LeaderBoardViewModel
+import com.example.seabattle.presentation.screens.leaderboard.LeaderboardViewModel
 import com.example.seabattle.presentation.screens.game.GameViewModel
 import com.example.seabattle.presentation.screens.home.HomeViewModel
 import com.example.seabattle.presentation.screens.profile.ProfileViewModel
@@ -17,5 +17,5 @@ val presentationModule = module {
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { GameViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get()) }
-    viewModel { LeaderBoardViewModel() }
+    viewModel { LeaderboardViewModel() }
 }
