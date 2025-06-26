@@ -56,6 +56,7 @@ fun HomeScreen(
         homeViewModel.startListeningList()
         onDispose {
             homeViewModel.stopListeningList()
+            homeViewModel.resetUiState()
         }
     }
 

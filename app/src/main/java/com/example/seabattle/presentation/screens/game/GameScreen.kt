@@ -31,6 +31,7 @@ import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSecti
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
 import com.example.seabattle.presentation.screens.game.resources.GameSection
@@ -45,6 +46,12 @@ fun GameScreen(
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    // Get the current back stack entry to determine the current route
+    // This its used to clean the back stack when navigating to the home screen
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route ?: Screen.Game.name
+
     var showLeaveDialog by remember { mutableStateOf(false) }
 
     // Stop listeners when the screen is disposed
@@ -75,7 +82,7 @@ fun GameScreen(
         if (game!= null && game.gameState == GameState.GAME_ABORTED.name) {
             gameViewModel.onUserLeave()
             navController.navigate(Screen.Home.title){
-                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                popUpTo(currentRoute) { inclusive = true }
             }
         }
     }
@@ -98,7 +105,7 @@ fun GameScreen(
                         showLeaveDialog = false
                         gameViewModel.onUserLeave()
                         navController.navigate(Screen.Home.title){
-                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                            popUpTo(currentRoute) { inclusive = true }
                         }
                     }
                 ) {
@@ -178,8 +185,11 @@ fun GameScreenContent(
     enableSeeShips: (watcher: String) -> Boolean = { false }
 ) {
     if (game == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Loading game data...")
+        Box(
+            modifier = Modifier.fillMaxSize()
+            , contentAlignment = Alignment.Center
+        ) {
+            // Empty state when the game is null
         }
         return
     }

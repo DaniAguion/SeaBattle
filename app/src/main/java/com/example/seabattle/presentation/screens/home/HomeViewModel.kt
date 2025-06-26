@@ -63,6 +63,7 @@ class HomeViewModel(
         }
     }
 
+
     fun stopListeningList() {
         getGamesJob?.cancel()
         getGamesJob = null
@@ -103,6 +104,14 @@ class HomeViewModel(
                     _uiState.value = _uiState.value.copy(errorMessage = e.message)
                 }
         }
+    }
+
+
+    fun resetUiState() {
+        _uiState.value = _uiState.value.copy(
+            hasJoined = false,
+            errorMessage = null
+        )
     }
 
 
