@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.presentation.screens.Tabs
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -314,5 +315,7 @@ fun CommonForm(
 @Preview(showBackground = true)
 @Composable
 fun WelcomeScreenPreview() {
-    WelcomeScreenContent()
+    SeaBattleTheme {
+        WelcomeScreenContent()
+    }
 }

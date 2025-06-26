@@ -29,6 +29,7 @@ import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.presentation.screens.Screen
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -125,15 +126,17 @@ fun ProfileScreenContent(
 @Preview (showBackground = true)
 @Composable
 fun ProfilePreview(){
-    ProfileScreenContent(
-        modifier = Modifier.fillMaxSize(),
-        user = User(
-            userId = "1",
-            displayName = "John Doe",
-            email = "@example.com",
-            photoUrl = "",
-            score = 100
-        ),
-        onLogoutButtonClicked = {}
-    )
+    SeaBattleTheme {
+        ProfileScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            user = User(
+                userId = "1",
+                displayName = "John Doe",
+                email = "@example.com",
+                photoUrl = "",
+                score = 100
+            ),
+            onLogoutButtonClicked = {}
+        )
+    }
 }

@@ -39,6 +39,7 @@ import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.screens.Screen
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import com.example.seabattle.presentation.validation.ValidationError
 import org.koin.androidx.compose.koinViewModel
 
@@ -112,7 +113,7 @@ fun HomeScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
-        item {
+        item() {
             Text(
                 text = stringResource(R.string.home_header_title),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -240,17 +241,19 @@ fun HomeScreenContent(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview(){
-    HomeScreenContent(
-        modifier = Modifier.fillMaxSize(),
-        navController = NavHostController(context = LocalContext.current),
-        gameName = "Test Game",
-        gameNameError = null,
-        errorList = false,
-        loadingList = false,
-        hasJoined = false,
-        gameList = listOf(gameSample1, gameSample1),
-        onClickCreateGame = { },
-        onClickJoinGame = { },
-        onGameNameUpdate = { },
-    )
+    SeaBattleTheme{
+        HomeScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            navController = NavHostController(context = LocalContext.current),
+            gameName = "Test Game",
+            gameNameError = null,
+            errorList = false,
+            loadingList = false,
+            hasJoined = false,
+            gameList = listOf(gameSample1),
+            onClickCreateGame = { },
+            onClickJoinGame = { },
+            onGameNameUpdate = { },
+        )
+    }
 }

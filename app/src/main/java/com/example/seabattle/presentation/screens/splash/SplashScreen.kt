@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.presentation.screens.Screen
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -59,9 +61,18 @@ fun SplashScreen(
             }
         }
     }
+    SplashScreenContent(
+        modifier = Modifier.fillMaxSize()
+    )
+}
 
+
+@Composable
+fun SplashScreenContent(
+    modifier : Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
@@ -70,6 +81,18 @@ fun SplashScreen(
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "Application Logo"
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun SplashScreenPreview() {
+    SeaBattleTheme {
+        SplashScreenContent(
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

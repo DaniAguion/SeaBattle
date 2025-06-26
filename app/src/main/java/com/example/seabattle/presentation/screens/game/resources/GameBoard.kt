@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getColor
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 
 
@@ -224,11 +225,13 @@ fun Cell(
 @Preview(showBackground = true)
 @Composable
 fun PlayingSectionPreview(){
-    GameBoard(
-        gameBoard = gameSample1.boardForPlayer1,
-        cellsUnhidden = true,
-        onClickCell = { row, col -> },
-        clickEnabled = true,
-        modifier = Modifier.fillMaxWidth()
-    )
+    SeaBattleTheme {
+        GameBoard(
+            gameBoard = gameSample1.boardForPlayer1,
+            cellsUnhidden = true,
+            onClickCell = { row, col -> },
+            clickEnabled = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }

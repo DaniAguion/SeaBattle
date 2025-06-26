@@ -38,6 +38,7 @@ import com.example.seabattle.presentation.screens.game.resources.GameFinishedSec
 import com.example.seabattle.presentation.screens.game.resources.GameSection
 import com.example.seabattle.presentation.screens.game.resources.PlayersInfoHeader
 import com.example.seabattle.presentation.screens.game.resources.WaitGameSection
+import com.example.seabattle.presentation.theme.SeaBattleTheme
 
 @Composable
 fun GameScreen(
@@ -267,12 +268,14 @@ fun GameScreenContent(
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview(){
-    GameScreenContent(
-        modifier = Modifier.fillMaxSize(),
-        game = gameSample1.copy(
-            gameState = GameState.IN_PROGRESS.name,
-        ),
-        userId = gameSample1.player1.userId,
-        userScore = 100,
-    )
+    SeaBattleTheme {
+        GameScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            game = gameSample1.copy(
+                gameState = GameState.IN_PROGRESS.name,
+            ),
+            userId = gameSample1.player1.userId,
+            userScore = 100,
+        )
+    }
 }
