@@ -8,6 +8,7 @@ import com.example.seabattle.data.firestore.errors.toUserError
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.errors.UserError
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query.Direction.DESCENDING
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -40,6 +41,18 @@ class UserRepositoryImpl(
             } else {
                 throw UserError.UserProfileNotFound()
             }
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toUserError()
+        }
+    }
+
+
+    override suspend fun getLeaderboard(): Result<List<User>> = withContext(ioDispatcher) {
+        runCatching {
+            val querySnapshot = usersCollection.orderBy("score", DESCENDING).limit(25).get().await()
+            val usersList = querySnapshot.documents.mapNotNull { it.toObject(UserDto::class.java)?.toUserEntity() }
+            return@runCatching usersList
         }
         .recoverCatching { throwable ->
             throw throwable.toUserError()

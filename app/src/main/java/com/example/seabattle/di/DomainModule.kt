@@ -1,6 +1,7 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.usecase.GetLeaderboardUseCase
 import com.example.seabattle.domain.usecase.user.GetAuthUserUseCase
 import com.example.seabattle.domain.usecase.user.LoginUserUseCase
 import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
@@ -43,4 +44,5 @@ val domainModule = module {
     factory { EnableClaimUseCase() }
     factory { ClaimVictoryUseCase(get(), get(), get()) }
     factory { SetScoreUseCase(get(), get(), get(), get()) }
+    factory { GetLeaderboardUseCase(get(), get()) }
 }

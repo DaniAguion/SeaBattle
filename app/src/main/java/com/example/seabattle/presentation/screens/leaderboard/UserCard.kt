@@ -1,7 +1,6 @@
 package com.example.seabattle.presentation.screens.leaderboard
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,12 +22,12 @@ import com.example.seabattle.presentation.theme.SeaBattleTheme
 @Composable
 fun UserCard(
     user: User,
+    position: Int,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
@@ -40,20 +39,31 @@ fun UserCard(
             verticalAlignment = Alignment.CenterVertically
 
         ){
-            Column(
+            Row(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
             ) {
                 Text(
-                    text = user.displayName,
+                    text = position.toString() + "º",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 2.dp)
+                    modifier = Modifier.padding(end = 20.dp)
                 )
-                Text(
-                    text = user.score.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = user.displayName,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = user.score.toString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(end = 20.dp)
+                    )
+                }
             }
         }
     }
@@ -65,6 +75,7 @@ fun GameCardPreview() {
     SeaBattleTheme {
         UserCard(
             user = gameSample1.player1,
+            position = 1,
             modifier = Modifier.fillMaxWidth()
         )
     }

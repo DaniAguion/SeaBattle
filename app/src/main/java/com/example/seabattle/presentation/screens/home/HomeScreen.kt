@@ -113,7 +113,7 @@ fun HomeScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
-        item() {
+        item {
             Text(
                 text = stringResource(R.string.home_header_title),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,

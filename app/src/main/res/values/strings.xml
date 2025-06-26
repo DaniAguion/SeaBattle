@@ -78,11 +78,11 @@
 
     // Leaderboard Screen
     <string name="leaderboard_header_title">Leaderboard</string>
-    <string name="leaderboard_header_desc">Ranking of players</string>
+    <string name="leaderboard_header_desc">List of best players ranked by score</string>
     <string name="error_get_users">Error getting list of users</string>
+    <string name="ranking_header">Ranking of players</string>
 
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
-
 </resources>
