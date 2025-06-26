@@ -53,11 +53,8 @@ fun SplashScreen(
                 }
             }
             SplashState.Loading -> {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.loading_splash_screen),
-                    Toast.LENGTH_LONG
-                ).show()
+                // There is no need to do anything here
+                // the splash screen will show until the state changes
             }
         }
     }

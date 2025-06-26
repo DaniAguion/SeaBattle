@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">Sea Battle</string>
 
-    // Login Page and Register Page
+    // Splash Screen
+    <string name="error_splash_screen">Error, it wasn\'t possible to retrieve user information.</string>
+
+    // Welcome Screen
     <string name="welcome_page_title">Welcome!</string>
     <string name="welcome_page_desc">Sign in with your user account or sign up to create a new one.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="username">Username</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="submit">Submit</string>
@@ -23,13 +27,6 @@
     <string name="error_empty_password">Please introduce your password</string>
     <string name="error_short_password">Password is too short.</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
-
-
-    // Splash Screen
-    <string name="error_splash_screen">Error, it wasn\'t possible to retrieve user information.</string>
-    <string name="loading_splash_screen">Checking session..</string>
-    <string name="username">Username</string>
-
 
     // Home Screen
     <string name="home_header_title">Welcome!</string>
