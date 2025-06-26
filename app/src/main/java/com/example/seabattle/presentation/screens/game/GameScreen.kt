@@ -1,6 +1,7 @@
 package com.example.seabattle.presentation.screens.game
 
 
+import com.example.seabattle.R
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -22,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -31,6 +31,7 @@ import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSecti
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
@@ -94,10 +95,10 @@ fun GameScreen(
                 showLeaveDialog = false
             },
             title = {
-                Text("Confirm you want to leave")
+                Text(stringResource(R.string.leave_dialog_title))
             },
             text = {
-                Text("¿Are you sure you want to leave?")
+                Text(stringResource(R.string.leave_dialog_desc))
             },
             confirmButton = {
                 Button(
@@ -109,7 +110,7 @@ fun GameScreen(
                         }
                     }
                 ) {
-                    Text("Leave")
+                    Text(stringResource(R.string.leave_dialog_confirm))
                 }
             },
             dismissButton = {
@@ -118,7 +119,7 @@ fun GameScreen(
                         showLeaveDialog = false
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.leave_dialog_cancel))
                 }
             }
         )
@@ -131,10 +132,10 @@ fun GameScreen(
                 gameViewModel.onDismissClaimDialog()
             },
             title = {
-                Text("Opponent is AFK")
+                Text(stringResource(R.string.claim_dialog_title))
             },
             text = {
-                Text("¿Do you want to claim victory?")
+                Text(stringResource(R.string.claim_dialog_desc))
             },
             confirmButton = {
                 Button(
@@ -142,7 +143,7 @@ fun GameScreen(
                         gameViewModel.onClaimVictory()
                     }
                 ) {
-                    Text("Claim Victory")
+                    Text(stringResource(R.string.claim_dialog_confirm))
                 }
             },
             dismissButton = {
@@ -151,7 +152,7 @@ fun GameScreen(
                         gameViewModel.onDismissClaimDialog()
                     }
                 ) {
-                    Text("Continue Playing")
+                    Text(stringResource(R.string.claim_dialog_cancel))
                 }
             }
         )

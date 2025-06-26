@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -57,14 +58,14 @@ fun GameSection(
     ) {
         if (delayedCurrentPlayer == userId) {
             Text(
-                text = "It's your turn!",
+                text = stringResource(R.string.your_turn),
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
         } else {
             Text(
-                text = "It's your opponent's turn!",
+                text = stringResource(R.string.oponnent_turn),
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))

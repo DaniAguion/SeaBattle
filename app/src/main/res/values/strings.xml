@@ -29,13 +29,50 @@
     <string name="error_splash_screen">Error, it wasn\'t possible to retrieve user information.</string>
     <string name="loading_splash_screen">Checking session..</string>
     <string name="username">Username</string>
-    <string name="error_get_games">Error getting games from server</string>
-    <string name="list_games_title">Available games</string>
-    <string name="error_action">Action has failed</string>
+
+
+    // Home Page
+    <string name="home_header_title">Welcome!</string>
+    <string name="home_header_desc">Join a game or create a new one to start playing</string>
     <string name="create_game_title">Create a new game</string>
     <string name="gameName">Game Name</string>
     <string name="error_gameName">Game Name is too short</string>
     <string name="error_invalid_gameName">Game Name too short</string>
-    <string name="error_empty_gameName">Please, name the new game.</string>
     <string name="create_game">Create Game</string>
+    <string name="list_games_title">Available games</string>
+    <string name="error_empty_gameName">Please, name the new game.</string>
+    <string name="error_get_games">Error getting games from server</string>
+
+    // Game Page
+    <string name="leave_dialog_title">Confirm you want to leave</string>
+    <string name="leave_dialog_desc">Are you sure you want to leave?</string>
+    <string name="leave_dialog_confirm">Leave</string>
+    <string name="leave_dialog_cancel">Cancel</string>
+    <string name="claim_dialog_title">Opponent is AFK</string>
+    <string name="claim_dialog_desc">Do you want to claim victory?</string>
+    <string name="claim_dialog_confirm">Claim Victory</string>
+    <string name="claim_dialog_cancel">Continue Playing</string>
+    // Game Page - Wait Game Section
+    <string name="waiting_player">Waiting Player</string>
+    <string name="game_name">Game Name: %s</string>
+    <string name="waiting_time">Waiting Time: %s</string>
+    // Game Page - Ready Check Section
+    <string name="ready_check_title">Confirm when you are ready!</string>
+    <string name="ready_check_desc">Waiting for players to be ready...</string>
+    <string name="player_ready">%s - Ready</string>
+    <string name="player_not_ready">%s - Not Ready</string>
+    <string name="ready_button">Ready</string>
+    // Game Page - Game Section
+    <string name="your_turn">It\'s your turn!</string>
+    <string name="oponnent_turn">It\'s your opponent\'s turn!</string>
+    // Game Page - Finish Section
+    <string name="game_finished">Game Finished!</string>
+    <string name="winner_message">You have won!!</string>
+    <string name="loser_message">You have lost :(</string>
+    <string name="initial_score">Initial Score:</string>
+    <string name="your_score">Your Score:</string>
+
+    // Others
+    <string name="leave_game_button">Leave Game</string>
+    <string name="error_action">Action has failed</string>
 </resources>

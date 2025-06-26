@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -69,18 +70,18 @@ fun WaitGameSection(
 
         // Header
         Text(
-            text = "Waiting Player",
+            text = stringResource(R.string.waiting_player),
             fontSize = 20.sp,
             fontWeight = SemiBold,
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         Text(
-            text = "Game Name: ${game.gameName}",
+            text = stringResource(id = R.string.game_name, game.gameName),
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
         if (game.gameState == "WAITING_FOR_PLAYER") {
             Text(
-                text = "Waiting Time: ${formatTime(waitingTime)}",
+                text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),
                 fontSize = 18.sp,
                 color = if (waitingTime >= 300) Color.Red else Color.Black,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
@@ -89,7 +90,7 @@ fun WaitGameSection(
                 onClick = onClickLeave,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
             ) {
-                Text(text = "Leave Game")
+                Text(text = stringResource(R.string.leave_game_button))
             }
         }
     }

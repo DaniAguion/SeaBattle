@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,26 +47,34 @@ fun ReadyCheckSection(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Confirm when you are ready!",
+                text = stringResource(R.string.ready_check_title),
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
             )
             Text(
-                text = "Waiting for players to be ready...",
+                text = stringResource(R.string.ready_check_desc),
                 fontSize = 16.sp,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
             )
             Text(
-                text = "${game.player1.displayName} - ${if (game.player1Ready) "Ready" else "Not Ready"}",
+                text = if (game.player1Ready) {
+                    stringResource(R.string.player_ready, game.player1.displayName)
+                } else {
+                    stringResource(R.string.player_not_ready, game.player1.displayName)
+                },
                 fontSize = 16.sp,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
             )
             Text(
-                text = "${game.player2.displayName} - ${if (game.player2Ready) "Ready" else "Not Ready"}",
+                text = if (game.player2Ready) {
+                    stringResource(R.string.player_ready, game.player2.displayName)
+                } else {
+                    stringResource(R.string.player_not_ready, game.player2.displayName)
+                },
                 fontSize = 16.sp,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
@@ -80,7 +89,7 @@ fun ReadyCheckSection(
                         .padding(dimensionResource(R.dimen.padding_small))
                         .sizeIn(minWidth = 150.dp)
                 ) {
-                    Text(text = "Leave Game")
+                    Text(stringResource(R.string.leave_game_button))
                 }
                 Button(
                     onClick = onClickReady,
@@ -92,7 +101,7 @@ fun ReadyCheckSection(
                         .padding(dimensionResource(R.dimen.padding_small))
                         .sizeIn(minWidth = 150.dp)
                 ) {
-                    Text(text = "Ready")
+                    Text(stringResource(R.string.ready_button))
                 }
             }
         }

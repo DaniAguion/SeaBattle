@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,13 +53,17 @@ fun GameFinishedSection(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Game Finished",
+                text = stringResource(R.string.game_finished),
                 fontSize = 24.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
             Text(
-                text = if(game.winnerId == userId) "You have won!!" else "You have lost :(",
+                text = if(game.winnerId == userId){
+                    stringResource(R.string.winner_message)
+                } else {
+                    stringResource(R.string.loser_message)
+                },
                 fontSize = 18.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
@@ -76,15 +81,17 @@ fun GameFinishedSection(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Initial Score: ",
+                        text = stringResource(R.string.initial_score),
                         fontSize = 18.sp
                     )
+                    // Empty Text to align with the score display
+                    // To be replacer in the future with a more meaningful text
                     Text(
                         text = "",
                         fontSize = 18.sp,
                     )
                     Text(
-                        text = "Your Score: ",
+                        text = stringResource(R.string.your_score),
                         fontSize = 18.sp
                     )
                 }
@@ -115,7 +122,7 @@ fun GameFinishedSection(
                         .padding(dimensionResource(R.dimen.padding_small))
                         .sizeIn(minWidth = 150.dp)
                 ) {
-                    Text(text = "Leave Game")
+                    Text(text = stringResource(R.string.leave_game_button))
                 }
             }
         }

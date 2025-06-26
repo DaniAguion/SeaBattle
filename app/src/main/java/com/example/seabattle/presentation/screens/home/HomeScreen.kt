@@ -114,7 +114,7 @@ fun HomeScreenContent(
         // Header
         item {
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.home_header_title),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -122,7 +122,7 @@ fun HomeScreenContent(
                     .padding(top = 20.dp, bottom = 14.dp)
             )
             Text(
-                text = "Join a game or create a new one to start playing",
+                text = stringResource(R.string.home_header_desc),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -142,7 +142,7 @@ fun HomeScreenContent(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    stringResource(R.string.create_game_title),
+                    text = stringResource(R.string.create_game_title),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -198,7 +198,7 @@ fun HomeScreenContent(
         // Games List
         item {
             Text(
-                stringResource(R.string.list_games_title),
+                text = stringResource(R.string.list_games_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
