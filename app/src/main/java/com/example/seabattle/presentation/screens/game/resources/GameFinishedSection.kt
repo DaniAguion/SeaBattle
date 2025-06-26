@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,6 +70,17 @@ fun GameFinishedSection(
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
+            if (initialScore == userScore) {
+                Text(
+                    text = stringResource(R.string.calculating_score),
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp
+                )
+            }
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -103,9 +116,8 @@ fun GameFinishedSection(
                     AnimatedScoreDisplay(score = initialScore)
                     Row {
                         Text(
-                            text = if(initialScore < userScore) "+" else if(initialScore > userScore) "-" else "",
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small))
+                            text = if(initialScore < userScore) "+" else "",
+                            fontSize = 18.sp
                         )
                         AnimatedScoreDisplay(score = userScore - initialScore)
                     }
@@ -152,7 +164,7 @@ fun GameFinishedSectionPreview(){
             modifier = Modifier,
             game = gameSample1,
             userId = "user1",
-            userScore = 1000,
+            userScore = gameSample1.player1.score,
         )
     }
 }

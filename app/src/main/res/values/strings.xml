@@ -85,4 +85,5 @@
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
+    <string name="calculating_score">Calculating score...</string>
 </resources>
