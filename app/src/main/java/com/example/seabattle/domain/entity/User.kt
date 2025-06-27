@@ -6,7 +6,7 @@ data class User(
     val email: String = "",
     val photoUrl: String = "",
     val status: String = "offline",
-    val score: Int = 0
+    val score: Int = 1000
 )
 
 
