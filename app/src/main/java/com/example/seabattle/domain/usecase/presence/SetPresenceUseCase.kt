@@ -19,7 +19,7 @@ class SetPresenceUseCase (
             if (userId == "") {
                 throw PresenceError.UserNotAuthenticated()
             }
-            presenceRepo.definePresence(userId = userId).getOrThrow()
+            presenceRepo.setUserOnline(userId = userId).getOrThrow()
         }
         .onFailure { e ->
             Timber.e(e, "SetPresenceUseCase failed.")

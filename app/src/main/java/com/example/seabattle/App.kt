@@ -22,9 +22,8 @@ class SeaBattleApplication : Application() {
     private lateinit var connectivityObserver: ConnectivityObserver
     private lateinit var listenUserUseCase: ListenUserUseCase
     private val applicationScope = CoroutineScope(SupervisorJob())
+    private var listingPresence : Job? = null
     private var isUserAuthenticated = false
-    private var userListeningJob: Job? = null
-    private var listenPresence: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -53,17 +52,26 @@ class SeaBattleApplication : Application() {
     private fun startPresenceMonitoring() {
         // Start listening for user authentication changes and set presence when authenticated
         applicationScope.launch {
-            userListeningJob?.cancel()
-            userListeningJob = applicationScope.launch {
-                listenUserUseCase.invoke().collect { user ->
-                    isUserAuthenticated = (user != null)
-                    if (isUserAuthenticated) {
-                        setPresenceUseCase.invoke()
-                        listenPresence?.cancel()
-                        listenPresence = applicationScope.launch {
-                            listenPresenceUseCase.invoke()
+            listenUserUseCase.invoke().collect { user ->
+                val wasAuthenticated = isUserAuthenticated
+                isUserAuthenticated = (user != null)
+
+                if (isUserAuthenticated && !wasAuthenticated) {
+                    setPresenceUseCase.invoke()
+
+                    listingPresence = applicationScope.launch {
+                        listenPresenceUseCase.invoke().collect { presenceResult ->
+                            presenceResult
+                                .onSuccess { status ->
+                                    Timber.d("Status changed on client to: $status")
+                                }
+                                .onFailure { error ->
+                                    Timber.e(error, "Failed to get current presence status.")
+                                }
                         }
                     }
+                } else if (!isUserAuthenticated) {
+                    listingPresence?.cancel()
                 }
             }
         }
@@ -72,7 +80,7 @@ class SeaBattleApplication : Application() {
         // Observe connectivity changes and set presence accordingly is user is authenticated
         applicationScope.launch {
             connectivityObserver.observe().collect { status ->
-                if (status != ConnectivityObserver.Status.Available) {
+                if (status == ConnectivityObserver.Status.Available) {
                     if (isUserAuthenticated) {
                         setPresenceUseCase.invoke()
                     }

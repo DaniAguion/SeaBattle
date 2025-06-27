@@ -27,7 +27,7 @@ val domainModule = module {
     single { SessionService()}
     // User Use cases
     factory { LoginUserUseCase(get(), get(), get(), get())}
-    factory { LogoutUserUseCase(get(), get())}
+    factory { LogoutUserUseCase(get(), get(), get())}
     factory { RegisterUserUseCase(get(), get(), get(), get())}
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
@@ -42,7 +42,7 @@ val domainModule = module {
     factory { EnableReadyUseCase() }
     factory { UserReadyUseCase(get(), get(), get())}
     factory { SetPresenceUseCase(get(), get(), get()) }
-    factory { ListenPresenceUseCase(get(), get(), get()) }
+    factory { ListenPresenceUseCase(get(), get()) }
     factory { EnableClaimUseCase() }
     factory { ClaimVictoryUseCase(get(), get(), get()) }
     factory { SetScoreUseCase(get(), get(), get(), get()) }

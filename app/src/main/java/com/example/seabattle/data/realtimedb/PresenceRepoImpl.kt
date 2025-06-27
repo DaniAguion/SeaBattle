@@ -21,15 +21,32 @@ class PresenceRepoImpl(
 ) : PresenceRepository {
 
     // Set user presence status to online
-    override suspend fun definePresence(userId: String) : Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun setUserOnline(userId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userStatusRef = realtimeDB.getReference("presence/${userId}/status")
             // Set user status to online and update last online timestamp
+            userStatusRef.onDisconnect().cancel() // Cancel any existing onDisconnect handlers
             userStatusRef.setValue("online").await()
 
             // Set up onDisconnect handlers to update status when user disconnects
-            // This will be saved in the Realtime Database as 'task' to do when the user disconnects
-            userStatusRef.onDisconnect().setValue("offline")
+            // The change to offline status is automatically handled by Firebase
+            // It can take a minute wont be immediate
+            userStatusRef.onDisconnect().setValue("offline").await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toPresenceError()
+        }
+    }
+
+
+    // Function to set user presence status to offline
+    override suspend fun setUserOffline(userId: String) : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val userStatusRef = realtimeDB.getReference("presence/${userId}/status")
+
+            // The change to offline status is can be provoked if the onDisconnect handler is cancelled
+            userStatusRef.setValue("offline").await()
             return@runCatching
         }
         .recoverCatching { throwable ->
@@ -48,7 +65,8 @@ class PresenceRepoImpl(
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val statusString = dataSnapshot.getValue(String::class.java)
-                if (statusString == "online" || statusString == "offline") {
+
+                if (statusString == "offline" || statusString == "online") {
                     trySend(Result.success(statusString))
                 } else {
                     trySend(Result.failure(
