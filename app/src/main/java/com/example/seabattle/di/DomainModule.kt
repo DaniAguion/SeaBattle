@@ -18,6 +18,7 @@ import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.SetScoreUseCase
+import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import org.koin.dsl.module
@@ -41,6 +42,7 @@ val domainModule = module {
     factory { EnableReadyUseCase() }
     factory { UserReadyUseCase(get(), get(), get())}
     factory { SetPresenceUseCase(get(), get(), get()) }
+    factory { ListenPresenceUseCase(get(), get(), get()) }
     factory { EnableClaimUseCase() }
     factory { ClaimVictoryUseCase(get(), get(), get()) }
     factory { SetScoreUseCase(get(), get(), get(), get()) }

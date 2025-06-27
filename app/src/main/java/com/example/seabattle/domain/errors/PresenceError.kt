@@ -4,6 +4,8 @@ sealed class PresenceError(
     val errorMessage: String,
     cause: Throwable? = null
 ) : Exception(errorMessage, cause) {
+    class UserNotAuthenticated(cause: Throwable? = null) :
+        PresenceError("User is not authenticated. Please log in to set presence.", cause)
 
     class InvalidStatusValue(cause: Throwable? = null) :
         PresenceError("Received an invalid status value from the database (expected 'online' or 'offline').", cause)

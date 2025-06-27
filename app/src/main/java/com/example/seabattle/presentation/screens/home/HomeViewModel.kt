@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
-import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.presentation.validation.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ class HomeViewModel(
     private val createGameUseCase: CreateGameUseCase,
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
-    private val setPresenceUseCase: SetPresenceUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(gamesList = emptyList()))
@@ -27,15 +25,6 @@ class HomeViewModel(
     // Active listener use get the updated game list
     private var getGamesJob: Job? = null
 
-    init {
-        // Set presence when the ViewModel is initialized
-        viewModelScope.launch {
-            setPresenceUseCase.invoke()
-                .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                }
-        }
-    }
 
     fun startListeningList() {
         _uiState.value = _uiState.value.copy(loadingList = true)

@@ -20,7 +20,6 @@ class PresenceRepoImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : PresenceRepository {
 
-
     // Set user presence status to online
     override suspend fun definePresence(userId: String) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {

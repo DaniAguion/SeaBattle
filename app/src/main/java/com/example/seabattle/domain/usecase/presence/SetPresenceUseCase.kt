@@ -16,14 +16,10 @@ class SetPresenceUseCase (
     suspend operator fun invoke(): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            presenceRepo.definePresence(userId = userId).getOrThrow()
-            presenceRepo.listenUserPresence(userId).collect { result ->
-                result.onSuccess { status ->
-                    Timber.d("User presence status is $status.")
-                }.onFailure { error ->
-                    Timber.e(error, "Failed to listen user presence.")
-                }
+            if (userId == "") {
+                throw PresenceError.UserNotAuthenticated()
             }
+            presenceRepo.definePresence(userId = userId).getOrThrow()
         }
         .onFailure { e ->
             Timber.e(e, "SetPresenceUseCase failed.")
