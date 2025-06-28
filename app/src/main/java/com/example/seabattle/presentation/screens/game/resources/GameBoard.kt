@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getColor
 import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.domain.entity.CellState
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -118,31 +119,64 @@ fun Cell(
     val finalCellStyle: CellStyle =
         if (cellUnhidden) {
             when(cellValue){
-                0, 2 -> CellStyle.Water
-                1, 4 -> CellStyle.Ship
-                3 -> CellStyle.Hit
-                5 -> CellStyle.Sunk
+                CellState.HIDDEN_WATER.value -> CellStyle.Water
+                CellState.WATER.value -> CellStyle.Water
+
+                CellState.SHIP.value,
+                CellState.SHIP_TOP.value,
+                CellState.SHIP_BOTTOM.value,
+                CellState.SHIP_START.value,
+                CellState.SHIP_END.value -> CellStyle.Ship
+
+                CellState.HIT.value,
+                CellState.HIT_TOP.value,
+                CellState.HIT_BOTTOM.value,
+                CellState.HIT_START.value,
+                CellState.HIT_END.value -> CellStyle.Hit
+
+                CellState.SUNK.value,
+                CellState.SUNK_TOP.value,
+                CellState.SUNK_BOTTOM.value,
+                CellState.SUNK_START.value,
+                CellState.SUNK_END.value -> CellStyle.Sunk
                 else -> CellStyle.Water
             }
         } else {
             when(cellValue){
-                0, 1 -> CellStyle.Unknown
-                2 -> CellStyle.Water
-                3 -> CellStyle.Hit
-                4 -> CellStyle.Ship
-                5 -> CellStyle.Sunk
+                CellState.HIDDEN_WATER.value -> CellStyle.Unknown
+                CellState.WATER.value -> CellStyle.Water
+
+                CellState.SHIP.value,
+                CellState.SHIP_TOP.value,
+                CellState.SHIP_BOTTOM.value,
+                CellState.SHIP_START.value,
+                CellState.SHIP_END.value -> CellStyle.Unknown
+
+                CellState.HIT.value,
+                CellState.HIT_TOP.value,
+                CellState.HIT_BOTTOM.value,
+                CellState.HIT_START.value,
+                CellState.HIT_END.value -> CellStyle.Hit
+
+                CellState.SUNK.value,
+                CellState.SUNK_TOP.value,
+                CellState.SUNK_BOTTOM.value,
+                CellState.SUNK_START.value,
+                CellState.SUNK_END.value -> CellStyle.Sunk
                 else -> CellStyle.Water
             }
         }
 
     val finalTargetStyle: TargetStyle =
         when(cellValue){
-            3 -> TargetStyle.Hit
+            CellState.HIT.value -> TargetStyle.Hit
+            CellState.HIT_START.value -> TargetStyle.Hit
+            CellState.HIT_END.value -> TargetStyle.Hit
             else -> TargetStyle.None
         }
 
     val cellClickable = if (clickEnabled) finalCellStyle.clickable else false
-
+    val waterColor = colorResource(id = CellStyle.Water.backgroundColor)
 
 
     //
@@ -284,9 +318,83 @@ fun Cell(
             modifier = Modifier.size(cellSize)
         ) {
             drawRect(
-                color = animatedCellColor,
+                color = waterColor,
                 size = size,
             )
+
+            val width = size.width
+            val height = size.height
+
+            val cellPath = if (currentAnimateCellStyle == CellStyle.Unknown) {
+                Path().apply {
+                    val left = 0f
+                    val top = 0f
+                    val right = size.width
+                    val bottom = size.height
+                    addRect(Rect(left, top, right, bottom))
+                }
+            } else if ((cellValue == CellState.SHIP_TOP.value && cellUnhidden) ||
+                cellValue == CellState.HIT_TOP.value ||
+                cellValue == CellState.SUNK_TOP.value
+            ) {
+                Path().apply {
+                    moveTo(width / 2f, 0f)
+                    lineTo(width, height/1.5f)
+                    lineTo(width, height)
+                    lineTo(0f, height)
+                    lineTo(0f, height/1.5f)
+                    close()
+                }
+            } else if ((cellValue == CellState.SHIP_BOTTOM.value && cellUnhidden) ||
+                cellValue == CellState.HIT_BOTTOM.value ||
+                cellValue == CellState.SUNK_BOTTOM.value
+            ) {
+                Path().apply {
+                    moveTo(width / 2f, height)
+                    lineTo(width, height/1.5f)
+                    lineTo(width, 0f)
+                    lineTo(0f, 0f)
+                    lineTo(0f, height/1.5f)
+                    close()
+                }
+            } else if ((cellValue == CellState.SHIP_START.value && cellUnhidden) ||
+                cellValue == CellState.HIT_START.value ||
+                cellValue == CellState.SUNK_START.value) {
+                Path().apply {
+                    moveTo(0f, height/ 2f)
+                    lineTo(width/1.5f, height)
+                    lineTo(width, height)
+                    lineTo(width, 0f)
+                    lineTo(width/1.5f, 0f)
+                    close()
+                }
+            } else if ((cellValue == CellState.SHIP_END.value && cellUnhidden) ||
+                cellValue == CellState.HIT_END.value ||
+                cellValue == CellState.SUNK_END.value) {
+                Path().apply {
+                    moveTo(width, height/ 2f)
+                    lineTo(width/1.5f, 0f)
+                    lineTo(0f, 0f)
+                    lineTo(0f, height)
+                    lineTo(width/1.5f, height)
+                    close()
+                }
+            } else {
+                Path().apply {
+                    val left = 0f
+                    val top = 0f
+                    val right = size.width
+                    val bottom = size.height
+                    addRect(Rect(left, top, right, bottom))
+                }
+            }
+
+            clipPath(cellPath) {
+                drawRect(
+                    color = animatedCellColor,
+                    size = size,
+                )
+            }
 
             drawCircle(
                 color = animatedTargetColor,

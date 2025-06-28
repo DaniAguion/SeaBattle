@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.usecase.game
 
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.entity.CellState
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Ship
@@ -71,13 +72,31 @@ class MakeMoveUseCase(
                 var nextPlayer = ""
 
                 when (cellValue) {
-                    0 -> { // Did not hit. Turn over
-                        gameBoard[x.toString()]?.put(y.toString(), 2)
+                    CellState.HIDDEN_WATER.value -> { // Did not hit. Turn over
+                        val cellNewValue = CellState.WATER.value
+                        gameBoard[x.toString()]?.put(y.toString(), cellNewValue)
                         nextPlayer = if (game.currentPlayer == game.player1.userId) game.player2.userId else game.player1.userId
                     }
 
-                    1 -> { // Hit. Player continues. Update the game board and the ships status.
-                        gameBoard[x.toString()]?.put(y.toString(), 3)
+                    CellState.SHIP.value,
+                    CellState.SHIP_TOP.value,
+                    CellState.SHIP_BOTTOM.value,
+                    CellState.SHIP_START.value,
+                    CellState.SHIP_END.value -> {
+                        // Hit. Player continues. Update the game board and the ships status.
+                        val cellNewValue = if (cellValue == CellState.SHIP_TOP.value) {
+                            CellState.HIT_TOP.value
+                        } else if (cellValue == CellState.SHIP_BOTTOM.value) {
+                            CellState.HIT_BOTTOM.value
+                        } else if (cellValue == CellState.SHIP_START.value) {
+                            CellState.HIT_START.value
+                        } else if (cellValue == CellState.SHIP_END.value) {
+                            CellState.HIT_END.value
+                        } else {
+                            CellState.HIT.value
+                        }
+
+                        gameBoard[x.toString()]?.put(y.toString(), cellNewValue)
                         nextPlayer = game.currentPlayer
                         updatedShips = currentShips.map { ship ->
                             val newShipBody = ship.shipBody.map { piece ->
@@ -87,16 +106,43 @@ class MakeMoveUseCase(
                                     piece
                                 }
                             }
-                            val isSunk = newShipBody.all { it.touched }
+                            // Check if the ship is sunk and was not sunk before
+                            val sunkNow = newShipBody.all { it.touched } && !ship.sunk
 
                             // If the ship was sunk, update all the pieces of the ship on the game board
-                            if (isSunk) {
+                            if (sunkNow) {
                                 newShipBody.forEach { piece ->
-                                    gameBoard[piece.x.toString()]?.put(piece.y.toString(), 5)
+                                    val cellValue = gameBoard[piece.x.toString()]?.get(piece.y.toString()) ?: throw GameError.Unknown()
+
+                                    val sunkCellValue = if (cellValue == CellState.HIT_TOP.value ||
+                                        cellValue == CellState.SHIP_TOP.value
+                                    ) {
+                                        CellState.SUNK_TOP.value
+                                    } else if (cellValue == CellState.HIT_BOTTOM.value ||
+                                        cellValue == CellState.SHIP_BOTTOM.value
+                                    ) {
+                                        CellState.SUNK_BOTTOM.value
+                                    } else if (cellValue == CellState.HIT_START.value ||
+                                        cellValue == CellState.SHIP_START.value
+                                    ) {
+                                        CellState.SUNK_START.value
+                                    } else if (cellValue == CellState.HIT_END.value ||
+                                        cellValue == CellState.SHIP_END.value
+                                    ) {
+                                        CellState.SUNK_END.value
+                                    } else if (cellValue == CellState.HIT.value ||
+                                        cellValue == CellState.SHIP.value
+                                    ) {
+                                        CellState.SUNK.value
+                                    } else {
+                                        cellValue
+                                    }
+
+                                    gameBoard[piece.x.toString()]?.put(piece.y.toString(), sunkCellValue)
                                 }
                             }
 
-                            ship.copy(shipBody = newShipBody, sunk = isSunk)
+                            ship.copy(shipBody = newShipBody, sunk = (sunkNow || ship.sunk))
                         }
 
                         // Check if the are any ships left

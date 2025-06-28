@@ -1,5 +1,6 @@
 package com.example.seabattle.data.local
 
+import com.example.seabattle.domain.entity.CellState
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipDirection
 import com.example.seabattle.domain.entity.ShipPiece
@@ -13,7 +14,7 @@ import com.example.seabattle.domain.repository.GameBoardRepository
 class GameBoardRepositoryImpl() : GameBoardRepository {
     private val gameBoardSize: Int = 10
     private var gameBoard: MutableList<MutableList<Int>> = MutableList(gameBoardSize) {
-        MutableList(gameBoardSize) { 0 }
+        MutableList(gameBoardSize) { CellState.HIDDEN_WATER.value }
     }
     private var shipList: MutableList<Ship> = mutableListOf()
 
@@ -48,18 +49,34 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
         val position = definePosition(shipSize)
         val shipBody = MutableList(shipSize) { ShipPiece(0, 0, false) }
 
-        for (i in 0 until shipSize)
+
+        for (i in 0 until shipSize) {
             when (position.shipDirection) {
-                ShipDirection.VERTICAL -> {
-                    gameBoard[position.x][position.y + i] = 1
+                ShipDirection.HORIZONTAL -> {
+                    val cellValue = if (i == 0) {
+                        CellState.SHIP_START.value
+                    } else if (i == shipSize - 1) {
+                        CellState.SHIP_END.value
+                    } else {
+                        CellState.SHIP.value
+                    }
+                    gameBoard[position.x][position.y + i] = cellValue
                     shipBody[i] = shipBody[i].copy(x = position.x, y = position.y + i)
                 }
 
-                ShipDirection.HORIZONTAL -> {
-                    gameBoard[position.x + i][position.y] = 1
+                ShipDirection.VERTICAL -> {
+                    val cellValue = if (i == 0) {
+                        CellState.SHIP_TOP.value
+                    } else if (i == shipSize - 1) {
+                        CellState.SHIP_BOTTOM.value
+                    } else {
+                        CellState.SHIP.value
+                    }
+                    gameBoard[position.x + i][position.y] = cellValue
                     shipBody[i] = shipBody[i].copy(x = position.x + i, y = position.y)
                 }
             }
+        }
         return Ship(
             size = shipSize,
             shipBody = shipBody.toList(),
@@ -79,13 +96,13 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
             var y1: Int
 
             when (shipDirection){
-                ShipDirection.VERTICAL -> {
+                ShipDirection.HORIZONTAL -> {
                     x0 = (0 until gameBoardSize).random()
                     y0 = (0 until gameBoardSize - shipSize).random()
                     x1 = x0
                     y1 = y0 + shipSize
                 }
-                ShipDirection.HORIZONTAL -> {
+                ShipDirection.VERTICAL -> {
                     x0 = (0 until gameBoardSize - shipSize).random()
                     y0 = (0 until gameBoardSize).random()
                     x1 = x0 + shipSize
@@ -111,7 +128,7 @@ class GameBoardRepositoryImpl() : GameBoardRepository {
 
         for (x in xMin..xMax) {
             for (y in yMin .. yMax) {
-                if (gameBoard[x][y] != 0) return false
+                if (gameBoard[x][y] != CellState.HIDDEN_WATER.value) return false
             }
         }
         return true

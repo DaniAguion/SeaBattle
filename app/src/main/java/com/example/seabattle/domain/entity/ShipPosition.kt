@@ -8,6 +8,6 @@ data class ShipPosition (
 )
 
 enum class ShipDirection {
-    VERTICAL,
-    HORIZONTAL
+    HORIZONTAL,
+    VERTICAL
 }
