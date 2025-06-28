@@ -18,13 +18,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -38,6 +44,8 @@ import com.example.seabattle.R
 import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlin.random.Random
 
 
 @Composable
@@ -48,17 +56,19 @@ fun GameBoard(
     clickEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val boardSize = gameBoard.size
+
     // Calculate screen width and height in dp
     val density = LocalDensity.current
     val windowSize = LocalWindowInfo.current.containerSize
     val screenWidthDp = with(density) { windowSize.width.toDp() }
     val screenHeightDp = with(density) { windowSize.height.toDp() }
     val padding = dimensionResource(R.dimen.padding_medium)
-    val availableWidth = screenWidthDp - (padding * 2)
-    val availableHeight = screenHeightDp - (padding* 2)
+    val cellPadding = dimensionResource(R.dimen.cell_padding)
+    val availableWidth = screenWidthDp - (padding * 2) - cellPadding * 2 * boardSize
+    val availableHeight = screenHeightDp - (padding* 2) - cellPadding * 2 * boardSize
 
     // Calculate the cell size based on the available width and height
-    val boardSize = gameBoard.size
     val calculatedCellSize = (minOf(availableWidth.value, availableHeight.value) / boardSize).dp
 
     Card(
@@ -75,7 +85,7 @@ fun GameBoard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             for (i in 0 until gameBoard.size) {
-                Row {
+                Row  {
                     for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
                         Cell(
                             cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
@@ -101,6 +111,7 @@ fun Cell(
     cellSize: Dp
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
 
     val finalCellValue = cellValue
 
@@ -130,8 +141,13 @@ fun Cell(
             else -> TargetStyle.None
         }
 
-
     val cellClickable = if (clickEnabled) finalCellStyle.clickable else false
+
+
+
+    //
+    // Animation state management of the cell and target styles
+    //
 
     val (currentCellValue, setCurrentCellValue) = remember { mutableIntStateOf(finalCellValue) }
     val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
@@ -186,8 +202,75 @@ fun Cell(
         label = "targetSizeAnimation"
     )
 
+
+
+
+    //
+    // Fire Animation
+    //
+
+    val showFire = remember { mutableStateOf(false) }
+    val particles = remember { mutableStateListOf<FireParticle>() }
+    var lastFrameTime by remember { mutableLongStateOf(System.nanoTime()) }
+
+
+    LaunchedEffect(currentAnimateCellStyle) {
+        if (currentAnimateCellStyle == CellStyle.Hit || currentAnimateCellStyle == CellStyle.Sunk) {
+            showFire.value = true
+            particles.clear()
+            lastFrameTime = System.nanoTime()
+        } else {
+            showFire.value = false
+            particles.clear()
+        }
+    }
+
+    LaunchedEffect(showFire.value) {
+        if (showFire.value) {
+            val targetRadiusPx = with(density) { animatedTargetSize.toPx() }
+            val particleMaxRadiusPx = with(density) { (cellSize / 2).toPx() }
+            val particleMinSpeedPx = with(density) { (cellSize * 0.4f).toPx() }
+            val particleMaxSpeedPx = with(density) { (cellSize).toPx() }
+
+            while (isActive && showFire.value) {
+                val currentTime = System.nanoTime()
+                val deltaTime = (currentTime - lastFrameTime) / 1_000_000L
+                lastFrameTime = currentTime
+
+
+                val particlesToRemove = mutableListOf<FireParticle>()
+                for (particle in particles) {
+                    particle.update(deltaTime)
+                    if (particle.isDead()) {
+                        particlesToRemove.add(particle)
+                    }
+                }
+                particles.removeAll(particlesToRemove)
+
+
+                if (particles.size < 20 && Random.nextInt(100) < (1000L / 100)) {
+                    val numToSpawn = Random.nextInt(1, 3)
+                    repeat(numToSpawn) {
+                        particles.add(
+                            FireParticle.createRandom(
+                                centerX = 0f,
+                                startY = targetRadiusPx,
+                                maxRadius = particleMaxRadiusPx,
+                                minSpeed = particleMinSpeedPx,
+                                maxSpeed = particleMaxSpeedPx
+                            )
+                        )
+                    }
+                }
+                delay(10)
+            }
+        }
+    }
+
+
     Surface(
         modifier = Modifier
+            .padding(dimensionResource(R.dimen.cell_padding))
             .size(cellSize)
             .clickable(
                 enabled = cellClickable,
@@ -211,12 +294,21 @@ fun Cell(
                 center = center,
             )
 
-            drawCircle(
-                color = animatedTargetColor,
-                radius = animatedTargetSize.value,
-                center = center,
-            )
+            val targetCirclePath = Path().apply {
+                val left = center.x - animatedTargetSize.value
+                val top = center.y - animatedTargetSize.value
+                val right = center.x + animatedTargetSize.value
+                val bottom = center.y + animatedTargetSize.value
+                addOval(Rect(left, top, right, bottom))
+            }
+
+            clipPath(targetCirclePath) {
+                if (showFire.value) {
+                    drawFireParticles(particles, center + Offset(0f, animatedTargetSize.value))
+                }
+            }
         }
+
     }
 }
 

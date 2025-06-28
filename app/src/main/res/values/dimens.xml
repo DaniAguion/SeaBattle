@@ -6,6 +6,7 @@
     <dimen name="padding_small">8dp</dimen>
     <!-- Cell size for the grid layout -->
     <dimen name="cell_size">32dp</dimen>
+    <dimen name="cell_padding">1dp</dimen>
     <dimen name="hit_size">24dp</dimen>
     <dimen name="ship_size">20dp</dimen>
     <dimen name="target_size">16dp</dimen>
