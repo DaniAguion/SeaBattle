@@ -169,6 +169,23 @@ fun Cell(
             }
         }
 
+    val finalMaskCellStyle: CellStyle =
+        if (cellUnhidden) {
+            CellStyle.None
+        } else {
+            when(cellValue){
+                CellState.HIDDEN_WATER.value,
+                CellState.SHIP.value,
+                CellState.SHIP_TOP.value,
+                CellState.SHIP_BOTTOM.value,
+                CellState.SHIP_START.value,
+                CellState.SHIP_END.value -> CellStyle.Unknown
+
+                else -> CellStyle.None
+            }
+        }
+
+
     val finalTargetStyle: TargetStyle =
         when(cellValue){
             CellState.HIT.value -> TargetStyle.Hit
@@ -176,6 +193,7 @@ fun Cell(
             CellState.HIT_END.value -> TargetStyle.Hit
             else -> TargetStyle.None
         }
+
 
     val cellClickable = if (clickEnabled) finalCellStyle.clickable else false
     val waterColor = colorResource(id = CellStyle.Water.backgroundColor)
@@ -187,6 +205,7 @@ fun Cell(
 
     val (currentCellValue, setCurrentCellValue) = remember { mutableIntStateOf(finalCellValue) }
     val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
+    val (currentAnimateMaskCellStyle, setCurrentAnimateMaskCellStyle) = remember { mutableStateOf(finalMaskCellStyle) }
     val (currentAnimateTargetStyle, setCurrentAnimateTargetStyle) = remember { mutableStateOf(finalTargetStyle) }
     val animationDuration = 1000
     val animationDelay : Long = animationDuration.toLong()
@@ -209,27 +228,25 @@ fun Cell(
                 delay(timeMillis = animationDelay)
             }
             setCurrentAnimateCellStyle(finalCellStyle)
+            setCurrentAnimateMaskCellStyle(CellStyle.None)
             setCurrentAnimateTargetStyle(finalTargetStyle)
             setCurrentCellValue(finalCellValue)
         }
     }
 
-    val cellTransition = updateTransition(targetState = currentAnimateCellStyle, label = "cellStyleTransition")
 
-    val animatedCellColor by cellTransition.animateColor(
-        transitionSpec = { tween(durationMillis = animationDuration) },
-        label = "cellBackgroundColorAnimation"
-    ) { state ->
-        colorResource(id = state.backgroundColor)
-    }
-
-    /*
     val animatedCellColor by animateColorAsState(
         targetValue = colorResource(id = currentAnimateCellStyle.backgroundColor),
         animationSpec = tween(durationMillis = animationDuration),
-        label = "cellBackgroundColorAnimation"
+        label = "cellContentColorAnimation"
     )
-    */
+
+
+    val animatedMaskCellColor by animateColorAsState(
+        targetValue = colorResource(id = currentAnimateMaskCellStyle.backgroundColor),
+        animationSpec = tween(durationMillis = animationDuration),
+        label = "cellMaskColorAnimation"
+    )
 
 
     val animatedTargetColor by animateColorAsState(
@@ -250,14 +267,6 @@ fun Cell(
         label = "targetSizeAnimation"
     )
 
-
-
-    // Avoid showing the ship shape if the cell is not unhidden or an animation is in progress
-    var showShipShape = remember { mutableStateOf(false) }
-    LaunchedEffect(cellTransition.isRunning, cellUnhidden) {
-        showShipShape.value = (cellUnhidden ||
-                (currentAnimateCellStyle != CellStyle.Unknown && !cellTransition.isRunning))
-    }
 
 
     //
@@ -338,23 +347,10 @@ fun Cell(
         Canvas(
             modifier = Modifier.size(cellSize)
         ) {
-            drawRect(
-                color = waterColor,
-                size = size,
-            )
-
             val width = size.width
             val height = size.height
 
-            val cellPath = if (!showShipShape.value) {
-                Path().apply {
-                    val left = 0f
-                    val top = 0f
-                    val right = size.width
-                    val bottom = size.height
-                    addRect(Rect(left, top, right, bottom))
-                }
-            } else if (cellValue == CellState.SHIP_TOP.value ||
+            val cellPath = if (cellValue == CellState.SHIP_TOP.value ||
                         cellValue == CellState.HIT_TOP.value ||
                         cellValue == CellState.SUNK_TOP.value
             ) {
@@ -412,18 +408,6 @@ fun Cell(
                 }
             }
 
-            clipPath(cellPath) {
-                drawRect(
-                    color = animatedCellColor,
-                    size = size,
-                )
-            }
-
-            drawCircle(
-                color = animatedTargetColor,
-                radius = animatedTargetSize.value,
-                center = center,
-            )
 
             val targetCirclePath = Path().apply {
                 val left = center.x - animatedTargetSize.value
@@ -433,6 +417,38 @@ fun Cell(
                 addOval(Rect(left, top, right, bottom))
             }
 
+
+            // Draw the water background
+            drawRect(
+                color = waterColor,
+                size = size,
+            )
+
+
+            // Draw the contain of the cell
+            clipPath(cellPath) {
+                drawRect(
+                    color = animatedCellColor,
+                    size = size,
+                )
+            }
+
+
+            // Draw the mask for the cell when it is unknown
+            drawRect(
+                color = animatedMaskCellColor,
+                size = size,
+            )
+
+
+            // Draw the target circle
+            drawCircle(
+                color = animatedTargetColor,
+                radius = animatedTargetSize.value,
+                center = center,
+            )
+
+            // Draw the fire particles
             clipPath(targetCirclePath) {
                 if (showFire.value) {
                     drawFireParticles(particles, center + Offset(0f, animatedTargetSize.value))

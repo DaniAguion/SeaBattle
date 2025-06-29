@@ -26,6 +26,10 @@ sealed class CellStyle(
         clickable = false,
         backgroundColor = R.color.sunk_ship_color
     )
+    object None : CellStyle(
+        clickable = false,
+        backgroundColor = R.color.none_color
+    )
 }
 
 
