@@ -1,8 +1,10 @@
 package com.example.seabattle.presentation.screens.game.resources
 
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -212,11 +214,23 @@ fun Cell(
         }
     }
 
+    val cellTransition = updateTransition(targetState = currentAnimateCellStyle, label = "cellStyleTransition")
+
+    val animatedCellColor by cellTransition.animateColor(
+        transitionSpec = { tween(durationMillis = animationDuration) },
+        label = "cellBackgroundColorAnimation"
+    ) { state ->
+        colorResource(id = state.backgroundColor)
+    }
+
+    /*
     val animatedCellColor by animateColorAsState(
         targetValue = colorResource(id = currentAnimateCellStyle.backgroundColor),
         animationSpec = tween(durationMillis = animationDuration),
         label = "cellBackgroundColorAnimation"
     )
+    */
+
 
     val animatedTargetColor by animateColorAsState(
         targetValue = Color(getColor(context, currentAnimateTargetStyle.targetColor)),
@@ -237,6 +251,13 @@ fun Cell(
     )
 
 
+
+    // Avoid showing the ship shape if the cell is not unhidden or an animation is in progress
+    var showShipShape = remember { mutableStateOf(false) }
+    LaunchedEffect(cellTransition.isRunning, cellUnhidden) {
+        showShipShape.value = (cellUnhidden ||
+                (currentAnimateCellStyle != CellStyle.Unknown && !cellTransition.isRunning))
+    }
 
 
     //
@@ -325,7 +346,7 @@ fun Cell(
             val width = size.width
             val height = size.height
 
-            val cellPath = if (currentAnimateCellStyle == CellStyle.Unknown) {
+            val cellPath = if (!showShipShape.value) {
                 Path().apply {
                     val left = 0f
                     val top = 0f
@@ -333,9 +354,9 @@ fun Cell(
                     val bottom = size.height
                     addRect(Rect(left, top, right, bottom))
                 }
-            } else if ((cellValue == CellState.SHIP_TOP.value && cellUnhidden) ||
-                cellValue == CellState.HIT_TOP.value ||
-                cellValue == CellState.SUNK_TOP.value
+            } else if (cellValue == CellState.SHIP_TOP.value ||
+                        cellValue == CellState.HIT_TOP.value ||
+                        cellValue == CellState.SUNK_TOP.value
             ) {
                 Path().apply {
                     moveTo(width / 2f, 0f)
@@ -345,9 +366,9 @@ fun Cell(
                     lineTo(0f, height/1.5f)
                     close()
                 }
-            } else if ((cellValue == CellState.SHIP_BOTTOM.value && cellUnhidden) ||
-                cellValue == CellState.HIT_BOTTOM.value ||
-                cellValue == CellState.SUNK_BOTTOM.value
+            } else if (cellValue == CellState.SHIP_BOTTOM.value ||
+                        cellValue == CellState.HIT_BOTTOM.value ||
+                        cellValue == CellState.SUNK_BOTTOM.value
             ) {
                 Path().apply {
                     moveTo(width / 2f, height)
@@ -357,9 +378,10 @@ fun Cell(
                     lineTo(0f, height/1.5f)
                     close()
                 }
-            } else if ((cellValue == CellState.SHIP_START.value && cellUnhidden) ||
-                cellValue == CellState.HIT_START.value ||
-                cellValue == CellState.SUNK_START.value) {
+            } else if (cellValue == CellState.SHIP_START.value ||
+                        cellValue == CellState.HIT_START.value ||
+                        cellValue == CellState.SUNK_START.value
+            ) {
                 Path().apply {
                     moveTo(0f, height/ 2f)
                     lineTo(width/1.5f, height)
@@ -368,9 +390,10 @@ fun Cell(
                     lineTo(width/1.5f, 0f)
                     close()
                 }
-            } else if ((cellValue == CellState.SHIP_END.value && cellUnhidden) ||
-                cellValue == CellState.HIT_END.value ||
-                cellValue == CellState.SUNK_END.value) {
+            } else if (cellValue == CellState.SHIP_END.value ||
+                        cellValue == CellState.HIT_END.value ||
+                        cellValue == CellState.SUNK_END.value
+            ) {
                 Path().apply {
                     moveTo(width, height/ 2f)
                     lineTo(width/1.5f, 0f)

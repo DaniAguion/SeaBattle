@@ -114,25 +114,15 @@ class MakeMoveUseCase(
                                 newShipBody.forEach { piece ->
                                     val cellValue = gameBoard[piece.x.toString()]?.get(piece.y.toString()) ?: throw GameError.Unknown()
 
-                                    val sunkCellValue = if (cellValue == CellState.HIT_TOP.value ||
-                                        cellValue == CellState.SHIP_TOP.value
-                                    ) {
+                                    val sunkCellValue = if (cellValue == CellState.HIT_TOP.value || cellValue == CellState.SHIP_TOP.value) {
                                         CellState.SUNK_TOP.value
-                                    } else if (cellValue == CellState.HIT_BOTTOM.value ||
-                                        cellValue == CellState.SHIP_BOTTOM.value
-                                    ) {
+                                    } else if (cellValue == CellState.HIT_BOTTOM.value || cellValue == CellState.SHIP_BOTTOM.value) {
                                         CellState.SUNK_BOTTOM.value
-                                    } else if (cellValue == CellState.HIT_START.value ||
-                                        cellValue == CellState.SHIP_START.value
-                                    ) {
+                                    } else if (cellValue == CellState.HIT_START.value || cellValue == CellState.SHIP_START.value) {
                                         CellState.SUNK_START.value
-                                    } else if (cellValue == CellState.HIT_END.value ||
-                                        cellValue == CellState.SHIP_END.value
-                                    ) {
+                                    } else if (cellValue == CellState.HIT_END.value || cellValue == CellState.SHIP_END.value) {
                                         CellState.SUNK_END.value
-                                    } else if (cellValue == CellState.HIT.value ||
-                                        cellValue == CellState.SHIP.value
-                                    ) {
+                                    } else if (cellValue == CellState.HIT.value || cellValue == CellState.SHIP.value) {
                                         CellState.SUNK.value
                                     } else {
                                         cellValue
