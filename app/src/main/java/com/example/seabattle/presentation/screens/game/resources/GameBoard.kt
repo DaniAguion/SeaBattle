@@ -1,10 +1,8 @@
 package com.example.seabattle.presentation.screens.game.resources
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -234,27 +232,30 @@ fun Cell(
         }
     }
 
-
+    // Animate the cell change
     val animatedCellColor by animateColorAsState(
         targetValue = colorResource(id = currentAnimateCellStyle.backgroundColor),
         animationSpec = tween(durationMillis = animationDuration),
         label = "cellContentColorAnimation"
     )
 
-
+    // Animate the unmask of the cell
     val animatedMaskCellColor by animateColorAsState(
         targetValue = colorResource(id = currentAnimateMaskCellStyle.backgroundColor),
         animationSpec = tween(durationMillis = animationDuration),
         label = "cellMaskColorAnimation"
     )
 
-
+    // Animate the target change of color
     val animatedTargetColor by animateColorAsState(
         targetValue = Color(getColor(context, currentAnimateTargetStyle.targetColor)),
         animationSpec = tween(durationMillis = animationDuration),
         label = "targetColorAnimation"
     )
 
+    // Animate the target size
+    // Animate only if the target style is Target, otherwise make the change instantly
+    // The idea is to animate the size when changes from None to Target style
     val animatedTargetSize by animateDpAsState(
         targetValue = dimensionResource(currentAnimateTargetStyle.targetSize),
         animationSpec =
@@ -350,6 +351,7 @@ fun Cell(
             val width = size.width
             val height = size.height
 
+            // Path for the cell shape based on the cell value
             val cellPath = if (cellValue == CellState.SHIP_TOP.value ||
                         cellValue == CellState.HIT_TOP.value ||
                         cellValue == CellState.SUNK_TOP.value
@@ -409,6 +411,7 @@ fun Cell(
             }
 
 
+            // Path for the target circle needed to contain the fire particles
             val targetCirclePath = Path().apply {
                 val left = center.x - animatedTargetSize.value
                 val top = center.y - animatedTargetSize.value
@@ -434,7 +437,7 @@ fun Cell(
             }
 
 
-            // Draw the mask for the cell when it is unknown
+            // Draw the mask to hide the cell content
             drawRect(
                 color = animatedMaskCellColor,
                 size = size,
