@@ -3,13 +3,11 @@ package com.example.seabattle.presentation.screens.leaderboard
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -73,7 +71,7 @@ fun LeaderBoardContent(
     errorList: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
             .padding(24.dp)
             .fillMaxSize(),
@@ -81,38 +79,42 @@ fun LeaderBoardContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
-        Text(
-            text = stringResource(R.string.leaderboard_header_title),
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 6.dp)
-        )
-        Text(
-            text = stringResource(R.string.leaderboard_header_desc),
-            fontSize = MaterialTheme.typography.titleMedium.fontSize,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
-        )
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            elevation = CardDefaults.cardElevation(4.dp),
-            modifier = Modifier.padding(vertical = 16.dp)
-        ) {
-            LazyColumn(
+        item {
+            Text(
+                text = stringResource(R.string.leaderboard_header_title),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 6.dp)
+            )
+        }
+        item {
+            Text(
+                text = stringResource(R.string.leaderboard_header_desc),
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
+            )
+        }
+        item {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                elevation = CardDefaults.cardElevation(4.dp),
+                modifier = Modifier.padding(vertical = 16.dp)
             ) {
-                item {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = stringResource(R.string.ranking_header),
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -121,29 +123,25 @@ fun LeaderBoardContent(
                             .fillMaxWidth()
                             .padding(bottom = 20.dp)
                     )
-                }
-                when {
-                    loadingList -> {
-                        item {
+                    when {
+                        loadingList -> {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
                                 strokeWidth = 2.dp
                             )
                         }
-                    }
 
-                    !errorList -> {
-                        items(items = usersList, key = { it.userId }) { user ->
-                            UserCard(
-                                user = user,
-                                position = usersList.indexOf(user) + 1,
-                                modifier = Modifier
-                            )
+                        !errorList -> {
+                            usersList.forEach { user ->
+                                UserCard(
+                                    user = user,
+                                    position = usersList.indexOf(user) + 1,
+                                    modifier = Modifier
+                                )
+                            }
                         }
-                    }
 
-                    else -> {
-                        item {
+                        else -> {
                             Text(
                                 text = stringResource(R.string.error_get_users),
                                 modifier = Modifier.padding(8.dp),
