@@ -187,6 +187,8 @@ fun Cell(
     val finalTargetStyle: TargetStyle =
         when(cellValue){
             CellState.HIT.value -> TargetStyle.Hit
+            CellState.HIT_TOP.value -> TargetStyle.Hit
+            CellState.HIT_BOTTOM.value -> TargetStyle.Hit
             CellState.HIT_START.value -> TargetStyle.Hit
             CellState.HIT_END.value -> TargetStyle.Hit
             else -> TargetStyle.None
