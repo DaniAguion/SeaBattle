@@ -1,7 +1,7 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.domain.SessionService
-import com.example.seabattle.domain.usecase.GetLeaderboardUseCase
+import com.example.seabattle.domain.usecase.leaderboard.GetLeaderboardUseCase
 import com.example.seabattle.domain.usecase.user.GetAuthUserUseCase
 import com.example.seabattle.domain.usecase.user.LoginUserUseCase
 import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
@@ -20,6 +20,7 @@ import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
+import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import org.koin.dsl.module
 
@@ -32,6 +33,11 @@ val domainModule = module {
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }
+
+    // Leaderboard Use cases
+    factory { GetLeaderboardUseCase(get(), get()) }
+    factory { GetUserPositionUseCase(get(), get(), get()) }
+
     // Game Use cases
     factory { GetGamesUseCase(get(), get()) }
     factory { CreateGameUseCase(get(), get(), get(), get(), get())}
@@ -46,5 +52,4 @@ val domainModule = module {
     factory { EnableClaimUseCase() }
     factory { ClaimVictoryUseCase(get(), get(), get()) }
     factory { SetScoreUseCase(get(), get(), get(), get()) }
-    factory { GetLeaderboardUseCase(get(), get()) }
 }

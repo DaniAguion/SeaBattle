@@ -58,4 +58,16 @@ class UserRepositoryImpl(
             throw throwable.toUserError()
         }
     }
+
+
+    override suspend fun getUserPosition(userId: String, userScore: Int): Result<Int> = withContext(ioDispatcher) {
+        runCatching {
+            val querySnapshot = usersCollection.whereGreaterThanOrEqualTo("score", userScore).orderBy("score", DESCENDING).get().await()
+            val usersList = querySnapshot.documents.mapNotNull { it.toObject(UserDto::class.java)?.toUserEntity() }
+            return@runCatching usersList.indexOfFirst { it.userId == userId } + 1
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toUserError()
+        }
+    }
 }

@@ -4,13 +4,11 @@ import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
-import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.ScoreRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-
 
 class SetScoreUseCase(
     val userRepository: UserRepository,
@@ -37,13 +35,13 @@ class SetScoreUseCase(
             val user = userRepository.getUser(userId).getOrThrow()
             return@runCatching user.score
         }
-        .onFailure { e ->
-            Timber.e(e, "SetScoreUseCase failed.")
-        }
-        .recoverCatching { throwable ->
-            if (throwable is GameError) throw throwable
-            else if (throwable is UserError) throw throwable
-            else throw DomainError.Unknown(throwable)
-        }
+            .onFailure { e ->
+                Timber.Forest.e(e, "SetScoreUseCase failed.")
+            }
+            .recoverCatching { throwable ->
+                if (throwable is GameError) throw throwable
+                else if (throwable is UserError) throw throwable
+                else throw DomainError.Unknown(throwable)
+            }
     }
 }

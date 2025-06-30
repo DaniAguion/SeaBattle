@@ -2,17 +2,55 @@ package com.example.seabattle.presentation.screens.leaderboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seabattle.domain.usecase.GetLeaderboardUseCase
+import com.example.seabattle.domain.usecase.leaderboard.GetLeaderboardUseCase
+import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
+import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LeaderboardViewModel(
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val getUserPosition: GetUserPositionUseCase,
     private val getLeaderboardUseCase : GetLeaderboardUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LeaderboardUiState(usersList = emptyList()))
     var uiState: StateFlow<LeaderboardUiState> = _uiState.asStateFlow()
+
+
+    fun getUserPosition() {
+        viewModelScope.launch {
+            getUserProfileUseCase.invoke()
+                .onSuccess { user ->
+                    _uiState.value = _uiState.value.copy(
+                        user = user,
+                        errorMessage = null
+                    )
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(
+                        user = null,
+                        errorMessage = e.message
+                    )
+                }
+        }
+        viewModelScope.launch {
+            getUserPosition.invoke()
+                .onSuccess { position ->
+                    _uiState.value = _uiState.value.copy(
+                        userPosition = position,
+                        errorMessage = null
+                    )
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(
+                        userPosition = null,
+                        errorMessage = e.message
+                    )
+                }
+        }
+    }
 
 
     fun getLeaderboard() {

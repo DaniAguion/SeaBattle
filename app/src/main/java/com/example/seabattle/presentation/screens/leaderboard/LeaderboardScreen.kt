@@ -41,6 +41,7 @@ fun LeaderBoardScreen(
 
     // Load the leaderboard data when the screen is first composed
     DisposableEffect(Unit) {
+        leaderboardViewModel.getUserPosition()
         leaderboardViewModel.getLeaderboard()
         onDispose {
             leaderboardViewModel.onErrorShown()
@@ -57,6 +58,8 @@ fun LeaderBoardScreen(
 
 
     LeaderBoardContent(
+        user = leaderboardUiState.user,
+        userPosition = leaderboardUiState.userPosition,
         usersList = leaderboardUiState.usersList,
         loadingList = leaderboardUiState.loadingList,
         errorList = leaderboardUiState.errorList,
@@ -66,6 +69,8 @@ fun LeaderBoardScreen(
 
 @Composable
 fun LeaderBoardContent(
+    user: User?,
+    userPosition: Int?,
     usersList: List<User>,
     loadingList: Boolean,
     errorList: Boolean,
@@ -98,6 +103,38 @@ fun LeaderBoardContent(
                     .fillMaxWidth()
                     .padding(bottom = 10.dp)
             )
+        }
+        item {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                elevation = CardDefaults.cardElevation(4.dp),
+                modifier = Modifier.padding(vertical = 16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.your_position),
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp)
+                    )
+                    UserCard(
+                        user = user,
+                        position = userPosition ?: 0,
+                        modifier = Modifier
+                    )
+                }
+            }
         }
         item {
             Card(
@@ -161,10 +198,14 @@ fun LeaderBoardContent(
 fun LeaderBoardPreview(){
     SeaBattleTheme {
         LeaderBoardContent(
+            user = User(userId = "1", displayName = "Player1", score = 100),
+            userPosition = 1,
             usersList = listOf(
                 User(userId = "1", displayName = "Player1", score = 100),
                 User(userId = "2", displayName = "Player2", score = 90),
-                User(userId = "3", displayName = "Player3", score = 80)
+                User(userId = "3", displayName = "Player3", score = 80),
+                User(userId = "4", displayName = "Player4", score = 70),
+                User(userId = "5", displayName = "Player5", score = 60)
             ),
             loadingList = false,
             errorList = false,

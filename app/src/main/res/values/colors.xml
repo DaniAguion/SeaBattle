@@ -17,4 +17,8 @@
     <color name="target_color">#72626262</color>
     <color name="hit_color">#CFC50404</color>
     <color name="user_online_color">#61A807</color>
+
+    <color name="gold_color">#E0FFCA28</color>
+    <color name="silver_color">#C0C0C0</color>
+    <color name="bronze_color">#D9CD7F32</color>
 </resources>
