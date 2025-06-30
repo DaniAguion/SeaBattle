@@ -32,6 +32,13 @@ sealed class CellStyle(
     )
 }
 
+enum class CellShape {
+    SQUARE,
+    SHIP_TOP,
+    SHIP_BOTTOM,
+    SHIP_START,
+    SHIP_END,
+}
 
 sealed class TargetStyle(
     val targetColor: Int,

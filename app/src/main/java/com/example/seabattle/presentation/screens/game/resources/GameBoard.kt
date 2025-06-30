@@ -167,6 +167,31 @@ fun Cell(
             }
         }
 
+
+    // Determine the content shape based on the cell value and whether the user is allowed to see the cell
+    // It is better to avoid to show the ship shape to the opponent to make the game more interesting
+    val contentShape =
+        when(cellValue){
+            CellState.SHIP_TOP.value,
+            CellState.SUNK_TOP.value -> CellShape.SHIP_TOP
+            CellState.HIT_TOP.value -> if (cellUnhidden) { CellShape.SHIP_TOP } else { CellShape.SQUARE }
+
+            CellState.SHIP_BOTTOM.value,
+            CellState.SUNK_BOTTOM.value -> CellShape.SHIP_BOTTOM
+            CellState.HIT_BOTTOM.value -> if (cellUnhidden) { CellShape.SHIP_BOTTOM } else { CellShape.SQUARE }
+
+            CellState.SHIP_START.value,
+            CellState.SUNK_START.value -> CellShape.SHIP_START
+            CellState.HIT_START.value -> if (cellUnhidden) { CellShape.SHIP_START } else { CellShape.SQUARE }
+
+            CellState.SHIP_END.value,
+            CellState.SUNK_END.value -> CellShape.SHIP_END
+            CellState.HIT_END.value -> if (cellUnhidden) { CellShape.SHIP_END } else { CellShape.SQUARE }
+        else -> CellShape.SQUARE
+    }
+
+
+    // Determine the final mask cell style that will be used to hide the cell content
     val finalMaskCellStyle: CellStyle =
         if (cellUnhidden) {
             CellStyle.None
@@ -184,6 +209,7 @@ fun Cell(
         }
 
 
+    // Determine the final target style it will be used to show the target circle and the damage on the ship
     val finalTargetStyle: TargetStyle =
         when(cellValue){
             CellState.HIT.value -> TargetStyle.Hit
@@ -199,10 +225,10 @@ fun Cell(
     val waterColor = colorResource(id = CellStyle.Water.backgroundColor)
 
 
+
     //
     // Animation state management of the cell and target styles
     //
-
     val (currentCellValue, setCurrentCellValue) = remember { mutableIntStateOf(finalCellValue) }
     val (currentAnimateCellStyle, setCurrentAnimateCellStyle) = remember { mutableStateOf(finalCellStyle) }
     val (currentAnimateMaskCellStyle, setCurrentAnimateMaskCellStyle) = remember { mutableStateOf(finalMaskCellStyle) }
@@ -255,6 +281,8 @@ fun Cell(
         label = "targetColorAnimation"
     )
 
+
+
     // Animate the target size
     // Animate only if the target style is Target, otherwise make the change instantly
     // The idea is to animate the size when changes from None to Target style
@@ -275,7 +303,6 @@ fun Cell(
     //
     // Fire Animation
     //
-
     val showFire = remember { mutableStateOf(false) }
     val particles = remember { mutableStateListOf<FireParticle>() }
     var lastFrameTime by remember { mutableLongStateOf(System.nanoTime()) }
@@ -335,6 +362,8 @@ fun Cell(
     }
 
 
+
+    // Draw the cell
     Surface(
         modifier = Modifier
             .padding(dimensionResource(R.dimen.cell_padding))
@@ -354,10 +383,7 @@ fun Cell(
             val height = size.height
 
             // Path for the cell shape based on the cell value
-            val cellPath = if (cellValue == CellState.SHIP_TOP.value ||
-                        cellValue == CellState.HIT_TOP.value ||
-                        cellValue == CellState.SUNK_TOP.value
-            ) {
+            val cellPath = if (contentShape == CellShape.SHIP_TOP) {
                 Path().apply {
                     moveTo(width / 2f, 0f)
                     lineTo(width, height/1.5f)
@@ -366,10 +392,7 @@ fun Cell(
                     lineTo(0f, height/1.5f)
                     close()
                 }
-            } else if (cellValue == CellState.SHIP_BOTTOM.value ||
-                        cellValue == CellState.HIT_BOTTOM.value ||
-                        cellValue == CellState.SUNK_BOTTOM.value
-            ) {
+            } else if (contentShape == CellShape.SHIP_BOTTOM) {
                 Path().apply {
                     moveTo(width / 2f, height)
                     lineTo(width, height/1.5f)
@@ -378,10 +401,7 @@ fun Cell(
                     lineTo(0f, height/1.5f)
                     close()
                 }
-            } else if (cellValue == CellState.SHIP_START.value ||
-                        cellValue == CellState.HIT_START.value ||
-                        cellValue == CellState.SUNK_START.value
-            ) {
+            } else if (contentShape == CellShape.SHIP_START) {
                 Path().apply {
                     moveTo(0f, height/ 2f)
                     lineTo(width/1.5f, height)
@@ -390,10 +410,7 @@ fun Cell(
                     lineTo(width/1.5f, 0f)
                     close()
                 }
-            } else if (cellValue == CellState.SHIP_END.value ||
-                        cellValue == CellState.HIT_END.value ||
-                        cellValue == CellState.SUNK_END.value
-            ) {
+            } else if (contentShape == CellShape.SHIP_END) {
                 Path().apply {
                     moveTo(width, height/ 2f)
                     lineTo(width/1.5f, 0f)
