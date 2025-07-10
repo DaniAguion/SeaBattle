@@ -66,9 +66,16 @@ class PresenceRepoImpl(
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val statusString = dataSnapshot.getValue(String::class.java)
 
+                // If the status is null, it might mean the user has been deleted
+                if (statusString == null) {
+                    close()
+                    return
+                }
+
                 if (statusString == "offline" || statusString == "online") {
                     trySend(Result.success(statusString))
-                } else {
+                }
+                else {
                     trySend(Result.failure(
                         PresenceError.InvalidStatusValue(IllegalStateException("Unexpected presence status value: $statusString")))
                     )
@@ -88,4 +95,16 @@ class PresenceRepoImpl(
     }.flowOn(ioDispatcher)
 
 
+
+    // Delete user presence data
+    override suspend fun deleteUserPresence(userId: String): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val userStatusRef = realtimeDB.getReference("presence/${userId}")
+            userStatusRef.removeValue().await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toPresenceError()
+        }
+    }
 }

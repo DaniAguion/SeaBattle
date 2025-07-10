@@ -6,4 +6,5 @@ interface PresenceRepository {
     suspend fun setUserOnline(userId: String): Result<Unit>
     suspend fun setUserOffline(userId: String) : Result<Unit>
     fun listenUserPresence(userId: String): Flow<Result<String>>
+    suspend fun deleteUserPresence(userId: String): Result<Unit>
 }

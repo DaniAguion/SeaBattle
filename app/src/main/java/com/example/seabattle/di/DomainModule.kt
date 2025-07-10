@@ -21,6 +21,7 @@ import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
+import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import org.koin.dsl.module
 
@@ -30,6 +31,7 @@ val domainModule = module {
     factory { LoginUserUseCase(get(), get(), get(), get())}
     factory { LogoutUserUseCase(get(), get(), get())}
     factory { RegisterUserUseCase(get(), get(), get(), get())}
+    factory { DeleteUserUseCase(get(), get(), get(), get()) }
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }

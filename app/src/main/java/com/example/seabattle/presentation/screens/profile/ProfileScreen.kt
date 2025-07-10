@@ -3,12 +3,16 @@ package com.example.seabattle.presentation.screens.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,15 +53,60 @@ fun ProfileScreen(
         }
     }
 
+
     LaunchedEffect(key1 = profileUiState.userLoggedIn) {
         if (!profileUiState.userLoggedIn) {
             navController.navigate(Screen.Welcome.title)
         }
     }
+
+
+    // Show a dialog when the user wants to delete a note permanently
+    if (profileUiState.deleteDialog) {
+        AlertDialog(
+            onDismissRequest = { profileViewModel.onClickCancel() },
+            title = { Text(stringResource(R.string.delete_account_title)) },
+            text = { Text(stringResource(R.string.delete_account_title_msg)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        profileViewModel.onClickConfirm()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                ) {
+                    Text(stringResource(R.string.delete_button))
+                }
+            },
+            dismissButton = {
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            profileViewModel.onClickCancel()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
+                        Text(stringResource(R.string.cancel_button))
+                    }
+                }
+            }
+        )
+    }
+
+
     ProfileScreenContent(
         modifier = modifier,
         user = profileUiState.user,
-        onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked
+        onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked,
+        onDeleteAccountClicked = profileViewModel::onDeleteAccountClicked
     )
 }
 
@@ -65,6 +115,7 @@ fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     user: User,
     onLogoutButtonClicked: () -> Unit = {},
+    onDeleteAccountClicked: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -113,10 +164,22 @@ fun ProfileScreenContent(
             Button(
                 onClick = onLogoutButtonClicked,
                 modifier = Modifier
-                    .widthIn(min = 250.dp)
+                    .widthIn(min = 200.dp)
                     .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 Text("SignOut")
+            }
+        }
+
+        // Delete Account Button
+        item {
+            Button(
+                onClick = onDeleteAccountClicked,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+            ) {
+                Text("Delete Account")
             }
         }
     }

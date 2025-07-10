@@ -100,6 +100,10 @@
     <string name="error_action">Action has failed</string>
     <string name="calculating_score">Calculating score...</string>
     <string name="your_position">Current position</string>
+    <string name="delete_account_title">Delete your user account?</string>
+    <string name="delete_account_title_msg">All your progress and information will be deleted. Are you sure?</string>
+    <string name="delete_button">Delete</string>
+    <string name="cancel_button">Cancel</string>
 
 
 </resources>

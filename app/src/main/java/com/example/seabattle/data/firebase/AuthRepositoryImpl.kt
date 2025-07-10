@@ -71,6 +71,19 @@ class AuthRepositoryImpl(
     }
 
 
+    // Method to delete the current user
+    override suspend fun deleteUser() : Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            val user = auth.currentUser ?: throw AuthError.InvalidUser()
+            user.delete().await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
+        }
+    }
+
+
     // Method to logout the current user
     override fun logoutUser() {
         auth.signOut()

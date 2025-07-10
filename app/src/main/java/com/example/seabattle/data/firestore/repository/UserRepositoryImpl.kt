@@ -48,6 +48,17 @@ class UserRepositoryImpl(
     }
 
 
+    override suspend fun deleteUser(userId: String): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            usersCollection.document(userId).delete().await()
+        }
+            .map { _ -> }
+            .recoverCatching { throwable ->
+                throw throwable.toUserError()
+            }
+    }
+
+
     override suspend fun getLeaderboard(): Result<List<User>> = withContext(ioDispatcher) {
         runCatching {
             val querySnapshot = usersCollection.orderBy("score", DESCENDING).limit(25).get().await()
