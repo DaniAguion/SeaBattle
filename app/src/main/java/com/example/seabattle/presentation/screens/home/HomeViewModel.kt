@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
-import com.example.seabattle.presentation.validation.Validator
+import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,7 +45,7 @@ class HomeViewModel(
                                 gamesList = emptyList(),
                                 errorList = true,
                                 loadingList = false,
-                                errorMessage = e.message
+                                error = e
                             )
                         }
                 }
@@ -77,7 +77,7 @@ class HomeViewModel(
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -90,7 +90,7 @@ class HomeViewModel(
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -99,12 +99,12 @@ class HomeViewModel(
     fun resetUiState() {
         _uiState.value = _uiState.value.copy(
             hasJoined = false,
-            errorMessage = null
+            error = null
         )
     }
 
 
     fun onErrorShown(){
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }

@@ -81,7 +81,7 @@ class GameViewModel(
                                 }
                             },
                             onFailure = { e ->
-                                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                                _uiState.value = _uiState.value.copy(error = e)
                             }
                         )
                     }
@@ -156,7 +156,7 @@ class GameViewModel(
                     _uiState.value = _uiState.value.copy(userScore = score)
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -167,7 +167,7 @@ class GameViewModel(
         viewModelScope.launch {
             userReadyUseCase.invoke()
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -194,7 +194,7 @@ class GameViewModel(
                     _uiState.value = _uiState.value.copy(game = null)
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -205,7 +205,7 @@ class GameViewModel(
         viewModelScope.launch {
             makeMoveUseCase.invoke(x, y)
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -253,7 +253,7 @@ class GameViewModel(
                     )
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(errorMessage = e.message)
+                    _uiState.value = _uiState.value.copy(error = e)
                 }
         }
     }
@@ -272,7 +272,7 @@ class GameViewModel(
     // This function is called when the error message is shown to the user
     // It clears the error message from the UI state
     fun onErrorShown(){
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+        _uiState.value = _uiState.value.copy(error = null)
     }
 
 

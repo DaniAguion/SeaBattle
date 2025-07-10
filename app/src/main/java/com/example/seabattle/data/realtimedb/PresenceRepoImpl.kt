@@ -86,4 +86,6 @@ class PresenceRepoImpl(
             userStatusRef.removeEventListener(listener)
         }
     }.flowOn(ioDispatcher)
+
+
 }

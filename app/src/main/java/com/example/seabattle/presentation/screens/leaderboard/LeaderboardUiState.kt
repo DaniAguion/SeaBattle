@@ -9,6 +9,6 @@ data class LeaderboardUiState (
     val usersList: List<User>,
     val errorList: Boolean = false,
     val loadingList: Boolean = true,
-    val errorMessage: String? = null,
+    val error: Throwable? = null,
 )
 

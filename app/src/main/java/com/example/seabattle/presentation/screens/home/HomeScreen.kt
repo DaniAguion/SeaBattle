@@ -40,7 +40,8 @@ import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
-import com.example.seabattle.presentation.validation.ValidationError
+import com.example.seabattle.presentation.resources.ValidationError
+import com.example.seabattle.presentation.resources.toErrorMessageUI
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -62,9 +63,9 @@ fun HomeScreen(
     }
 
     // Show a toast message when an error occurs
-    LaunchedEffect(key1 = homeUiState.errorMessage) {
-        homeUiState.errorMessage?.let { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+    LaunchedEffect(key1 = homeUiState.error) {
+        homeUiState.error?.let { error ->
+            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
             homeViewModel.onErrorShown()
         }
     }

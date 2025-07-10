@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
+import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.Tabs
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.launch
@@ -52,11 +53,13 @@ fun WelcomeScreen(
     welcomeViewModel: WelcomeViewModel = koinViewModel()
 ) {
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
-    val localContext = LocalContext.current
+    val context = LocalContext.current
 
-    LaunchedEffect(key1 = welcomeUiState.errorMessage) {
-        welcomeUiState.errorMessage?.let { errorMessage ->
-            Toast.makeText(localContext, errorMessage, Toast.LENGTH_LONG).show()
+
+    // Show a toast message when an error occurs
+    LaunchedEffect(key1 = welcomeUiState.error) {
+        welcomeUiState.error?.let { error ->
+            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
             welcomeViewModel.onErrorShown()
         }
     }
@@ -76,7 +79,7 @@ fun WelcomeScreen(
         onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
         onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
         onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
-        onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(localContext) }
+        onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(context) }
     )
 }
 

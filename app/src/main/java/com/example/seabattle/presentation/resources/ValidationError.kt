@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.validation
+package com.example.seabattle.presentation.resources
 
 import com.example.seabattle.R
 

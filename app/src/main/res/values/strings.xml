@@ -28,6 +28,22 @@
     <string name="error_short_password">Password is too short.</string>
     <string name="weak_password">"Password must contain at least an uppercase letter, a lowercase letter and a number. "</string>
 
+
+    // Error Messages shown on toast
+    <string name="error_invalid_credentials">Invalid credentials. Please verify your email and password.</string>
+    <string name="error_invalid_user">Account doesn\'t exist or is disabled.</string>
+    <string name="error_existing_user">An account with this email already exists.</string>
+    <string name="error_network_connection">Network connection problem. Please check your connection.</string>
+    <string name="error_unknown">An unexpected error occurred. Try again.</string>
+    <string name="error_game_not_found">Game not found.</string>
+    <string name="error_game_not_valid">An error occurred with the game data.</string>
+    <string name="error_invalid_game_state">Game state doesn\'t allow this action.</string>
+    <string name="error_permission_denied">You do not have permission to perform this action.</string>
+    <string name="error_user_not_auth">User is not authenticated.</string>
+    <string name="error_presence_status">An error occurred setting the offline/online status.</string>
+    <string name="error_user_not_found">User not found.</string>
+
+
     // Home Screen
     <string name="home_header_title">Welcome!</string>
     <string name="home_header_desc">Join a game or create a new one to start playing</string>
@@ -84,4 +100,6 @@
     <string name="error_action">Action has failed</string>
     <string name="calculating_score">Calculating score...</string>
     <string name="your_position">Current position</string>
+
+
 </resources>

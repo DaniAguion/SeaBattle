@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
 import com.example.seabattle.presentation.screens.game.resources.GameSection
 import com.example.seabattle.presentation.screens.game.resources.PlayersInfoHeader
@@ -64,10 +65,11 @@ fun GameScreen(
         }
     }
 
+
     // Show a toast message when an error occurs
-    LaunchedEffect(key1 = gameUiState.errorMessage) {
-        gameUiState.errorMessage?.let { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+    LaunchedEffect(key1 = gameUiState.error) {
+        gameUiState.error?.let { error ->
+            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
             gameViewModel.onErrorShown()
         }
     }

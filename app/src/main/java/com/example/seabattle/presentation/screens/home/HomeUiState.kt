@@ -1,7 +1,7 @@
 package com.example.seabattle.presentation.screens.home
 
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.presentation.validation.ValidationError
+import com.example.seabattle.presentation.resources.ValidationError
 
 data class HomeUiState (
     val gameName: String = "Testing",
@@ -10,6 +10,6 @@ data class HomeUiState (
     val errorList: Boolean = false,
     val loadingList: Boolean = true,
     val hasJoined: Boolean = false,
-    val errorMessage: String? = null,
+    val error: Throwable? = null,
 )
 

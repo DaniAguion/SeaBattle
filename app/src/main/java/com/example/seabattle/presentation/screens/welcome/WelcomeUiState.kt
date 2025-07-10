@@ -1,6 +1,6 @@
 package com.example.seabattle.presentation.screens.welcome
 
-import com.example.seabattle.presentation.validation.ValidationError
+import com.example.seabattle.presentation.resources.ValidationError
 
 data class WelcomeUiState(
     val isLoggedIn: Boolean = false,
@@ -11,7 +11,7 @@ data class WelcomeUiState(
     val emailError: ValidationError? = null,
     val passwordError: ValidationError? = null,
     val msgResult: InfoMessages? = null,
-    val errorMessage: String? = null,
+    val error: Throwable? = null,
 )
 
 enum class InfoMessages {

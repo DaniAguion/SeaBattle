@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.entity.LoginMethod
 import com.example.seabattle.domain.usecase.user.LoginUserUseCase
 import com.example.seabattle.domain.usecase.user.RegisterUserUseCase
-import com.example.seabattle.presentation.validation.Validator
-import com.example.seabattle.presentation.validation.Validator.validateNewPassword
+import com.example.seabattle.presentation.resources.Validator
+import com.example.seabattle.presentation.resources.Validator.validateNewPassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -79,9 +79,8 @@ class WelcomeViewModel(
                     _uiState.value = _uiState.value.copy(isLoggedIn = false)
                 }
             }
-            .onFailure { throwable ->
-                val errorMessage = throwable.message
-                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
+            .onFailure { e ->
+                _uiState.value = _uiState.value.copy(error = e)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
@@ -116,9 +115,8 @@ class WelcomeViewModel(
                     _uiState.value = _uiState.value.copy(isLoggedIn = false)
                 }
             }
-            .onFailure { throwable ->
-                val errorMessage = throwable.message
-                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
+            .onFailure { e ->
+                _uiState.value = _uiState.value.copy(error = e)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
@@ -143,9 +141,8 @@ class WelcomeViewModel(
                     _uiState.value = _uiState.value.copy(isLoggedIn = false)
                 }
             }
-            .onFailure { throwable ->
-                val errorMessage = throwable.message
-                _uiState.value = _uiState.value.copy(errorMessage = errorMessage)
+            .onFailure { e ->
+                _uiState.value = _uiState.value.copy(error = e)
                 _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
@@ -153,6 +150,6 @@ class WelcomeViewModel(
     }
 
     fun onErrorShown(){
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }

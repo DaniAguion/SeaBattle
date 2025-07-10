@@ -25,13 +25,13 @@ class LeaderboardViewModel(
                 .onSuccess { user ->
                     _uiState.value = _uiState.value.copy(
                         user = user,
-                        errorMessage = null
+                        error = null
                     )
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
                         user = null,
-                        errorMessage = e.message
+                        error = e
                     )
                 }
         }
@@ -40,13 +40,13 @@ class LeaderboardViewModel(
                 .onSuccess { position ->
                     _uiState.value = _uiState.value.copy(
                         userPosition = position,
-                        errorMessage = null
+                        error = null
                     )
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
                         userPosition = null,
-                        errorMessage = e.message
+                        error = e
                     )
                 }
         }
@@ -68,7 +68,7 @@ class LeaderboardViewModel(
                         usersList = emptyList(),
                         errorList = true,
                         loadingList = false,
-                        errorMessage = e.message
+                        error = e
                     )
                 }
         }
@@ -76,6 +76,6 @@ class LeaderboardViewModel(
 
 
     fun onErrorShown(){
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }
