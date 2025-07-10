@@ -14,6 +14,9 @@ sealed class AuthError(
     class UserCollision(cause: Throwable? = null) :
         AuthError("An account with this email already exists.", cause)
 
+    class RecentLoginRequired(cause: Throwable? = null) :
+        AuthError("Recent login required. Please log in again.", cause)
+
     class NetworkConnection(cause: Throwable? = null) :
         AuthError("Network connection problem. Please check your connection.", cause)
 

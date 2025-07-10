@@ -81,21 +81,16 @@ fun ProfileScreen(
                 }
             },
             dismissButton = {
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
+                Button(
+                    onClick = {
+                        profileViewModel.onClickCancel()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 ) {
-                    Button(
-                        onClick = {
-                            profileViewModel.onClickCancel()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) {
-                        Text(stringResource(R.string.cancel_button))
-                    }
+                    Text(stringResource(R.string.cancel_button))
                 }
             }
         )

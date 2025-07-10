@@ -15,6 +15,7 @@ fun Throwable.toErrorMessageUI(): Int {
         is AuthError.InvalidCredentials -> R.string.error_invalid_credentials
         is AuthError.InvalidUser -> R.string.error_invalid_user
         is AuthError.UserCollision -> R.string.error_existing_user
+        is AuthError.RecentLoginRequired -> R.string.error_recent_login_required
         is AuthError.NetworkConnection -> R.string.error_network_connection
         is AuthError.Unknown -> R.string.error_unknown
         is DomainError.Unknown -> R.string.error_unknown

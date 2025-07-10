@@ -104,6 +104,7 @@
     <string name="delete_account_title_msg">All your progress and information will be deleted. Are you sure?</string>
     <string name="delete_button">Delete</string>
     <string name="cancel_button">Cancel</string>
+    <string name="error_recent_login_required">Recent login required. Please log in again.</string>
 
 
 </resources>

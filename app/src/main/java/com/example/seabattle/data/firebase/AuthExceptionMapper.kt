@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 
@@ -19,6 +20,7 @@ fun Throwable.toAuthError(): AuthError {
         is FirebaseAuthInvalidUserException -> AuthError.InvalidUser(this)
         is FirebaseAuthUserCollisionException -> AuthError.UserCollision(this)
         is FirebaseNetworkException -> AuthError.NetworkConnection(this)
+        is FirebaseAuthRecentLoginRequiredException -> AuthError.RecentLoginRequired(this)
         is FirebaseException -> AuthError.Unknown(this)
         else -> AuthError.Unknown(this)
     }
