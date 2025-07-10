@@ -61,7 +61,7 @@ class UserRepositoryImpl(
 
     override suspend fun getLeaderboard(): Result<List<User>> = withContext(ioDispatcher) {
         runCatching {
-            val querySnapshot = usersCollection.orderBy("score", DESCENDING).limit(25).get().await()
+            val querySnapshot = usersCollection.orderBy("score", DESCENDING).orderBy("userId", DESCENDING).limit(25).get().await()
             val usersList = querySnapshot.documents.mapNotNull { it.toObject(UserDto::class.java)?.toUserEntity() }
             return@runCatching usersList
         }
