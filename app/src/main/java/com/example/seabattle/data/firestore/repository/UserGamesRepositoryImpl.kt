@@ -1,20 +1,16 @@
 package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.GameHistoryDto
-import com.example.seabattle.data.firestore.dto.UserDto
 import com.example.seabattle.data.firestore.dto.UserGamesDto
 import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.repository.UserRepository
-import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.entity.UserGames
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.UserGamesRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query.Direction.DESCENDING
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
