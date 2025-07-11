@@ -159,12 +159,24 @@ class GameViewModel(
 
     // This function checks the changes in the game board
     private fun detectBoardChanges(game: Game) {
+        val previousPlayer = _uiState.value.previousGame?.currentPlayer
         val previousBoard1 = _uiState.value.previousGame?.boardForPlayer1
-        val previousBoard2 = _uiState.value.previousGame?.boardForPlayer1
+        val previousBoard2 = _uiState.value.previousGame?.boardForPlayer2
 
+        // If the previous game is null, we don't have any previous board to compare
+        // If the player has changed check both boards
+        // If the player has not changed, check only the board of the current player
         if (previousBoard1 != null && previousBoard2 != null) {
-            compareBoards(previousBoard1, game.boardForPlayer1)
-            compareBoards(previousBoard2, game.boardForPlayer2)
+            if (previousPlayer != game.currentPlayer) {
+                compareBoards(previousBoard1, game.boardForPlayer1)
+                compareBoards(previousBoard2, game.boardForPlayer2)
+            } else {
+                if (game.currentPlayer == game.player1.userId) {
+                    compareBoards(previousBoard1, game.boardForPlayer1)
+                } else {
+                    compareBoards(previousBoard2, game.boardForPlayer2)
+                }
+            }
         }
 
         _uiState.value = _uiState.value.copy(previousGame = game)
@@ -178,16 +190,21 @@ class GameViewModel(
                 val previousCell = previousBoard[row]?.get(col)
                 val currentCell = currentBoard[row]?.get(col)
 
-                if (previousCell != null && currentCell != null && previousCell != currentCell) {
+                if (previousCell == null || currentCell == null) {
+                    continue
+                }
 
-                    val cellState : BasicCellState = CellState.getFromValue(currentCell).toBasic()
+                if (previousCell == currentCell) {
+                    continue
+                }
 
-
-                    if (cellState == BasicCellState.WATER) {
-                        soundManager.playWaterSplash()
-                    } else if ((cellState == BasicCellState.HIT) || (cellState == BasicCellState.SUNK)) {
-                        soundManager.playShipHit()
-                    }
+                val cellState : BasicCellState = CellState.getFromValue(currentCell).toBasic()
+                if (cellState == BasicCellState.WATER) {
+                    soundManager.playWaterSplash()
+                } else if ((cellState == BasicCellState.HIT) || (cellState == BasicCellState.SUNK)) {
+                    // When the the ship is SUNK all the cells of the ship are marked as SUNK
+                    // So the sound will be played one time for each cell but that's okay
+                    soundManager.playShipHit()
                 }
             }
         }
