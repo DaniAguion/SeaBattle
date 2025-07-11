@@ -3,6 +3,9 @@ package com.example.seabattle.presentation.screens.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.entity.BasicCellState
+import com.example.seabattle.domain.entity.CellState
+import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.usecase.game.EnableClaimUseCase
 import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
@@ -13,6 +16,7 @@ import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.SetScoreUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
+import com.example.seabattle.presentation.SoundManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +26,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.getValue
 
 
 class GameViewModel(
@@ -35,10 +42,11 @@ class GameViewModel(
     private val claimVictoryUseCase: ClaimVictoryUseCase,
     private val setScoreUseCase: SetScoreUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
+    private val soundManager: SoundManager by inject()
 
     private var listenGameJob: Job? = null
     private var checkClaimJob: Job? = null
@@ -99,6 +107,7 @@ class GameViewModel(
             _uiState.map { it.game }
                 .collectLatest { latestGame ->
                     val game = latestGame ?: return@collectLatest
+                    detectBoardChanges(game)
 
                     if (game.gameState != GameState.IN_PROGRESS.name || game.winnerId != null) {
                         _uiState.value = _uiState.value.copy(showClaimDialog = false)
@@ -148,6 +157,44 @@ class GameViewModel(
     }
 
 
+    // This function checks the changes in the game board
+    private fun detectBoardChanges(game: Game) {
+        val previousBoard1 = _uiState.value.previousGame?.boardForPlayer1
+        val previousBoard2 = _uiState.value.previousGame?.boardForPlayer1
+
+        if (previousBoard1 != null && previousBoard2 != null) {
+            compareBoards(previousBoard1, game.boardForPlayer1)
+            compareBoards(previousBoard2, game.boardForPlayer2)
+        }
+
+        _uiState.value = _uiState.value.copy(previousGame = game)
+    }
+
+
+    // This function compares the previous and current game boards
+    private fun compareBoards(previousBoard: Map<String, Map<String, Int>>, currentBoard: Map<String, Map<String, Int>>) {
+        for (row in currentBoard.keys) {
+            for (col in currentBoard[row]?.keys ?: emptySet()) {
+                val previousCell = previousBoard[row]?.get(col)
+                val currentCell = currentBoard[row]?.get(col)
+
+                if (previousCell != null && currentCell != null && previousCell != currentCell) {
+
+                    val cellState : BasicCellState = CellState.getFromValue(currentCell).toBasic()
+
+
+                    if (cellState == BasicCellState.WATER) {
+                        soundManager.playWaterSplash()
+                    } else if ((cellState == BasicCellState.HIT) || (cellState == BasicCellState.SUNK)) {
+                        soundManager.playShipHit()
+                    }
+                }
+            }
+        }
+    }
+
+
+    // This function calls the user score use case when the game is finished
     private fun onGameFinished() {
         val game = _uiState.value.game ?: return
         viewModelScope.launch {

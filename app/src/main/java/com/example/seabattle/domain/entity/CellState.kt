@@ -52,6 +52,48 @@ sealed class CellState(val value: Int) {
     object SUNK_END : CellState(
         value = 25
     )
+
+    fun toBasic(): BasicCellState {
+        when(this) {
+            is HIDDEN_WATER, WATER -> return BasicCellState.WATER
+            is SHIP, SHIP_TOP, SHIP_BOTTOM, SHIP_START, SHIP_END -> return BasicCellState.SHIP
+            is HIT, HIT_TOP, HIT_BOTTOM, HIT_START, HIT_END -> return BasicCellState.HIT
+            is SUNK, SUNK_TOP, SUNK_BOTTOM, SUNK_START, SUNK_END -> return BasicCellState.SUNK
+        }
+    }
+
+    companion object {
+        fun getFromValue(value: Int): CellState {
+            return when (value) {
+                0 -> HIDDEN_WATER
+                1 -> SHIP
+                2 -> SHIP_TOP
+                3 -> SHIP_BOTTOM
+                4 -> SHIP_START
+                5 -> SHIP_END
+                10 -> WATER
+                11 -> HIT
+                12 -> HIT_TOP
+                13 -> HIT_BOTTOM
+                14 -> HIT_START
+                15 -> HIT_END
+                21 -> SUNK
+                22 -> SUNK_TOP
+                23 -> SUNK_BOTTOM
+                24 -> SUNK_START
+                25 -> SUNK_END
+                else -> throw IllegalArgumentException("Unknown cell state value: $value")
+            }
+        }
+    }
 }
+
+enum class BasicCellState {
+    SHIP,
+    WATER,
+    HIT,
+    SUNK;
+}
+
 
 

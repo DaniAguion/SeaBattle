@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.domain.entity.CellState
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
 import com.example.seabattle.presentation.screens.game.resources.GameSection
