@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.onFailure
 
 
 class ProfileViewModel(
@@ -29,7 +30,10 @@ class ProfileViewModel(
             listenUserUseCase.invoke()
                 .collect { user ->
                     if (user != null) {
-                        _uiState.value = ProfileUiState(user = user, userLoggedIn = true)
+                        _uiState.value = ProfileUiState(
+                            user = user,
+                            userLoggedIn = true
+                        )
                     } else {
                         _uiState.value = ProfileUiState(userLoggedIn = false)
                     }
@@ -59,7 +63,10 @@ class ProfileViewModel(
     // Function to handle confirm button click in the delete dialog
     fun onClickConfirm() {
         viewModelScope.launch {
-            deleteUserUseCase()
+            deleteUserUseCase.invoke()
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
         }
         _uiState.value = _uiState.value.copy(deleteDialog = false)
     }
@@ -68,5 +75,10 @@ class ProfileViewModel(
     fun stopListening() {
         updateUIJob?.cancel()
         updateUIJob = null
+    }
+
+
+    fun onErrorShown(){
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }

@@ -1,10 +1,10 @@
 package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.UserDto
+import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toUserDto
 import com.example.seabattle.data.firestore.mappers.toUserEntity
 import com.example.seabattle.domain.repository.UserRepository
-import com.example.seabattle.data.firestore.errors.toUserError
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.errors.UserError
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,7 +27,7 @@ class UserRepositoryImpl(
         }
         .map { _ -> }
         .recoverCatching { throwable ->
-            throw throwable.toUserError()
+            throw throwable as? UserError ?: throwable.toDataError()
         }
     }
 
@@ -43,7 +43,7 @@ class UserRepositoryImpl(
             }
         }
         .recoverCatching { throwable ->
-            throw throwable.toUserError()
+            throw throwable as? UserError ?: throwable.toDataError()
         }
     }
 
@@ -52,10 +52,10 @@ class UserRepositoryImpl(
         runCatching {
             usersCollection.document(userId).delete().await()
         }
-            .map { _ -> }
-            .recoverCatching { throwable ->
-                throw throwable.toUserError()
-            }
+        .map { _ -> }
+        .recoverCatching { throwable ->
+            throw throwable as? UserError ?: throwable.toDataError()
+        }
     }
 
 
@@ -66,7 +66,7 @@ class UserRepositoryImpl(
             return@runCatching usersList
         }
         .recoverCatching { throwable ->
-            throw throwable.toUserError()
+            throw throwable as? UserError ?: throwable.toDataError()
         }
     }
 
@@ -78,7 +78,7 @@ class UserRepositoryImpl(
             return@runCatching usersList.indexOfFirst { it.userId == userId } + 1
         }
         .recoverCatching { throwable ->
-            throw throwable.toUserError()
+            throw throwable as? UserError ?: throwable.toDataError()
         }
     }
 }

@@ -5,6 +5,7 @@ import com.example.seabattle.domain.entity.CellState
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
 import com.example.seabattle.domain.entity.Ship
+import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
@@ -37,7 +38,7 @@ class MakeMoveUseCase(
                     throw UserError.UserProfileNotFound()
                 }
                 if (game.player1.userId != userId && game.player2.userId != userId) {
-                    throw GameError.GameNotValid()
+                    throw GameError.InvalidData()
                 }
 
                 // Get the opponent ships and create a copy
@@ -62,11 +63,11 @@ class MakeMoveUseCase(
 
 
                 // Check valid cell coordinates
-                val row = gameBoard[x.toString()] ?: throw GameError.Unknown()
-                val cellValue = row[y.toString()] ?: throw GameError.Unknown()
+                val row = gameBoard[x.toString()] ?: throw GameError.InvalidData()
+                val cellValue = row[y.toString()] ?: throw GameError.InvalidData()
 
                 if (gameBoard[x.toString()] == null || gameBoard[x.toString()]?.get(y.toString()) == null) {
-                    throw GameError.Unknown()
+                    throw GameError.InvalidData()
                 }
 
                 var nextPlayer = ""
@@ -112,7 +113,7 @@ class MakeMoveUseCase(
                             // If the ship was sunk, update all the pieces of the ship on the game board
                             if (sunkNow) {
                                 newShipBody.forEach { piece ->
-                                    val cellValue = gameBoard[piece.x.toString()]?.get(piece.y.toString()) ?: throw GameError.Unknown()
+                                    val cellValue = gameBoard[piece.x.toString()]?.get(piece.y.toString()) ?: throw GameError.InvalidData()
 
                                     val sunkCellValue = if (cellValue == CellState.HIT_TOP.value || cellValue == CellState.SHIP_TOP.value) {
                                         CellState.SUNK_TOP.value
@@ -142,7 +143,7 @@ class MakeMoveUseCase(
                         }
                     }
                     else -> {
-                        throw GameError.Unknown()
+                        throw GameError.InvalidData()
                     }
                 }
 
@@ -172,9 +173,12 @@ class MakeMoveUseCase(
             Timber.e(e, "MakeMoveUseCase failed.")
         }
         .recoverCatching { throwable ->
-            if (throwable is GameError) throw throwable
-            else if (throwable is UserError) throw throwable
-            else throw DomainError.Unknown(throwable)
+            when (throwable) {
+                is GameError -> throw throwable
+                is UserError -> throw throwable
+                is DataError -> throw throwable
+                else -> throw DomainError.Unknown(throwable)
+            }
         }
     }
 }

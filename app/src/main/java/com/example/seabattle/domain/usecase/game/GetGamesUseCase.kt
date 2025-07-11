@@ -1,8 +1,10 @@
 package com.example.seabattle.domain.usecase.game
 
 
+import android.provider.ContactsContract
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
@@ -34,6 +36,7 @@ class GetGamesUseCase(
                 Timber.e(throwable, "GetGamesUseCase failed.")
                 when (throwable) {
                     is GameError -> emit(Result.failure(throwable))
+                    is DataError -> emit(Result.failure(throwable))
                     else -> emit(Result.failure(DomainError.Unknown(throwable)))
                 }
             }

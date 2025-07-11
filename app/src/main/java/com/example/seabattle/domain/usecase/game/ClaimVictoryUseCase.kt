@@ -3,6 +3,7 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
@@ -28,7 +29,7 @@ class ClaimVictoryUseCase(
         val currentPlayerOffline = ((game.currentPlayer == game.player1.userId && game.player1.status != "online") ||
                 (game.currentPlayer == game.player2.userId && game.player2.status != "online"))
         val updatedAtTime = game.updatedAt?.time
-        if (updatedAtTime == null) throw GameError.GameNotValid()
+        if (updatedAtTime == null) throw GameError.InvalidData()
         val lastUpdate = (System.currentTimeMillis() - updatedAtTime)/ 1000
         return (currentPlayerOffline && lastUpdate > 30) || (lastUpdate > 60)
     }
@@ -62,9 +63,12 @@ class ClaimVictoryUseCase(
             Timber.e(e, "ClaimVictoryUseCase failed.")
         }
         .recoverCatching { throwable ->
-            if (throwable is GameError) throw throwable
-            else if (throwable is UserError) throw throwable
-            else throw DomainError.Unknown(throwable)
+            when (throwable) {
+                is GameError -> throw throwable
+                is UserError -> throw throwable
+                is DataError -> throw throwable
+                else -> throw DomainError.Unknown(throwable)
+            }
         }
     }
 }

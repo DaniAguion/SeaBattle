@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +35,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.domain.entity.User
+import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
@@ -45,11 +48,21 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel(),
 ) {
     val profileUiState by profileViewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
         onDispose {
             profileViewModel.stopListening()
+        }
+    }
+
+
+    // Show a toast message when an error occurs
+    LaunchedEffect(key1 = profileUiState.error) {
+        profileUiState.error?.let { error ->
+            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            profileViewModel.onErrorShown()
         }
     }
 

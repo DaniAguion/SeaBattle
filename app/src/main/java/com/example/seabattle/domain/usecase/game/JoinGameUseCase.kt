@@ -3,6 +3,7 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
@@ -51,9 +52,12 @@ class JoinGameUseCase(
                 Timber.e(e, "JoinGameUseCase failed.")
             }
             .recoverCatching { throwable ->
-                if (throwable is GameError) throw throwable
-                else if (throwable is UserError) throw throwable
-                else throw DomainError.Unknown(throwable)
+                when (throwable) {
+                    is GameError -> throw throwable
+                    is UserError -> throw throwable
+                    is DataError -> throw throwable
+                    else -> throw DomainError.Unknown(throwable)
+                }
             }
     }
 }

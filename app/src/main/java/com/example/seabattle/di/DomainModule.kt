@@ -31,7 +31,7 @@ val domainModule = module {
     factory { LoginUserUseCase(get(), get(), get(), get())}
     factory { LogoutUserUseCase(get(), get(), get())}
     factory { RegisterUserUseCase(get(), get(), get(), get())}
-    factory { DeleteUserUseCase(get(), get(), get(), get()) }
+    factory { DeleteUserUseCase(get(), get(), get(), get(), get()) }
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }

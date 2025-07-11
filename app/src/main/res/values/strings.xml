@@ -33,6 +33,7 @@
     <string name="error_invalid_credentials">Invalid credentials. Please verify your email and password.</string>
     <string name="error_invalid_user">Account doesn\'t exist or is disabled.</string>
     <string name="error_existing_user">An account with this email already exists.</string>
+    <string name="error_data_not_found">Data not found.</string>
     <string name="error_network_connection">Network connection problem. Please check your connection.</string>
     <string name="error_unknown">An unexpected error occurred. Try again.</string>
     <string name="error_game_not_found">Game not found.</string>

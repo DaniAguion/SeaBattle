@@ -2,11 +2,12 @@ package com.example.seabattle.data.firestore.repository
 
 
 import com.example.seabattle.data.firestore.dto.GameDto
-import com.example.seabattle.data.firestore.errors.toGameError
+import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toGameEntity
 import com.example.seabattle.data.firestore.mappers.toGameCreationDto
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
+import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.repository.GameRepository
 import com.google.firebase.firestore.FieldValue
@@ -43,7 +44,7 @@ class GameRepositoryImpl(
             .limit(25)
             .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
-                    trySend(Result.failure(error.toGameError()))
+                    trySend(Result.failure(error.toDataError()))
                     return@addSnapshotListener
                 }
 
@@ -61,9 +62,9 @@ class GameRepositoryImpl(
                 val games = snapshot.documents
                     .mapNotNull { document ->
                         try {
-                            document.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.GameNotValid()
+                            document.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.InvalidData()
                         } catch (e: Exception) {
-                            trySend(Result.failure(e.toGameError()))
+                            trySend(Result.failure(e.toDataError()))
                             return@addSnapshotListener
                         }
                     }
@@ -89,7 +90,7 @@ class GameRepositoryImpl(
             .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
                     Timber.e(error, "Error listening to game updates for gameId: $gameId")
-                    trySend(Result.failure(error.toGameError()))
+                    trySend(Result.failure(error.toDataError()))
                     return@addSnapshotListener
                 }
                 if (snapshot == null || !snapshot.exists()) {
@@ -98,9 +99,9 @@ class GameRepositoryImpl(
                 }
                 if (!snapshot.metadata.isFromCache) {
                     val gameEntity = try {
-                        snapshot.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.GameNotValid()
+                        snapshot.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.InvalidData()
                     } catch (e: Exception) {
-                        trySend(Result.failure(e.toGameError()))
+                        trySend(Result.failure(e.toDataError()))
                         return@addSnapshotListener
                     }
                     trySend(Result.success(gameEntity))
@@ -117,7 +118,7 @@ class GameRepositoryImpl(
     override suspend fun createGame(game: Game) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             if (!sourceIsServer) {
-                throw GameError.NetworkConnection()
+                throw DataError.NetworkConnection()
             }
             val gameDto = game.toGameCreationDto()
 
@@ -125,7 +126,7 @@ class GameRepositoryImpl(
             return@runCatching
         }
         .recoverCatching { throwable ->
-            throw throwable.toGameError()
+            throw throwable as? GameError ?: throwable.toDataError()
         }
     }
 
@@ -138,12 +139,12 @@ class GameRepositoryImpl(
             if (!document.exists()) { throw GameError.GameNotFound() }
 
             val gameEntity = document.toObject(GameDto::class.java)?.toGameEntity() ?:
-                throw GameError.GameNotValid()
+                throw GameError.InvalidData()
 
             return@runCatching gameEntity
         }
         .recoverCatching { throwable ->
-            throw throwable.toGameError()
+            throw throwable as? GameError ?: throwable.toDataError()
         }
     }
 
@@ -158,7 +159,7 @@ class GameRepositoryImpl(
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(document)
                 val fetchedGameDto = snapshot.toObject(GameDto::class.java)
-                    ?: throw GameError.GameNotValid()
+                    ?: throw GameError.InvalidData()
 
                 val gameEntity = fetchedGameDto.toGameEntity()
 
@@ -171,26 +172,7 @@ class GameRepositoryImpl(
             }.await()
         }
         .recoverCatching { throwable ->
-            throw throwable.toGameError()
-        }
-    }
-
-
-
-    // Function to delete a game by gameId
-    override suspend fun deleteGame(gameId: String) : Result<Unit> = withContext(ioDispatcher) {
-        runCatching {
-            db.runTransaction { transaction ->
-                val document = transaction.get(gamesCollection.document(gameId))
-
-                if (document.exists()) {
-                    transaction.delete(document.reference)
-                }
-                return@runTransaction
-            }.await()
-        }
-        .recoverCatching { throwable ->
-            throw throwable.toGameError()
+            throw throwable as? GameError ?: throwable.toDataError()
         }
     }
 }

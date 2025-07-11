@@ -9,5 +9,4 @@ interface GameRepository {
     suspend fun createGame(game: Game) : Result<Unit>
     suspend fun getGame(gameId: String) : Result<Game>
     suspend fun updateGameFields(gameId: String, logicFunction: (Game) -> Map<String, Any?>): Result<Unit>
-    suspend fun deleteGame(gameId: String) : Result<Unit>
 }
