@@ -1,10 +1,12 @@
 package com.example.seabattle.domain.entity
 
+import java.util.Date
+
 data class UserGames(
     val userId: String = "",
-    val currentGameId: String = "",
-    val invitedToGameId: String = "",
-    val historial: List<GameHistory> = emptyList()
+    val currentGameId: String? = null,
+    val invitedToGameId: String? = null,
+    val history: List<GameHistory> = emptyList()
 )
 
 data class GameHistory (
@@ -13,6 +15,6 @@ data class GameHistory (
     val player1: User,
     val player2: User,
     val scoreTransacted: Boolean = false,
-    val playedAt: String = ""
+    val playedAt: Date? = Date()
 )
 

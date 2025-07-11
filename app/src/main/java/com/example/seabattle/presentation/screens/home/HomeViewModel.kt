@@ -2,9 +2,11 @@ package com.example.seabattle.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
+import com.example.seabattle.domain.usecase.user.GetCurrentGameIdUseCase
 import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,8 @@ class HomeViewModel(
     private val createGameUseCase: CreateGameUseCase,
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
+    private val getCurrentGameIdUseCase: GetCurrentGameIdUseCase,
+    private val sessionService: SessionService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(gamesList = emptyList()))
@@ -24,6 +28,25 @@ class HomeViewModel(
 
     // Active listener use get the updated game list
     private var getGamesJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            getCurrentGameIdUseCase.invoke()
+                .onSuccess { gameId ->
+                    if (gameId.isNullOrEmpty()) {
+                        sessionService.clearCurrentGame()
+                        _uiState.value = _uiState.value.copy(hasJoined = false)
+                    } else {
+                        sessionService.setCurrentGameId(gameId)
+                        _uiState.value = _uiState.value.copy(hasJoined = true)
+                    }
+
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
+        }
+    }
 
 
     fun startListeningList() {

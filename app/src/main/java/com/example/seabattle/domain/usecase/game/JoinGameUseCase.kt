@@ -9,6 +9,7 @@ import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.UserGamesRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -18,6 +19,7 @@ import timber.log.Timber
 class JoinGameUseCase(
     val gameRepository: GameRepository,
     val userRepository: UserRepository,
+    val userGamesRepository: UserGamesRepository,
     val ioDispatcher: CoroutineDispatcher,
     val sessionService: SessionService,
 ) {
@@ -45,7 +47,8 @@ class JoinGameUseCase(
 
             // Update the game state
             gameRepository.updateGameFields(gameId, ::joinGame).getOrThrow()
-
+            // Add the game to the user's games
+            userGamesRepository.updateCurrentGameId(userId, gameId).getOrThrow()
             // Register the gameId in the session
             sessionService.setCurrentGameId(gameId)
         }

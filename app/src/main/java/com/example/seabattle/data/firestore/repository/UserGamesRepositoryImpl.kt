@@ -69,7 +69,7 @@ class UserGamesRepositoryImpl(
 
 
     // Function to update the current game ID for a user
-    override suspend fun updateCurrentGameId(userId: String, gameId: String): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             userGamesCollection.document(userId).update("currentGameId", gameId).await()
         }
@@ -81,7 +81,7 @@ class UserGamesRepositoryImpl(
 
 
     // Function to update the invited game ID for a user
-    override suspend fun updateInvitedGameId(userId: String, gameId: String): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun updateInvitedGameId(userId: String, gameId: String?): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             userGamesCollection.document(userId).update("invitedGameId", gameId).await()
         }

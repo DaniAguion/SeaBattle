@@ -10,6 +10,7 @@ import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.UserGamesRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ class CreateGameUseCase(
     val gameRepository: GameRepository,
     val userRepository: UserRepository,
     val gameBoardRepository: GameBoardRepository,
+    val userGamesRepository: UserGamesRepository,
     val ioDispatcher: CoroutineDispatcher,
     val sessionService: SessionService,
 ) {
@@ -54,10 +56,11 @@ class CreateGameUseCase(
                 gameState = GameState.WAITING_FOR_PLAYER.name
             )
 
+            // Create the game in the repository
             gameRepository.createGame(game).getOrThrow()
-
-            // Fetch the updated game and set it in the session
-            game = gameRepository.getGame(gameId).getOrThrow()
+            // Add the game to the user's games
+            userGamesRepository.updateCurrentGameId(userId, gameId).getOrThrow()
+            // Register the gameId in the session
             sessionService.setCurrentGameId(gameId)
             return@runCatching
         }

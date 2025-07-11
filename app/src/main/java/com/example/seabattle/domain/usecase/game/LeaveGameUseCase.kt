@@ -8,6 +8,7 @@ import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.GameRepository
+import com.example.seabattle.domain.repository.UserGamesRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -15,6 +16,7 @@ import timber.log.Timber
 
 class LeaveGameUseCase(
     val gameRepository: GameRepository,
+    val userGamesRepository: UserGamesRepository,
     val sessionService: SessionService,
     val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -47,8 +49,9 @@ class LeaveGameUseCase(
                     }
                 }
                 gameRepository.updateGameFields(gameId = game.gameId, logicFunction = ::leaveGame).getOrThrow()
-            }
 
+            }
+            userGamesRepository.updateCurrentGameId(userId = userId, gameId = null).getOrThrow()
             sessionService.clearCurrentGame()
         }
         .onFailure { e ->

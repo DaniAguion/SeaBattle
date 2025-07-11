@@ -7,6 +7,7 @@ import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.domain.repository.PresenceRepository
+import com.example.seabattle.domain.repository.UserGamesRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -15,6 +16,7 @@ import timber.log.Timber
 class DeleteUserUseCase (
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val userGamesRepository: UserGamesRepository,
     private val presenceRepo: PresenceRepository,
     private val sessionService: SessionService,
     val ioDispatcher: CoroutineDispatcher,
@@ -26,6 +28,7 @@ class DeleteUserUseCase (
             // Delete user from all repositories
             presenceRepo.deleteUserPresence(userId = userId).getOrThrow()
             userRepository.deleteUser(userId = userId).getOrThrow()
+            userGamesRepository.deleteUserGames(userId = userId).getOrThrow()
             authRepository.deleteUser().getOrThrow()
             sessionService.clearCurrentUser()
         }

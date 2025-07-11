@@ -22,19 +22,23 @@ import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
+import com.example.seabattle.domain.usecase.user.GetCurrentGameIdUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
     single { SessionService()}
     // User Use cases
-    factory { LoginUserUseCase(get(), get(), get(), get())}
+    factory { LoginUserUseCase(get(), get(), get(), get(), get()) }
     factory { LogoutUserUseCase(get(), get(), get())}
-    factory { RegisterUserUseCase(get(), get(), get(), get())}
-    factory { DeleteUserUseCase(get(), get(), get(), get(), get()) }
+    factory { RegisterUserUseCase(get(), get(), get(), get(), get()) }
+    factory { DeleteUserUseCase(get(), get(), get(), get(), get(), get()) }
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }
+
+    // User Games Use cases
+    factory { GetCurrentGameIdUseCase(get(), get(), get()) }
 
     // Leaderboard Use cases
     factory { GetLeaderboardUseCase(get(), get()) }
@@ -42,10 +46,10 @@ val domainModule = module {
 
     // Game Use cases
     factory { GetGamesUseCase(get(), get()) }
-    factory { CreateGameUseCase(get(), get(), get(), get(), get())}
-    factory { JoinGameUseCase(get(), get(), get(), get())}
+    factory { CreateGameUseCase(get(), get(), get(), get(), get(), get())}
+    factory { JoinGameUseCase(get(), get(), get(), get(), get())}
     factory { ListenGameUseCase(get())}
-    factory { LeaveGameUseCase(get(), get(), get())}
+    factory { LeaveGameUseCase(get(), get(), get(), get()) }
     factory { MakeMoveUseCase(get(), get(), get())}
     factory { EnableReadyUseCase() }
     factory { UserReadyUseCase(get(), get(), get())}
