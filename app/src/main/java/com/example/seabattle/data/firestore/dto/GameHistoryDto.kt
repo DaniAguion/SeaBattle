@@ -1,5 +1,6 @@
 package com.example.seabattle.data.firestore.dto
 
+import java.util.Date
 
 data class GameHistoryDto (
     val gameId: String = "",
@@ -7,6 +8,6 @@ data class GameHistoryDto (
     val player1: UserDto,
     val player2: UserDto,
     val scoreTransacted: Boolean = false,
-    val playedAt: String = ""
+    val playedAt: Date? = Date()
 )
 

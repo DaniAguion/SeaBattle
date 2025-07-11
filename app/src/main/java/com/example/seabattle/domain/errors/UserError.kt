@@ -6,4 +6,6 @@ sealed class UserError(
 ) : Exception(errorMessage, cause) {
     class UserProfileNotFound(cause: Throwable? = null) :
         UserError("User profile could not be found.", cause)
+    class UserGamesNotFound(cause: Throwable? = null) :
+        UserError("User games could not be found.", cause)
 }

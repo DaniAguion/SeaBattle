@@ -5,5 +5,5 @@ data class UserGamesDto(
     val userId: String = "",
     val currentGameId: String = "",
     val invitedToGameId: String = "",
-    val historial: List<GameHistoryDto> = emptyList(),
+    val history: List<GameHistoryDto> = emptyList(),
 )

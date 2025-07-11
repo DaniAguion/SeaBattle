@@ -9,7 +9,7 @@ fun UserGames.toDto(): UserGamesDto =
         userId = userId,
         currentGameId = currentGameId,
         invitedToGameId = invitedToGameId,
-        historial = historial.map { it.toDto() }
+        history = historial.map { it.toDto() }
     )
 
 
@@ -18,5 +18,5 @@ fun UserGamesDto.toEntity(): UserGames =
         userId = userId,
         currentGameId = currentGameId,
         invitedToGameId = invitedToGameId,
-        historial = historial.map { it.toEntity() }
+        historial = history.map { it.toEntity() }
     )
