@@ -3,7 +3,7 @@ package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.errors.toDataError
-import com.example.seabattle.data.firestore.mappers.toGameEntity
+import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.data.firestore.mappers.toGameCreationDto
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -62,7 +62,7 @@ class GameRepositoryImpl(
                 val games = snapshot.documents
                     .mapNotNull { document ->
                         try {
-                            document.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.InvalidData()
+                            document.toObject(GameDto::class.java)?.toEntity() ?: throw GameError.InvalidData()
                         } catch (e: Exception) {
                             trySend(Result.failure(e.toDataError()))
                             return@addSnapshotListener
@@ -99,7 +99,7 @@ class GameRepositoryImpl(
                 }
                 if (!snapshot.metadata.isFromCache) {
                     val gameEntity = try {
-                        snapshot.toObject(GameDto::class.java)?.toGameEntity() ?: throw GameError.InvalidData()
+                        snapshot.toObject(GameDto::class.java)?.toEntity() ?: throw GameError.InvalidData()
                     } catch (e: Exception) {
                         trySend(Result.failure(e.toDataError()))
                         return@addSnapshotListener
@@ -138,7 +138,7 @@ class GameRepositoryImpl(
             val document = gamesCollection.document(gameId).get().await()
             if (!document.exists()) { throw GameError.GameNotFound() }
 
-            val gameEntity = document.toObject(GameDto::class.java)?.toGameEntity() ?:
+            val gameEntity = document.toObject(GameDto::class.java)?.toEntity() ?:
                 throw GameError.InvalidData()
 
             return@runCatching gameEntity
@@ -161,7 +161,7 @@ class GameRepositoryImpl(
                 val fetchedGameDto = snapshot.toObject(GameDto::class.java)
                     ?: throw GameError.InvalidData()
 
-                val gameEntity = fetchedGameDto.toGameEntity()
+                val gameEntity = fetchedGameDto.toEntity()
 
                 var updateData = logicFunction(gameEntity)
                 updateData = updateData + mapOf("updatedAt" to FieldValue.serverTimestamp())

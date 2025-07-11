@@ -1,5 +1,6 @@
 package com.example.seabattle.domain.usecase.game
 
+import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
@@ -36,7 +37,7 @@ class JoinGameUseCase(
 
                 // Update the game state and add the second player
                 return mapOf(
-                    "player2" to user,
+                    "player2" to user.toDto(),
                     "gameState" to GameState.CHECK_READY.name,
                     "currentPlayer" to listOf(game.player1.userId, userId).random()
                 )

@@ -4,7 +4,7 @@ import com.example.seabattle.data.firestore.dto.UserDto
 import com.example.seabattle.domain.entity.User
 
 
-fun User.toUserDto(): UserDto =
+fun User.toDto(): UserDto =
     UserDto(
         userId = userId,
         displayName = displayName,
@@ -15,7 +15,7 @@ fun User.toUserDto(): UserDto =
     )
 
 
-fun UserDto.toUserEntity(): User =
+fun UserDto.toEntity(): User =
     User(
         userId = userId,
         displayName = displayName,
