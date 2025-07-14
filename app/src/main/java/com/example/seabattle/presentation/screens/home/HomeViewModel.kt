@@ -6,7 +6,7 @@ import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
-import com.example.seabattle.domain.usecase.user.GetCurrentGameIdUseCase
+import com.example.seabattle.domain.usecase.userGames.GetCurrentGameIdUseCase
 import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

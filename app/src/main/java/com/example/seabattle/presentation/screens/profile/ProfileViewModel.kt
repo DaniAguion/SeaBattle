@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
 import com.example.seabattle.domain.usecase.user.ListenUserUseCase
 import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
+import com.example.seabattle.domain.usecase.userGames.GetHistoryUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,7 @@ import kotlin.onFailure
 class ProfileViewModel(
     private val logoutUseCase: LogoutUserUseCase,
     private val listenUserUseCase: ListenUserUseCase,
+    private val getHistoryUseCase: GetHistoryUseCase,
     private val deleteUserUseCase: DeleteUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState())
@@ -24,8 +26,8 @@ class ProfileViewModel(
     // Listeners use to observe the game updates
     private var updateUIJob: Job? = null
 
-    init {
-        // Observe the current game from the session and update the UI state
+
+    fun startListening() {
         updateUIJob = viewModelScope.launch {
             listenUserUseCase.invoke()
                 .collect { user ->
@@ -40,6 +42,29 @@ class ProfileViewModel(
                 }
         }
     }
+
+
+    // Function to load the user history
+    fun loadUserHistory() {
+        viewModelScope.launch {
+            getHistoryUseCase.invoke()
+                .onSuccess { historyList ->
+                    _uiState.value = _uiState.value.copy(
+                        historyList = historyList,
+                        loadingList = false,
+                        errorList = false
+                    )
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(
+                        error = e,
+                        loadingList = false,
+                        errorList = true
+                    )
+                }
+        }
+    }
+
 
     // Function to handle logout button click
     fun onLogoutButtonClicked() {

@@ -96,6 +96,11 @@
     <string name="error_get_users">Error getting list of users</string>
     <string name="ranking_header">Ranking of players</string>
 
+    // Profile Screen
+    <string name="history_header">Played games</string>
+    <string name="error_get_history">Error getting list of played games</string>
+    <string name="vs">vs</string>
+
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
@@ -106,6 +111,8 @@
     <string name="delete_button">Delete</string>
     <string name="cancel_button">Cancel</string>
     <string name="error_recent_login_required">Recent login required. Please log in again.</string>
+    <string name="victory">Victory</string>
+    <string name="defeat">Defeat</string>
 
 
 </resources>
