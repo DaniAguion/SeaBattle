@@ -1,6 +1,5 @@
 package com.example.seabattle.domain.repository
 
-import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.UserGames
 
 
