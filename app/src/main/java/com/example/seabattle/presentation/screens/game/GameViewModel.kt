@@ -13,7 +13,7 @@ import com.example.seabattle.domain.usecase.game.ClaimVictoryUseCase
 import com.example.seabattle.domain.usecase.game.LeaveGameUseCase
 import com.example.seabattle.domain.usecase.game.ListenGameUseCase
 import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
-import com.example.seabattle.domain.usecase.game.SetScoreUseCase
+import com.example.seabattle.domain.usecase.game.FinishGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.presentation.SoundManager
@@ -40,7 +40,7 @@ class GameViewModel(
     private val leaveGameUseCase: LeaveGameUseCase,
     private val enableClaimUseCase: EnableClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase,
-    private val setScoreUseCase: SetScoreUseCase,
+    private val finishGameUseCase: FinishGameUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase
 ) : ViewModel(), KoinComponent {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
@@ -215,7 +215,7 @@ class GameViewModel(
     private fun onGameFinished() {
         val game = _uiState.value.game ?: return
         viewModelScope.launch {
-            setScoreUseCase.invoke( gameId = game.gameId )
+            finishGameUseCase.invoke( gameId = game.gameId )
                 .onSuccess { score ->
                     _uiState.value = _uiState.value.copy(userScore = score)
                 }

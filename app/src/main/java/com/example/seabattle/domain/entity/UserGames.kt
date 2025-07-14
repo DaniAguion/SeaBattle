@@ -14,7 +14,7 @@ data class GameHistory (
     val winnerId: String? = null,
     val player1: User,
     val player2: User,
-    val scoreTransacted: Boolean = false,
+    val scoreTransacted: Long = 0L,
     val playedAt: Date? = Date()
 )
 

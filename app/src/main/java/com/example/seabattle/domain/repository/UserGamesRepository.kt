@@ -10,5 +10,4 @@ interface UserGamesRepository {
     suspend fun deleteUserGames(userId: String): Result<Unit>
     suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
     suspend fun updateInvitedGameId(userId: String, gameId: String?): Result<Unit>
-    suspend fun addGameToHistory(userId: String, game: Game): Result<Unit>
 }

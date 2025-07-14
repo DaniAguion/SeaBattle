@@ -6,13 +6,13 @@ import com.example.seabattle.data.firebase.AuthRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserRepositoryImpl
 import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserGamesRepositoryImpl
-import com.example.seabattle.data.functions.ScoreRepositoryImpl
+import com.example.seabattle.data.functions.BackendRepositoryImpl
 import com.example.seabattle.data.realtimedb.PresenceRepoImpl
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.PresenceRepository
-import com.example.seabattle.domain.repository.ScoreRepository
+import com.example.seabattle.domain.repository.BackendRepository
 import com.example.seabattle.domain.repository.UserGamesRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -40,5 +40,5 @@ val dataModule = module {
     single<GameBoardRepository> { GameBoardRepositoryImpl() }
 
     // Firebase Cloud Functions
-    single<ScoreRepository> { ScoreRepositoryImpl(get()) }
+    single<BackendRepository> { BackendRepositoryImpl(get()) }
 }

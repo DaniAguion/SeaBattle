@@ -4,15 +4,15 @@ import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
-import com.example.seabattle.domain.repository.ScoreRepository
+import com.example.seabattle.domain.repository.BackendRepository
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class SetScoreUseCase(
+class FinishGameUseCase(
     val userRepository: UserRepository,
-    val scoreRepository: ScoreRepository,
+    val backendRepository: BackendRepository,
     val sessionService: SessionService,
     val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -29,7 +29,7 @@ class SetScoreUseCase(
             }
 
             // Call the function to  get the game details
-            scoreRepository.updateScore(gameId).getOrThrow()
+            backendRepository.finishGame(gameId).getOrThrow()
 
             // Return the score based on the userId
             val user = userRepository.getUser(userId).getOrThrow()

@@ -17,7 +17,7 @@ import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.EnableReadyUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
-import com.example.seabattle.domain.usecase.game.SetScoreUseCase
+import com.example.seabattle.domain.usecase.game.FinishGameUseCase
 import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
@@ -57,5 +57,5 @@ val domainModule = module {
     factory { ListenPresenceUseCase(get(), get()) }
     factory { EnableClaimUseCase() }
     factory { ClaimVictoryUseCase(get(), get(), get()) }
-    factory { SetScoreUseCase(get(), get(), get(), get()) }
+    factory { FinishGameUseCase(get(), get(), get(), get()) }
 }
