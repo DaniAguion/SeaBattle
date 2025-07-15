@@ -1,9 +1,36 @@
 package com.example.seabattle.data.firestore.dto
 
+import java.util.Date
+
 
 data class UserGamesDto(
     val userId: String = "",
     val currentGameId: String? = null,
-    val invitedToGameId: String? = null,
+    val invitedToGameId: List<InvitationDto> = emptyList(),
     val history: List<GameHistoryDto> = emptyList(),
+)
+
+
+data class InvitationDto(
+    val gameId: String = "",
+    val gameName: String = "",
+    val invitationState: String = "",
+    val invitedBy: BasicUserDto = BasicUserDto(),
+)
+
+
+data class GameHistoryDto (
+    val gameId: String = "",
+    val winnerId: String? = null,
+    val player1: BasicUserDto = BasicUserDto(),
+    val player2: BasicUserDto = BasicUserDto(),
+    val scoreTransacted: Long = 0L,
+    val playedAt: Date? = Date()
+)
+
+data class BasicUserDto(
+    val userId: String = "",
+    val displayName: String = "",
+    val photoUrl: String = "",
+    val score: Int = 1000
 )

@@ -28,7 +28,6 @@ import com.example.seabattle.data.local.gameSample1
 import com.example.seabattle.domain.entity.GameHistory
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.presentation.theme.SeaBattleTheme
-import kotlin.math.abs
 
 
 @Composable

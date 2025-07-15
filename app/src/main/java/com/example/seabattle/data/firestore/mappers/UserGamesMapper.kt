@@ -7,6 +7,6 @@ fun UserGamesDto.toEntity(): UserGames =
     UserGames(
         userId = userId,
         currentGameId = currentGameId,
-        invitedToGameId = invitedToGameId,
+        invitedToGameId = invitedToGameId.map { it.toEntity() },
         history = history.map { it.toEntity() }
     )
