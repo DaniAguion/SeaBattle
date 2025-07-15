@@ -32,7 +32,6 @@ fun GameDto.toEntity(): Game {
         player2Ready = player2Ready,
         boardForPlayer2 = boardForPlayer2,
         player2Ships = player2Ships,
-        currentMove = currentMove,
         currentPlayer = currentPlayer,
         gameState = gameState,
         winnerId = winnerId,
@@ -68,7 +67,6 @@ fun Game.toGameCreationDto(): GameCreationDto {
         player2Ready = player2Ready,
         boardForPlayer2 = boardForPlayer2,
         player2Ships = player2Ships,
-        currentMove = currentMove,
         currentPlayer = currentPlayer,
         gameState = gameState,
         winnerId = winnerId

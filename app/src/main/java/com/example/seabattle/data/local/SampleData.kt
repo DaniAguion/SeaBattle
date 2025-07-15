@@ -155,7 +155,6 @@ val sampleGame = Game(
             sunk = false
         )
     ),
-    currentMove=1,
     currentPlayer="dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
     gameState="GAME_IN_PROGRESS",
     winnerId=null

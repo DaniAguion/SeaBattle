@@ -20,7 +20,6 @@ data class GameCreationDto(
     val player2Ready: Boolean = false,
     val boardForPlayer2: Map<String, Map<String, Int>> = emptyMap(),
     val player2Ships: List<Ship> = emptyList(),
-    val currentMove: Int = 1,
     val currentPlayer: String = "",
     val gameState: String = "",
     val winnerId: String? = null,
