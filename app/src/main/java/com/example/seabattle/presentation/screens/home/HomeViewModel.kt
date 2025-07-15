@@ -6,7 +6,6 @@ import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
-import com.example.seabattle.domain.usecase.userGames.GetCurrentGameIdUseCase
 import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
 import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
@@ -20,7 +19,6 @@ class HomeViewModel(
     private val createGameUseCase: CreateGameUseCase,
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
-    private val getCurrentGameIdUseCase: GetCurrentGameIdUseCase,
     private val listenUserGamesUseCase: ListenUserGamesUseCase,
     private val sessionService: SessionService
 ) : ViewModel() {
@@ -31,28 +29,6 @@ class HomeViewModel(
     // Active listener use get the updated game list
     private var getUserGamesJob: Job? = null
     private var getGamesJob: Job? = null
-
-
-    /*
-    init {
-        viewModelScope.launch {
-            getCurrentGameIdUseCase.invoke()
-                .onSuccess { gameId ->
-                    if (gameId.isNullOrEmpty()) {
-                        sessionService.clearCurrentGame()
-                        _uiState.value = _uiState.value.copy(hasJoined = false)
-                    } else {
-                        sessionService.setCurrentGameId(gameId)
-                        _uiState.value = _uiState.value.copy(hasJoined = true)
-                    }
-
-                }
-                .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(error = e)
-                }
-        }
-    }
-     */
 
 
     fun startListeningUserGames(){
