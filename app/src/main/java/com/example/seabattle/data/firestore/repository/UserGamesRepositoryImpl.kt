@@ -120,7 +120,7 @@ class UserGamesRepositoryImpl(
 
 
     // Function to listen to invitations for the user
-    override suspend fun listenToUserGames(userId: String): Flow<Result<UserGames>>
+    override fun listenToUserGames(userId: String): Flow<Result<UserGames>>
     = callbackFlow {
         val listener = userGamesCollection
             .document(userId)
