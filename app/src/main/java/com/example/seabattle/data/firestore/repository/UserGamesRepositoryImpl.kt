@@ -1,13 +1,11 @@
 package com.example.seabattle.data.firestore.repository
 
-import com.example.seabattle.data.firestore.dto.GameDto
 import com.example.seabattle.data.firestore.dto.UserGamesDto
 import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.Invitation
 import com.example.seabattle.domain.entity.UserGames
-import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.UserGamesRepository
 import com.google.firebase.firestore.FieldValue
@@ -162,7 +160,7 @@ class UserGamesRepositoryImpl(
                 .get()
                 .await()
 
-            var userGamesDto: UserGamesDto? = null
+            var userGamesDto: UserGamesDto?
 
             if (document.exists()) {
                 userGamesDto = document.toObject(UserGamesDto::class.java)

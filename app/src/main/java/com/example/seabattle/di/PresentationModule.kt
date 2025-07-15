@@ -12,10 +12,55 @@ import org.koin.dsl.module
 
 val presentationModule = module {
     single { GoogleSignIn() }
-    viewModel { SplashViewModel(get()) }
-    viewModel { WelcomeViewModel(get(), get(), get()) }
-    viewModel { ProfileViewModel(get(), get(), get(), get()) }
-    viewModel { GameViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
-    viewModel { LeaderboardViewModel(get(), get(), get()) }
+    viewModel {
+        SplashViewModel(
+            get()
+        )
+    }
+    viewModel {
+        WelcomeViewModel(
+            get(),
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        ProfileViewModel(
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        GameViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        HomeViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        LeaderboardViewModel(
+        get(),
+            get(),
+            get()
+        )
+    }
 }

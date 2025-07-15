@@ -55,9 +55,9 @@ fun HomeScreen(
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
-        homeViewModel.startListeningList()
+        homeViewModel.startListeners()
         onDispose {
-            homeViewModel.stopListeningList()
+            homeViewModel.stopListeners()
             homeViewModel.resetUiState()
         }
     }

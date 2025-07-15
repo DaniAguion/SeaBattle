@@ -7,6 +7,7 @@ import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.userGames.GetCurrentGameIdUseCase
+import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
 import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,7 @@ class HomeViewModel(
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
     private val getCurrentGameIdUseCase: GetCurrentGameIdUseCase,
+    private val listenUserGamesUseCase: ListenUserGamesUseCase,
     private val sessionService: SessionService
 ) : ViewModel() {
 
@@ -27,8 +29,11 @@ class HomeViewModel(
     var uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     // Active listener use get the updated game list
+    private var getUserGamesJob: Job? = null
     private var getGamesJob: Job? = null
 
+
+    /*
     init {
         viewModelScope.launch {
             getCurrentGameIdUseCase.invoke()
@@ -47,9 +52,34 @@ class HomeViewModel(
                 }
         }
     }
+     */
 
 
-    fun startListeningList() {
+    fun startListeningUserGames(){
+        getUserGamesJob = viewModelScope.launch {
+            listenUserGamesUseCase.invoke()
+                .collect { result ->
+                    result
+                        .onSuccess { userGames ->
+                            if (userGames.currentGameId.isNullOrEmpty()) {
+                                sessionService.clearCurrentGame()
+                                _uiState.value = _uiState.value.copy(hasJoined = false)
+                            } else {
+                                sessionService.setCurrentGameId(userGames.currentGameId)
+                                _uiState.value = _uiState.value.copy(hasJoined = true)
+                            }
+                        }
+                        .onFailure { e ->
+                            _uiState.value = _uiState.value.copy(
+                                error = e
+                            )
+                        }
+                }
+        }
+    }
+
+
+    fun startGettingGames() {
         _uiState.value = _uiState.value.copy(loadingList = true)
         // Start listening to fetch games
         getGamesJob = viewModelScope.launch {
@@ -76,7 +106,15 @@ class HomeViewModel(
     }
 
 
-    fun stopListeningList() {
+    fun startListeners(){
+        startListeningUserGames()
+        startGettingGames()
+    }
+
+
+    fun stopListeners() {
+        getUserGamesJob?.cancel()
+        getUserGamesJob = null
         getGamesJob?.cancel()
         getGamesJob = null
     }
