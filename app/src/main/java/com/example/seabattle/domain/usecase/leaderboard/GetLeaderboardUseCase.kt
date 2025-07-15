@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.leaderboard
 
-import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.UserRepository
@@ -12,7 +12,7 @@ class GetLeaderboardUseCase(
     val userRepository: UserRepository,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(): Result<List<User>> = withContext(ioDispatcher) {
+    suspend operator fun invoke(): Result<List<BasicPlayer>> = withContext(ioDispatcher) {
         runCatching {
             val userList = userRepository.getLeaderboard().getOrThrow()
             return@runCatching userList

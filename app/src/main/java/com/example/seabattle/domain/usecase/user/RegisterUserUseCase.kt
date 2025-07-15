@@ -30,7 +30,7 @@ class RegisterUserUseCase (
 
             userRepository.createUser(userProfile).getOrThrow()
             userGamesRepository.createUserGames(userProfile.userId).getOrThrow()
-            sessionService.setCurrentUser(userProfile)
+            sessionService.setCurrentUserId(userProfile)
             return@runCatching true
         }
         .onFailure { e ->

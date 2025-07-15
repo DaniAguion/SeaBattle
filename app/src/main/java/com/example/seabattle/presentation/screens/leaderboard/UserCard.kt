@@ -18,14 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.seabattle.R
-import com.example.seabattle.data.local.gameSample1
-import com.example.seabattle.domain.entity.User
+import com.example.seabattle.data.local.sampleBasicPlayersList
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 
 
 @Composable
 fun UserCard(
-    user: User?,
+    user: BasicPlayer?,
     position: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -90,7 +90,7 @@ fun UserCard(
 fun GameCardPreview() {
     SeaBattleTheme {
         UserCard(
-            user = gameSample1.player1,
+            user = sampleBasicPlayersList.first(),
             position = 4,
             modifier = Modifier.fillMaxWidth()
         )

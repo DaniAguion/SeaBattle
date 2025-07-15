@@ -11,7 +11,8 @@ fun User.toDto(): UserDto =
         email = email,
         photoUrl = photoUrl,
         status = status,
-        score = score
+        score = score,
+        history = history.map { it.toDto() }
     )
 
 
@@ -22,5 +23,6 @@ fun UserDto.toEntity(): User =
         email = email,
         photoUrl = photoUrl,
         status = status,
-        score = score
+        score = score,
+        history = history.map { it.toEntity() }
     )

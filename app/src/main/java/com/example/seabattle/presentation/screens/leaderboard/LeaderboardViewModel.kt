@@ -2,6 +2,7 @@ package com.example.seabattle.presentation.screens.leaderboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.usecase.leaderboard.GetLeaderboardUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
@@ -24,7 +25,12 @@ class LeaderboardViewModel(
             getUserProfileUseCase.invoke()
                 .onSuccess { user ->
                     _uiState.value = _uiState.value.copy(
-                        user = user,
+                        user = BasicPlayer(
+                            userId = user.userId,
+                            displayName = user.displayName,
+                            photoUrl = user.photoUrl,
+                            score = user.score
+                        ),
                         error = null
                     )
                 }

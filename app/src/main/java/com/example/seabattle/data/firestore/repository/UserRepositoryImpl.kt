@@ -1,9 +1,11 @@
 package com.example.seabattle.data.firestore.repository
 
+import com.example.seabattle.data.firestore.dto.BasicPlayerDto
 import com.example.seabattle.data.firestore.dto.UserDto
 import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.errors.UserError
@@ -23,7 +25,11 @@ class UserRepositoryImpl(
     override suspend fun createUser(user: User) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userDto = user.toDto()
-            usersCollection.document(user.userId).set(userDto).await()
+
+            usersCollection
+                .document(user.userId)
+                .set(userDto)
+                .await()
         }
         .map { _ -> }
         .recoverCatching { throwable ->
@@ -34,7 +40,11 @@ class UserRepositoryImpl(
 
     override suspend fun getUser(userId: String) : Result<User> = withContext(ioDispatcher) {
         runCatching {
-            val document = usersCollection.document(userId).get().await()
+            val document = usersCollection
+                .document(userId)
+                .get()
+                .await()
+
             if (document.exists()) {
                 val userEntity = document.toObject(UserDto::class.java)?.toEntity()
                 return@runCatching userEntity ?: throw UserError.UserProfileNotFound()
@@ -50,7 +60,10 @@ class UserRepositoryImpl(
 
     override suspend fun deleteUser(userId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
-            usersCollection.document(userId).delete().await()
+            usersCollection
+                .document(userId)
+                .delete()
+                .await()
         }
         .map { _ -> }
         .recoverCatching { throwable ->
@@ -59,10 +72,16 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun getLeaderboard(): Result<List<User>> = withContext(ioDispatcher) {
+    override suspend fun getLeaderboard(): Result<List<BasicPlayer>> = withContext(ioDispatcher) {
         runCatching {
-            val querySnapshot = usersCollection.orderBy("score", DESCENDING).orderBy("userId", DESCENDING).limit(25).get().await()
-            val usersList = querySnapshot.documents.mapNotNull { it.toObject(UserDto::class.java)?.toEntity() }
+            val querySnapshot = usersCollection
+                .orderBy("score", DESCENDING)
+                .orderBy("userId", DESCENDING)
+                .limit(25)
+                .get()
+                .await()
+
+            val usersList : List<BasicPlayer> = querySnapshot.documents.mapNotNull { it.toObject(BasicPlayerDto::class.java)?.toEntity() }
             return@runCatching usersList
         }
         .recoverCatching { throwable ->
@@ -73,7 +92,12 @@ class UserRepositoryImpl(
 
     override suspend fun getUserPosition(userId: String, userScore: Int): Result<Int> = withContext(ioDispatcher) {
         runCatching {
-            val querySnapshot = usersCollection.whereGreaterThanOrEqualTo("score", userScore).orderBy("score", DESCENDING).get().await()
+            val querySnapshot = usersCollection
+                .whereGreaterThanOrEqualTo("score", userScore)
+                .orderBy("score", DESCENDING)
+                .get()
+                .await()
+
             val usersList = querySnapshot.documents.mapNotNull { it.toObject(UserDto::class.java)?.toEntity() }
             return@runCatching usersList.indexOfFirst { it.userId == userId } + 1
         }

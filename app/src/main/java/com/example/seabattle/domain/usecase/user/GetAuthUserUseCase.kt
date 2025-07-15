@@ -22,7 +22,7 @@ class GetAuthUserUseCase (
             }
 
             val userProfile = authRepository.getAuthUserProfile().getOrThrow()
-            sessionService.setCurrentUser(userProfile)
+            sessionService.setCurrentUserId(userProfile)
             return@runCatching userProfile
         }
             .onFailure { e ->

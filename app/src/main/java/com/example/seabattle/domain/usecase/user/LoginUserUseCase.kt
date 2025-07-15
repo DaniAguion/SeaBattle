@@ -33,7 +33,7 @@ class LoginUserUseCase (
                     userGamesRepository.createUserGames(userProfile.userId).getOrThrow()
                 }
             }
-            sessionService.setCurrentUser(userProfile)
+            sessionService.setCurrentUserId(userProfile)
             return@runCatching true
         }
         .onFailure { e ->

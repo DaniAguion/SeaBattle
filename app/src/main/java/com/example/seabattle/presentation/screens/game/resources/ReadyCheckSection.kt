@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
-import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 
@@ -114,7 +114,7 @@ fun ReadyCheckSection(
 fun ReadyCheckSectionPreview(){
     SeaBattleTheme {
         ReadyCheckSection(
-            game = gameSample1
+            game = sampleGame
         )
     }
 }

@@ -24,15 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.seabattle.R
-import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.data.local.sampleGame
+import com.example.seabattle.data.local.sampleGameHistory
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.entity.GameHistory
-import com.example.seabattle.domain.entity.User
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 
 
 @Composable
 fun PlayedGameCard(
-    user: User,
+    userId: String,
     game: GameHistory,
     modifier: Modifier = Modifier,
 ) {
@@ -52,13 +53,13 @@ fun PlayedGameCard(
                 horizontalArrangement = Arrangement.Center,
             ){
                 Text(
-                    text = if (user.userId == game.winnerId) {stringResource(id = R.string.victory)} else {stringResource(id = R.string.defeat)},
+                    text = if (userId == game.winnerId) {stringResource(id = R.string.victory)} else {stringResource(id = R.string.defeat)},
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (user.userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    color = if (userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
                 )
                 Text(
-                    text = "( " + if (user.userId == game.player1.userId) {
+                    text = "( " + if (userId == game.player1.userId) {
                         game.player1.score.toString()
                     } else {
                         game.player2.score.toString()
@@ -66,7 +67,7 @@ fun PlayedGameCard(
 
                     style = MaterialTheme.typography.bodyMedium
                     .copy(fontWeight = SemiBold),
-                    color = if (user.userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    color = if (userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .padding(dimensionResource(R.dimen.padding_small))
                 )
@@ -98,7 +99,7 @@ fun PlayedGameCard(
 
 @Composable
 fun PlayerInfo(
-    player: User
+    player: BasicPlayer
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -133,15 +134,8 @@ fun PlayerInfo(
 fun GameCardPreview() {
     SeaBattleTheme {
         PlayedGameCard(
-            user = gameSample1.player1,
-            game = GameHistory(
-                gameId = "1",
-                winnerId = gameSample1.player1.userId,
-                player1 = gameSample1.player1,
-                player2 = gameSample1.player2,
-                14,
-                playedAt = gameSample1.updatedAt
-            ),
+            userId = sampleGame.player1.userId,
+            game = sampleGameHistory,
             modifier = Modifier.fillMaxWidth()
         )
     }

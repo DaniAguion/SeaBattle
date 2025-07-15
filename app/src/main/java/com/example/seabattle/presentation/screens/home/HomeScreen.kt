@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
-import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
@@ -251,7 +251,7 @@ fun HomeScreenPreview(){
             errorList = false,
             loadingList = false,
             hasJoined = false,
-            gameList = listOf(gameSample1),
+            gameList = listOf(sampleGame),
             onClickCreateGame = { },
             onClickJoinGame = { },
             onGameNameUpdate = { },

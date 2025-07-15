@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
-import com.example.seabattle.data.local.gameSample1
+import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
@@ -112,8 +112,8 @@ fun GameSectionPreview(){
     SeaBattleTheme {
         GameSection(
             modifier = Modifier.fillMaxWidth(),
-            game = gameSample1,
-            userId = gameSample1.player1.userId
+            game = sampleGame,
+            userId = sampleGame.player1.userId
         )
     }
 }

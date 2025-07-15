@@ -33,8 +33,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.seabattle.data.local.gameSample1
-import com.example.seabattle.domain.entity.CellState
+import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.game.resources.GameFinishedSection
 import com.example.seabattle.presentation.screens.game.resources.GameSection
@@ -274,10 +273,10 @@ fun GameScreenPreview(){
     SeaBattleTheme {
         GameScreenContent(
             modifier = Modifier.fillMaxSize(),
-            game = gameSample1.copy(
+            game = sampleGame.copy(
                 gameState = GameState.IN_PROGRESS.name,
             ),
-            userId = gameSample1.player1.userId,
+            userId = sampleGame.player1.userId,
             userScore = 100,
         )
     }

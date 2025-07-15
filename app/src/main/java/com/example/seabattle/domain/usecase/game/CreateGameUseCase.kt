@@ -3,7 +3,7 @@ package com.example.seabattle.domain.usecase.game
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameState
-import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.domain.errors.DataError
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.GameError
@@ -43,10 +43,16 @@ class CreateGameUseCase(
             var game = Game(
                 gameId = gameId,
                 gameName = gameName,
-                player1 = user,
+                player1 = Player(
+                    userId = user.userId,
+                    displayName = user.displayName,
+                    photoUrl = user.photoUrl,
+                    status = user.status,
+                    score = user.score
+                ),
                 boardForPlayer1 = boardForPlayer1,
                 player1Ships = player1Ships,
-                player2 = User(
+                player2 = Player(
                     userId = "",
                     displayName = "",
                     photoUrl = ""

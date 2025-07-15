@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.seabattle.R
+import com.example.seabattle.data.local.sampleUser
 import com.example.seabattle.domain.entity.GameHistory
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.presentation.resources.toErrorMessageUI
@@ -59,7 +60,7 @@ fun ProfileScreen(
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
         profileViewModel.startListening()
-        profileViewModel.loadUserHistory()
+        profileViewModel.loadUserProfile()
         onDispose {
             profileViewModel.stopListening()
         }
@@ -121,7 +122,7 @@ fun ProfileScreen(
     ProfileScreenContent(
         modifier = modifier,
         user = profileUiState.user,
-        historyList = profileUiState.historyList,
+        historyList = profileUiState.user.history.reversed(),
         errorList = profileUiState.errorList,
         loadingList = profileUiState.loadingList,
         onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked,
@@ -228,8 +229,8 @@ fun ProfileScreenContent(
                         !errorList -> {
                             historyList.forEach { playedGame ->
                                 PlayedGameCard(
+                                    userId = user.userId,
                                     game = playedGame,
-                                    user = user,
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
@@ -268,13 +269,7 @@ fun ProfilePreview(){
     SeaBattleTheme {
         ProfileScreenContent(
             modifier = Modifier.fillMaxSize(),
-            user = User(
-                userId = "1",
-                displayName = "John Doe",
-                email = "@example.com",
-                photoUrl = "",
-                score = 100
-            ),
+            user = sampleUser,
             onLogoutButtonClicked = {}
         )
     }

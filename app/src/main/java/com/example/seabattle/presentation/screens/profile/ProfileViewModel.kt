@@ -3,9 +3,9 @@ package com.example.seabattle.presentation.screens.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
+import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.user.ListenUserUseCase
 import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
-import com.example.seabattle.domain.usecase.userGames.GetHistoryUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import kotlin.onFailure
 class ProfileViewModel(
     private val logoutUseCase: LogoutUserUseCase,
     private val listenUserUseCase: ListenUserUseCase,
-    private val getHistoryUseCase: GetHistoryUseCase,
+    private val getUserProfile: GetUserProfileUseCase,
     private val deleteUserUseCase: DeleteUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState())
@@ -30,12 +30,9 @@ class ProfileViewModel(
     fun startListening() {
         updateUIJob = viewModelScope.launch {
             listenUserUseCase.invoke()
-                .collect { user ->
-                    if (user != null) {
-                        _uiState.value = ProfileUiState(
-                            user = user,
-                            userLoggedIn = true
-                        )
+                .collect { userId ->
+                    if (userId != null) {
+                        _uiState.value = ProfileUiState(userLoggedIn = true)
                     } else {
                         _uiState.value = ProfileUiState(userLoggedIn = false)
                     }
@@ -45,12 +42,12 @@ class ProfileViewModel(
 
 
     // Function to load the user history
-    fun loadUserHistory() {
+    fun loadUserProfile() {
         viewModelScope.launch {
-            getHistoryUseCase.invoke()
-                .onSuccess { historyList ->
+            getUserProfile.invoke()
+                .onSuccess { userProfile ->
                     _uiState.value = _uiState.value.copy(
-                        historyList = historyList,
+                        user = userProfile,
                         loadingList = false,
                         errorList = false
                     )

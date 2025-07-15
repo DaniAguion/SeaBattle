@@ -29,7 +29,7 @@ class DeleteUserUseCase (
             userRepository.deleteUser(userId = userId).getOrThrow()
             userGamesRepository.deleteUserGames(userId = userId).getOrThrow()
             authRepository.deleteUser().getOrThrow()
-            sessionService.clearCurrentUser()
+            sessionService.clearCurrentUserId()
         }
         .onFailure { e ->
             Timber.e(e, "DeleteUserUseCase failed.")

@@ -27,7 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.seabattle.R
-import com.example.seabattle.domain.entity.User
+import com.example.seabattle.data.local.sampleBasicPlayersList
+import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
@@ -71,9 +72,9 @@ fun LeaderBoardScreen(
 
 @Composable
 fun LeaderBoardContent(
-    user: User?,
+    user: BasicPlayer?,
     userPosition: Int?,
-    usersList: List<User>,
+    usersList: List<BasicPlayer>,
     loadingList: Boolean,
     errorList: Boolean,
     modifier: Modifier = Modifier
@@ -200,15 +201,9 @@ fun LeaderBoardContent(
 fun LeaderBoardPreview(){
     SeaBattleTheme {
         LeaderBoardContent(
-            user = User(userId = "1", displayName = "Player1", score = 100),
+            user = sampleBasicPlayersList.first(),
             userPosition = 1,
-            usersList = listOf(
-                User(userId = "1", displayName = "Player1", score = 100),
-                User(userId = "2", displayName = "Player2", score = 90),
-                User(userId = "3", displayName = "Player3", score = 80),
-                User(userId = "4", displayName = "Player4", score = 70),
-                User(userId = "5", displayName = "Player5", score = 60)
-            ),
+            usersList = sampleBasicPlayersList,
             loadingList = false,
             errorList = false,
             modifier = Modifier.fillMaxSize(),

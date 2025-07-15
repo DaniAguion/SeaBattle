@@ -54,9 +54,9 @@ class MainActivity : ComponentActivity() {
     private fun startPresenceMonitoring() {
         // Start listening for user authentication changes and set presence when authenticated
         activityScope.launch {
-            listenUserUseCase.invoke().collect { user ->
+            listenUserUseCase.invoke().collect { userId ->
                 val wasAuthenticated = isUserAuthenticated
-                isUserAuthenticated = (user != null)
+                isUserAuthenticated = (userId != null)
 
                 if (isUserAuthenticated && !wasAuthenticated) {
                     setPresenceUseCase.invoke()

@@ -16,6 +16,6 @@ class LogoutUserUseCase (
         presenceRepo.setUserOffline(userId = userId).getOrThrow()
 
         authRepository.logoutUser()
-        sessionService.clearCurrentUser()
+        sessionService.clearCurrentUserId()
     }
 }
