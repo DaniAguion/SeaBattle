@@ -6,7 +6,7 @@ import java.util.Date
 data class UserGamesDto(
     val userId: String = "",
     val currentGameId: String? = null,
-    val invitedToGameId: List<InvitationDto> = emptyList(),
+    val gameInvitations: List<InvitationDto> = emptyList(),
     val history: List<GameHistoryDto> = emptyList(),
 )
 
@@ -14,7 +14,6 @@ data class UserGamesDto(
 data class InvitationDto(
     val gameId: String = "",
     val gameName: String = "",
-    val invitationState: String = "",
     val invitedBy: BasicUserDto = BasicUserDto(),
 )
 
