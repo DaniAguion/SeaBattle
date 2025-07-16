@@ -10,6 +10,6 @@ interface UserGamesRepository {
     fun listenToUserGames(userId: String): Flow<Result<UserGames>>
     suspend fun deleteUserGames(userId: String): Result<Unit>
     suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
-    suspend fun inviteToGame(guestId: String, invitation: Invitation): Result<Unit>
-    suspend fun deleteInvitation(userId: String): Result<Unit>
+    suspend fun sendInvitation(invitation: Invitation): Result<Unit>
+    suspend fun cancelInvitation(userId: String): Result<Unit>
 }

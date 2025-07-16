@@ -40,7 +40,7 @@ class InviteUserUseCase(
                 )
             )
 
-            userGamesRepository.inviteToGame(invitedPlayerId, invitation).getOrThrow()
+            userGamesRepository.sendInvitation(invitation).getOrThrow()
         }
         .onFailure { e ->
             Timber.e(e, "InviteUserUseCase failed.")

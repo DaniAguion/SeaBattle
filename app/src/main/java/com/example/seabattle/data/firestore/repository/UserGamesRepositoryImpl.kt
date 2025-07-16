@@ -120,15 +120,26 @@ class UserGamesRepositoryImpl(
 
 
     // Function to invite an user
-    override suspend fun inviteToGame(guestId: String, invitation: Invitation): Result<Unit>
-            = withContext(ioDispatcher) {
+    override suspend fun sendInvitation(invitation: Invitation): Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
-            val invitationDto = invitation.toDto()
+            db.runTransaction { transaction ->
+                val invitationDto = invitation.toDto()
+                val documentHostRef = userGamesCollection.document(invitationDto.invitedBy.userId)
+                val documentGuestRef = userGamesCollection.document(invitationDto.invitedTo.userId)
 
-            userGamesCollection
-                .document(guestId)
-                .update("invitedGameId", FieldValue.arrayUnion(invitationDto))
-                .await()
+                transaction.update(
+                    documentHostRef,
+                    "sentGameInvitation",
+                    invitationDto
+                )
+
+                transaction.update(
+                    documentGuestRef,
+                    "invitedGameId",
+                    FieldValue.arrayUnion(invitationDto)
+                )
+            }.await()
             return@runCatching
         }
         .recoverCatching { throwable ->
@@ -139,29 +150,34 @@ class UserGamesRepositoryImpl(
 
 
     // Function to delete an invitation
-    override suspend fun deleteInvitation(userId: String): Result<Unit>
+    override suspend fun cancelInvitation(userId: String): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
-            val document = userGamesCollection
-                .document(userId)
-                .get()
-                .await()
+            db.runTransaction { transaction ->
+                val userGamesDoc = userGamesCollection.document(userId)
 
-            var userGamesDto: UserGamesDto?
+                // Fetch the user games document to check the sent invitation
+                val snapshot = transaction.get(userGamesDoc)
+                if (!snapshot.exists()) throw UserError.UserGamesNotFound()
+                val userGamesDto = snapshot.toObject(UserGamesDto::class.java) ?: throw UserError.InvalidData()
+                val invitationDto = userGamesDto.sentGameInvitation ?: return@runTransaction
 
-            if (document.exists()) {
-                userGamesDto = document.toObject(UserGamesDto::class.java)
-                    ?: throw UserError.InvalidData()
-            } else {
-                throw UserError.UserGamesNotFound()
-            }
+                // Remove the invitation from the host and guest user games
+                val documentHostRef = userGamesCollection.document(invitationDto.invitedBy.userId)
+                val documentGuestRef = userGamesCollection.document(invitationDto.invitedTo.userId)
 
-            userGamesCollection
-                .document(userId)
-                .update(
+                transaction.update(
+                    documentHostRef,
+                    "sentGameInvitation",
+                    null
+                )
+
+                transaction.update(
+                    documentGuestRef,
                     "invitedGameId",
-                    FieldValue.arrayRemove(userGamesDto.sentGameInvitation)
-                ).await()
+                    FieldValue.arrayRemove(invitationDto)
+                )
+            }.await()
             return@runCatching
         }
         .recoverCatching { throwable ->
