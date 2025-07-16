@@ -26,7 +26,8 @@ class CreateGameUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val sessionService: SessionService,
 ) {
-    suspend operator fun invoke(gameName: String): Result<Unit> = withContext(ioDispatcher) {
+    suspend operator fun invoke(gameName: String, privateGame: Boolean): Result<Unit>
+    = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
             val user = userRepository.getUser(userId).getOrThrow()

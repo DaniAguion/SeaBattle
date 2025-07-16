@@ -12,6 +12,7 @@ import java.util.Date
 data class GameCreationDto(
     val gameId: String = "",
     val gameName: String = "",
+    val privateGame: Boolean = false,
     val player1: PlayerDto = PlayerDto(),
     val player1Ready: Boolean = false,
     val boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),
@@ -35,6 +36,7 @@ data class GameCreationDto(
 data class GameDto(
     val gameId: String = "",
     val gameName: String = "",
+    val privateGame: Boolean = false,
     val player1: PlayerDto = PlayerDto(),
     var player1Ready: Boolean = false,
     var boardForPlayer1: Map<String, Map<String, Int>> = emptyMap(),

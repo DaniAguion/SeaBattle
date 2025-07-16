@@ -109,7 +109,7 @@ class HomeViewModel(
             return
         }
         viewModelScope.launch {
-            createGameUseCase.invoke(gameName = gameName)
+            createGameUseCase.invoke(gameName = gameName, privateGame = false)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }

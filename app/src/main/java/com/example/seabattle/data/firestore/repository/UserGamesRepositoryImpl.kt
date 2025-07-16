@@ -32,6 +32,7 @@ class UserGamesRepositoryImpl(
         .build()
 
 
+
     // Function to create user games
     override suspend fun createUserGames(userId: String) : Result<Unit>
     = withContext(ioDispatcher) {
@@ -49,77 +50,10 @@ class UserGamesRepositoryImpl(
     }
 
 
-    // Function to get user games by user ID
-    override suspend fun getUserGames(userId: String) : Result<UserGames>
-    = withContext(ioDispatcher) {
-        runCatching {
-            val document = userGamesCollection.document(userId).get().await()
-            if (document.exists()) {
-                val userGamesEntity = document.toObject(UserGamesDto::class.java)?.toEntity()
-                return@runCatching userGamesEntity ?: throw UserError.InvalidData()
-            } else {
-                throw UserError.UserGamesNotFound()
-            }
-        }
-        .recoverCatching { throwable ->
-            throw throwable as? UserError ?: throwable.toDataError()
-        }
-    }
-
-
-    // Function to delete user games
-    override suspend fun deleteUserGames(userId: String): Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            userGamesCollection
-                .document(userId)
-                .delete()
-                .await()
-        }
-        .map { _ -> }
-        .recoverCatching { throwable ->
-            throw throwable as? UserError ?: throwable.toDataError()
-        }
-    }
-
-
-    // Function to update the current game ID for a user
-    override suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            userGamesCollection
-                .document(userId)
-                .update("currentGameId", gameId)
-                .await()
-        }
-        .map { _ -> }
-        .recoverCatching { throwable ->
-            throw throwable as? UserError ?: throwable.toDataError()
-        }
-    }
-
-
-    // Function to invite an user
-    override suspend fun inviteToGame(guestId: String, invitation: Invitation): Result<Unit>
-    = withContext(ioDispatcher) {
-        runCatching {
-            val invitationDto = invitation.toDto()
-            userGamesCollection
-                .document(guestId)
-                .update("invitedGameId", FieldValue.arrayUnion(invitationDto))
-                .await()
-        }
-            .map { _ -> }
-            .recoverCatching { throwable ->
-                throw throwable as? UserError ?: throwable.toDataError()
-            }
-    }
-
-
 
     // Function to listen to invitations for the user
     override fun listenToUserGames(userId: String): Flow<Result<UserGames>>
-    = callbackFlow {
+            = callbackFlow {
         val listener = userGamesCollection
             .document(userId)
             .addSnapshotListener(listenerOptions) { snapshot, error ->
@@ -151,8 +85,61 @@ class UserGamesRepositoryImpl(
 
 
 
+    // Function to delete user games
+    override suspend fun deleteUserGames(userId: String): Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            userGamesCollection
+                .document(userId)
+                .delete()
+                .await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable as? UserError ?: throwable.toDataError()
+        }
+    }
+
+
+
+    // Function to update the current game ID for a user
+    override suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
+    = withContext(ioDispatcher) {
+        runCatching {
+            userGamesCollection
+                .document(userId)
+                .update("currentGameId", gameId)
+                .await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable as? UserError ?: throwable.toDataError()
+        }
+    }
+
+
+
+    // Function to invite an user
+    override suspend fun inviteToGame(guestId: String, invitation: Invitation): Result<Unit>
+            = withContext(ioDispatcher) {
+        runCatching {
+            val invitationDto = invitation.toDto()
+
+            userGamesCollection
+                .document(guestId)
+                .update("invitedGameId", FieldValue.arrayUnion(invitationDto))
+                .await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable as? UserError ?: throwable.toDataError()
+        }
+    }
+
+
+
     // Function to delete an invitation
-    override suspend fun deleteInvitation(userId: String, gameID: String): Result<Unit>
+    override suspend fun deleteInvitation(userId: String): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             val document = userGamesCollection
@@ -169,13 +156,12 @@ class UserGamesRepositoryImpl(
                 throw UserError.UserGamesNotFound()
             }
 
-            val gameInvitation = userGamesDto.gameInvitations.indexOfFirst { it.gameId == gameID }
-
             userGamesCollection
                 .document(userId)
-                .update("invitedGameId", FieldValue.arrayRemove(gameInvitation))
-                .await()
-
+                .update(
+                    "invitedGameId",
+                    FieldValue.arrayRemove(userGamesDto.sentGameInvitation)
+                ).await()
             return@runCatching
         }
         .recoverCatching { throwable ->

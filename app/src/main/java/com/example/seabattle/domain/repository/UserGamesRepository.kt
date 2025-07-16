@@ -7,10 +7,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserGamesRepository {
     suspend fun createUserGames(userId: String) : Result<Unit>
-    suspend fun getUserGames(userId: String) : Result<UserGames>
+    fun listenToUserGames(userId: String): Flow<Result<UserGames>>
     suspend fun deleteUserGames(userId: String): Result<Unit>
     suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
     suspend fun inviteToGame(guestId: String, invitation: Invitation): Result<Unit>
-    fun listenToUserGames(userId: String): Flow<Result<UserGames>>
-    suspend fun deleteInvitation(userId: String, gameID: String): Result<Unit>
+    suspend fun deleteInvitation(userId: String): Result<Unit>
 }

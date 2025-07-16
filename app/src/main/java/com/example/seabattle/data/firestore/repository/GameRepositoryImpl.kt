@@ -41,6 +41,7 @@ class GameRepositoryImpl(
         val listener = gamesCollection
             .whereEqualTo("player1.status", "online")
             .whereEqualTo("gameState", GameState.WAITING_FOR_PLAYER.name)
+            .whereEqualTo("privateGame", false)
             .limit(25)
             .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {

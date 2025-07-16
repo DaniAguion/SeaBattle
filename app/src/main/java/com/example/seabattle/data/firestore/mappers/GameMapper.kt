@@ -12,6 +12,7 @@ fun GameDto.toEntity(): Game {
     return Game(
         gameId = gameId,
         gameName = gameName,
+        privateGame = privateGame,
         player1 = Player(
             userId = player1.userId,
             displayName = player1.displayName,
@@ -47,6 +48,7 @@ fun Game.toGameCreationDto(): GameCreationDto {
     return GameCreationDto(
         gameId = gameId,
         gameName = gameName,
+        privateGame = privateGame,
         player1 = PlayerDto(
             userId = player1.userId,
             displayName = player1.displayName,
