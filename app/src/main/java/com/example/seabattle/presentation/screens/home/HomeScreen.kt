@@ -1,17 +1,23 @@
 package com.example.seabattle.presentation.screens.home
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,28 +98,30 @@ fun HomeScreenContent(
 ) {
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .fillMaxSize(),
+
     ) {
         // Header
         item {
             Text(
                 text = stringResource(R.string.home_header_title),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 14.dp)
+                    .padding(top = 36.dp, bottom = 12.dp)
+                    .padding(horizontal = 24.dp)
             )
             Text(
                 text = stringResource(R.string.home_header_desc),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .padding(horizontal = 24.dp)
                     .fillMaxWidth()
-                    .padding(bottom = 4.dp)
             )
         }
 
@@ -123,7 +131,7 @@ fun HomeScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 32.dp, horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -144,18 +152,36 @@ fun HomeScreenContent(
         }
 
 
-        // Games List
-        item {
-            Text(
-                text = stringResource(R.string.list_games_title),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+        // List of Games
+        item{
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                elevation = CardDefaults.cardElevation(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxSize(),
+                ){
+                    Text(
+                        text = stringResource(R.string.list_games_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
         }
+
         when {
             loadingList -> {
                 item {
+                    HorizontalDivider(thickness = 2.dp)
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         strokeWidth = 2.dp
@@ -163,6 +189,31 @@ fun HomeScreenContent(
                 }
             }
             !errorList -> {
+                if (gameList.isEmpty()) {
+                    item {
+                        Card(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                            elevation = CardDefaults.cardElevation(4.dp),
+                            modifier = modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_available_games),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        HorizontalDivider(thickness = 2.dp)
+                    }
+                }
+
                 items(items = gameList, key = { it.gameId }) { game ->
                     GameCard(
                         gameId = game.gameId,

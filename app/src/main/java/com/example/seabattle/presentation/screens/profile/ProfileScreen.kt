@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -147,8 +148,8 @@ fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     user: User,
     historyList: List<GameHistory> = emptyList(),
-    errorList: Boolean = false,
-    loadingList: Boolean = true,
+    errorList: Boolean,
+    loadingList: Boolean,
     onLogoutButtonClicked: () -> Unit = {},
     onDeleteAccountClicked: () -> Unit = {}
 ) {
@@ -272,45 +273,40 @@ fun ProfileScreenContent(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
+                    HorizontalDivider(thickness = 1.dp)
                 }
             }
         }
 
 
         // Played Games List
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HorizontalDivider(thickness = 2.dp)
-                when {
-                    loadingList -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
-                        )
-                    }
+        when {
+            loadingList ->
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
 
-                    !errorList -> {
-                        historyList.forEach { playedGame ->
-                            PlayedGameCard(
-                                userId = user.userId,
-                                game = playedGame,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            HorizontalDivider(thickness = 2.dp)
-                        }
-                    }
+            !errorList -> {
+                items(items = historyList, key = { it.gameId }) { playedGame ->
+                    PlayedGameCard(
+                        userId = user.userId,
+                        game = playedGame,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                }
+            }
 
-                    else -> {
-                        Text(
-                            text = stringResource(R.string.error_get_history),
-                            modifier = Modifier.padding(8.dp),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
+            else -> {
+                item {
+                    Text(
+                        text = stringResource(R.string.error_get_history),
+                        modifier = Modifier.padding(8.dp),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
@@ -325,6 +321,9 @@ fun ProfilePreview(){
         ProfileScreenContent(
             modifier = Modifier.fillMaxSize(),
             user = sampleUser,
+            historyList = sampleUser.history,
+            errorList = false,
+            loadingList = false,
             onLogoutButtonClicked = {}
         )
     }

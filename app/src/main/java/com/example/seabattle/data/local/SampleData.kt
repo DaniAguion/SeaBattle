@@ -15,7 +15,24 @@ val sampleUser = User(
     email = "testing@gmail.com",
     photoUrl = "",
     status = "online",
-    score = 1500
+    score = 1500,
+    history = listOf(
+        GameHistory(
+            gameId = "1",
+            winnerId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
+            player1 = BasicPlayer(userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName = "MeuPixel", score = 1500),
+            player2 = BasicPlayer(userId = "MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName = "Daniel", score = 1400),
+            scoreTransacted = 100
+        ),
+        GameHistory(
+            gameId = "2",
+            winnerId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
+            player1 = BasicPlayer(userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2", displayName = "MeuPixel", score = 1500),
+            player2 = BasicPlayer(userId = "MFqfjTZM3lhKkNJRhGhMuV9T6MK2", displayName = "Daniel", score = 1400),
+            scoreTransacted = 100
+        )
+    )
+
 )
 
 
