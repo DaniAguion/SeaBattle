@@ -23,8 +23,10 @@ import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
+import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
 import com.example.seabattle.domain.usecase.userGames.InviteUserUseCase
 import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
+import com.example.seabattle.domain.usecase.userGames.RejectInvitationUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -41,6 +43,8 @@ val domainModule = module {
     // User Games Use cases
     factory { ListenUserGamesUseCase(get(), get(), get()) }
     factory { InviteUserUseCase(get(), get(), get(), get()) }
+    factory { CancelInvitationUseCase(get(), get(), get()) }
+    factory { RejectInvitationUseCase(get(), get(), get(), get()) }
 
     // Leaderboard Use cases
     factory { GetLeaderboardUseCase(get(), get()) }

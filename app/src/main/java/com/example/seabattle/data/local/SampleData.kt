@@ -12,7 +12,8 @@ import com.example.seabattle.domain.entity.User
 val sampleUser = User(
     userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
     displayName = "MeuPixel",
-    photoUrl = "https://lh3.googleusercontent.com/a/ACg8ocJNvKdeillcj8hhgyN3qMbyXCTUtC3Hcm5-p9HwRFHEos2tcsQ=s96-c",
+    email = "testing@gmail.com",
+    photoUrl = "",
     status = "online",
     score = 1500
 )

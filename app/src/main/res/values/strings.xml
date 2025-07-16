@@ -89,30 +89,29 @@
     <string name="loser_message">You have lost :(</string>
     <string name="initial_score">Initial Score:</string>
     <string name="your_score">Your Score:</string>
+    <string name="calculating_score">Calculating score...</string>
 
     // Leaderboard Screen
     <string name="leaderboard_header_title">Leaderboard</string>
     <string name="leaderboard_header_desc">List of best players ranked by score</string>
     <string name="error_get_users">Error getting list of users</string>
     <string name="ranking_header">Ranking of players</string>
+    <string name="your_position">Current position</string>
 
     // Profile Screen
     <string name="history_header">Played games</string>
     <string name="error_get_history">Error getting list of played games</string>
+    <string name="victory">Victory</string>
+    <string name="defeat">Defeat</string>
     <string name="vs">vs</string>
-
-    // Others
-    <string name="leave_game_button">Leave Game</string>
-    <string name="error_action">Action has failed</string>
-    <string name="calculating_score">Calculating score...</string>
-    <string name="your_position">Current position</string>
+    <string name="account_options">Account Options</string>
     <string name="delete_account_title">Delete your user account?</string>
     <string name="delete_account_title_msg">All your progress and information will be deleted. Are you sure?</string>
     <string name="delete_button">Delete</string>
     <string name="cancel_button">Cancel</string>
     <string name="error_recent_login_required">Recent login required. Please log in again.</string>
-    <string name="victory">Victory</string>
-    <string name="defeat">Defeat</string>
 
-
+    // Others
+    <string name="leave_game_button">Leave Game</string>
+    <string name="error_action">Action has failed</string>
 </resources>
