@@ -31,7 +31,6 @@ class JoinGameUseCase(
             // Function to validate the game state and join the game.
             fun joinGame(game: Game): Map<String, Any> {
                 if (game.player1.userId == user.userId ||
-                    game.player1.status != "online" ||
                     game.player2.userId != "" ||
                     game.gameState != GameState.WAITING_FOR_PLAYER.name) {
                     throw GameError.InvalidGameState()

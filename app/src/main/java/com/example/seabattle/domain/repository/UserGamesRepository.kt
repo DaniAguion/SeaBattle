@@ -12,4 +12,5 @@ interface UserGamesRepository {
     suspend fun updateCurrentGameId(userId: String, gameId: String?): Result<Unit>
     suspend fun sendInvitation(invitation: Invitation): Result<Unit>
     suspend fun cancelInvitation(userId: String): Result<Unit>
+    suspend fun rejectInvitation(invitation: Invitation): Result<Unit>
 }

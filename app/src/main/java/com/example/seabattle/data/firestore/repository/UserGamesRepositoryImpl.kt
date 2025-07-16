@@ -149,7 +149,7 @@ class UserGamesRepositoryImpl(
 
 
 
-    // Function to delete an invitation
+    // Function to cancel a sent invitation
     override suspend fun cancelInvitation(userId: String): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
@@ -183,5 +183,45 @@ class UserGamesRepositoryImpl(
         .recoverCatching { throwable ->
             throw throwable as? UserError ?: throwable.toDataError()
         }
+    }
+
+
+
+    // Function to reject an invitation
+    override suspend fun rejectInvitation(invitation: Invitation): Result<Unit>
+            = withContext(ioDispatcher) {
+        runCatching {
+            db.runTransaction { transaction ->
+                val invitationDto = invitation.toDto()
+                val documentHostRef = userGamesCollection.document(invitationDto.invitedBy.userId)
+                val documentGuestRef = userGamesCollection.document(invitationDto.invitedTo.userId)
+
+
+                // Check if the host has the invitation and remove it if it matches
+                val snapshot = transaction.get(documentHostRef)
+                if (snapshot.exists()){
+                    val hostGamesDto = snapshot.toObject(UserGamesDto::class.java)
+                    if (hostGamesDto?.sentGameInvitation?.gameId ==  invitationDto.gameId) {
+                        transaction.update(
+                            documentHostRef,
+                            "sentGameInvitation",
+                            null
+                        )
+                    }
+                }
+
+
+                // Remove the invitation from the guest user (current user)
+                transaction.update(
+                    documentGuestRef,
+                    "invitedGameId",
+                    FieldValue.arrayRemove(invitationDto)
+                )
+            }.await()
+            return@runCatching
+        }
+            .recoverCatching { throwable ->
+                throw throwable as? UserError ?: throwable.toDataError()
+            }
     }
 }
