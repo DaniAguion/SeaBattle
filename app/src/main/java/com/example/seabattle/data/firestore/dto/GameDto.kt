@@ -11,7 +11,6 @@ import java.util.Date
  */
 data class GameCreationDto(
     val gameId: String = "",
-    val gameName: String = "",
     val privateGame: Boolean = false,
     val player1: PlayerDto = PlayerDto(),
     val player1Ready: Boolean = false,

@@ -75,10 +75,6 @@ fun WaitGameSection(
             fontWeight = SemiBold,
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
         )
-        Text(
-            text = stringResource(id = R.string.game_name, game.gameName),
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-        )
         if (game.gameState == "WAITING_FOR_PLAYER") {
             Text(
                 text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),

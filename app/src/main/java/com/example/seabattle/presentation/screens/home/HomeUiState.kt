@@ -4,8 +4,6 @@ import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.resources.ValidationError
 
 data class HomeUiState (
-    val gameName: String = "Testing",
-    val gameNameError: ValidationError? = null,
     val gamesList: List<Game>,
     val errorList: Boolean = false,
     val loadingList: Boolean = true,

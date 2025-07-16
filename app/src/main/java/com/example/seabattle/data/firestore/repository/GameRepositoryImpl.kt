@@ -42,7 +42,7 @@ class GameRepositoryImpl(
             .whereEqualTo("player1.status", "online")
             .whereEqualTo("gameState", GameState.WAITING_FOR_PLAYER.name)
             .whereEqualTo("privateGame", false)
-            .limit(25)
+            .limit(15)
             .addSnapshotListener(listenerOptions) { snapshot, error ->
                 if (error != null) {
                     trySend(Result.failure(error.toDataError()))

@@ -10,14 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,7 +33,6 @@ import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
-import com.example.seabattle.presentation.resources.ValidationError
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,16 +62,19 @@ fun HomeScreen(
         }
     }
 
+
+    // Navigate to Game screen when the user joins a game
+    LaunchedEffect(key1 = homeUiState.hasJoined) {
+        if (homeUiState.hasJoined) {
+            navController.navigate(Screen.Game.title)
+        }
+    }
+
     HomeScreenContent(
         modifier = modifier,
-        navController = navController,
-        gameName = homeUiState.gameName,
-        gameNameError = homeUiState.gameNameError,
         gameList = homeUiState.gamesList,
         errorList = homeUiState.errorList,
         loadingList = homeUiState.loadingList,
-        hasJoined = homeUiState.hasJoined,
-        onGameNameUpdate = homeViewModel::onGameNameUpdate,
         onClickCreateGame = homeViewModel::onClickCreateGame,
         onClickJoinGame = homeViewModel::onClickJoinGame,
     )
@@ -89,23 +84,12 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    gameName : String,
-    gameNameError : ValidationError?,
     gameList : List<Game>,
     errorList : Boolean,
     loadingList : Boolean,
-    hasJoined: Boolean,
-    onGameNameUpdate: (String) -> Unit,
-    onClickCreateGame: (String) -> Unit,
+    onClickCreateGame: () -> Unit,
     onClickJoinGame: (String) -> Unit,
 ) {
-    // Navigate to Game screen when the user joins a game
-    LaunchedEffect(key1 = hasJoined) {
-        if (hasJoined) {
-            navController.navigate(Screen.Game.title)
-        }
-    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -148,53 +132,19 @@ fun HomeScreenContent(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Card(
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    modifier = Modifier.fillMaxWidth(0.9f)
+                Button(
+                    onClick = { onClickCreateGame() },
+                    modifier = Modifier
+                        .padding(top = dimensionResource(R.dimen.padding_small))
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        OutlinedTextField(
-                            value = gameName,
-                            onValueChange = onGameNameUpdate,
-                            label = { Text(stringResource(R.string.gameName)) },
-                            singleLine = true,
-                            isError = gameNameError != null,
-                            supportingText = {
-                                gameNameError?.let {
-                                    Text(
-                                        text = stringResource(R.string.error_gameName),
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(
-                                autoCorrectEnabled = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Button(
-                            onClick = { onClickCreateGame(gameName) },
-                            modifier = Modifier
-                                .padding(top = dimensionResource(R.dimen.padding_small))
-                        ) {
-                            Text(
-                                text = stringResource(R.string.create_game),
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
-                    }
+                    Text(
+                        text = stringResource(R.string.create_game),
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                        modifier = Modifier.padding(4.dp)
+                    )
                 }
             }
         }
-
 
 
         // Games List
@@ -245,16 +195,11 @@ fun HomeScreenPreview(){
     SeaBattleTheme{
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
-            navController = NavHostController(context = LocalContext.current),
-            gameName = "Test Game",
-            gameNameError = null,
             errorList = false,
             loadingList = false,
-            hasJoined = false,
             gameList = listOf(sampleGame),
             onClickCreateGame = { },
-            onClickJoinGame = { },
-            onGameNameUpdate = { },
+            onClickJoinGame = { }
         )
     }
 }

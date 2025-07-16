@@ -26,7 +26,7 @@ class CreateGameUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val sessionService: SessionService,
 ) {
-    suspend operator fun invoke(gameName: String, privateGame: Boolean): Result<Unit>
+    suspend operator fun invoke(privateGame: Boolean): Result<Unit>
     = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
@@ -43,7 +43,6 @@ class CreateGameUseCase(
 
             var game = Game(
                 gameId = gameId,
-                gameName = gameName,
                 player1 = Player(
                     userId = user.userId,
                     displayName = user.displayName,

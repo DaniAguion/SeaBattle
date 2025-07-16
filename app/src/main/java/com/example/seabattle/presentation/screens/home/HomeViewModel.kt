@@ -96,20 +96,9 @@ class HomeViewModel(
     }
 
 
-    fun onGameNameUpdate(gameName: String) {
-        val validationResult = Validator.validateGameName(gameName)
-        _uiState.value = _uiState.value.copy(gameNameError = validationResult)
-        _uiState.value = _uiState.value.copy(gameName = gameName)
-    }
-
-
-    fun onClickCreateGame(gameName: String) {
-        onGameNameUpdate(gameName = gameName)
-        if (uiState.value.gameNameError != null){
-            return
-        }
+    fun onClickCreateGame() {
         viewModelScope.launch {
-            createGameUseCase.invoke(gameName = gameName, privateGame = false)
+            createGameUseCase.invoke(privateGame = false)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }

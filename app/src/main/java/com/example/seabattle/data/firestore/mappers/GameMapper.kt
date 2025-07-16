@@ -11,7 +11,6 @@ import com.example.seabattle.domain.entity.Player
 fun GameDto.toEntity(): Game {
     return Game(
         gameId = gameId,
-        gameName = gameName,
         privateGame = privateGame,
         player1 = Player(
             userId = player1.userId,
@@ -47,7 +46,6 @@ fun GameDto.toEntity(): Game {
 fun Game.toGameCreationDto(): GameCreationDto {
     return GameCreationDto(
         gameId = gameId,
-        gameName = gameName,
         privateGame = privateGame,
         player1 = PlayerDto(
             userId = player1.userId,

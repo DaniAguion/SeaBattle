@@ -49,11 +49,6 @@ fun GameCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = game.gameName,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 2.dp)
-                )
-                Text(
                     text = "Play against: ${game.player1.displayName}",
                     style = MaterialTheme.typography.bodyMedium,
                 )

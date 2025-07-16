@@ -21,7 +21,6 @@ val sampleUser = User(
 
 val sampleGame = Game(
     gameId="f074ffb3-2bdd-4edc-97b4-8a423d3705af",
-    gameName = "Test Game",
     player1= Player(
         userId = "dLvCWzXgbAhcTqYqiR5iFKYDGgS2",
         displayName = "MeuPixel",
