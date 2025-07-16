@@ -254,12 +254,12 @@ class GameViewModel(
                 userId = _uiState.value.userId,
                 game = _uiState.value.game
             )
-                .onSuccess {
-                    _uiState.value = _uiState.value.copy(game = null)
-                }
-                .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(error = e)
-                }
+            .onSuccess {
+                _uiState.value = _uiState.value.copy(game = null, hasLeftGame = true)
+            }
+            .onFailure { e ->
+                _uiState.value = _uiState.value.copy(error = e)
+            }
         }
     }
 

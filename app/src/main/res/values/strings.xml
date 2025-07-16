@@ -48,7 +48,6 @@
     // Home Screen
     <string name="home_header_title">Welcome!</string>
     <string name="home_header_desc">Join a game or create a new one to start playing</string>
-    <string name="create_game_title">Create a new game</string>
     <string name="gameName">Game Name</string>
     <string name="error_gameName">Game Name is too short</string>
     <string name="error_invalid_gameName">Game Name too short</string>

@@ -127,19 +127,16 @@ fun HomeScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.create_game_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
                 Button(
                     onClick = { onClickCreateGame() },
+                    shape = MaterialTheme.shapes.large,
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = dimensionResource(R.dimen.padding_small))
                 ) {
                     Text(
                         text = stringResource(R.string.create_game),
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(4.dp)
                     )
                 }
@@ -168,7 +165,8 @@ fun HomeScreenContent(
             !errorList -> {
                 items(items = gameList, key = { it.gameId }) { game ->
                     GameCard(
-                        game = game,
+                        gameId = game.gameId,
+                        playerName = game.player1.displayName,
                         gameClick = onClickJoinGame,
                         modifier = Modifier
                     )

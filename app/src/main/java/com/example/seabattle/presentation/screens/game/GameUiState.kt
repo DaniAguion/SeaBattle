@@ -5,6 +5,7 @@ import com.example.seabattle.domain.entity.Game
 data class GameUiState (
     val game: Game? = null,
     val previousGame: Game? = null,
+    val hasLeftGame: Boolean = false,
     val error: Throwable? = null,
     val userId: String = "",
     val userScore: Int = 0,

@@ -80,11 +80,16 @@ fun GameScreen(
         onBack = { showLeaveDialog = true }
     )
 
-    // Observe the game state and navigate to the home screen if the game has been deleted or aborted
+    // Observe the game state and call onUserLeave if the game was aborted
     LaunchedEffect(key1 = gameUiState.game) {
-        val game = gameUiState.game
-        if (game!= null && game.gameState == GameState.GAME_ABORTED.name) {
+        if (gameUiState.game?.gameState == GameState.GAME_ABORTED.name) {
             gameViewModel.onUserLeave()
+        }
+    }
+
+    // If the user has left the game, navigate to the home screen and clear the back stack
+    LaunchedEffect(key1 = gameUiState.hasLeftGame) {
+        if (gameUiState.hasLeftGame) {
             navController.navigate(Screen.Home.title){
                 popUpTo(currentRoute) { inclusive = true }
             }
@@ -108,7 +113,7 @@ fun GameScreen(
                     onClick = {
                         showLeaveDialog = false
                         gameViewModel.onUserLeave()
-                        navController.navigate(Screen.Home.title){
+                        navController.navigate(Screen.Home.title) {
                             popUpTo(currentRoute) { inclusive = true }
                         }
                     }
