@@ -16,6 +16,7 @@ import com.example.seabattle.domain.usecase.game.MakeMoveUseCase
 import com.example.seabattle.domain.usecase.game.FinishGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
+import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
 import com.example.seabattle.presentation.SoundManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,6 +39,7 @@ class GameViewModel(
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase,
+    private val cancelInvitationUseCase: CancelInvitationUseCase,
     private val enableClaimUseCase: EnableClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase,
     private val finishGameUseCase: FinishGameUseCase,
@@ -250,16 +252,21 @@ class GameViewModel(
     fun onUserLeave() {
         viewModelScope.launch {
             stopListening() // Stop listening to the game updates before clearing the game
-            leaveGameUseCase.invoke(
-                userId = _uiState.value.userId,
-                game = _uiState.value.game
-            )
-            .onSuccess {
-                _uiState.value = _uiState.value.copy(game = null, hasLeftGame = true)
+
+            if (uiState.value.game?.privateGame == true) {
+                cancelInvitationUseCase.invoke()
+                    .onFailure { e ->
+                        _uiState.value = _uiState.value.copy(error = e)
+                    }
             }
-            .onFailure { e ->
-                _uiState.value = _uiState.value.copy(error = e)
-            }
+
+            leaveGameUseCase.invoke(userId = _uiState.value.userId, game = _uiState.value.game)
+                .onSuccess {
+                    _uiState.value = _uiState.value.copy(game = null, hasLeftGame = true)
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
         }
     }
 
