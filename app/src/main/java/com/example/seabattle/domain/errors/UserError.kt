@@ -8,6 +8,8 @@ sealed class UserError(
         UserError("User profile could not be found.", cause)
     class UserGamesNotFound(cause: Throwable? = null) :
         UserError("User games could not be found.", cause)
-    class InvalidData(cause: Throwable? = null) :
+    class InvalidUserGamesData(cause: Throwable? = null) :
         UserError("User games data is not valid or corrupted.", cause)
+    class InvalidGuest(cause: Throwable? = null) :
+        UserError("Invalid guest user", cause)
 }

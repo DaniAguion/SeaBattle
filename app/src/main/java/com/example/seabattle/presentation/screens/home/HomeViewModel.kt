@@ -7,6 +7,7 @@ import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.user.FindPlayerUseCase
+import com.example.seabattle.domain.usecase.userGames.InviteUserUseCase
 import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val createGameUseCase: CreateGameUseCase,
     private val findPlayerUseCase: FindPlayerUseCase,
+    private val inviteUserUseCase: InviteUserUseCase,
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
     private val listenUserGamesUseCase: ListenUserGamesUseCase,
@@ -111,26 +113,27 @@ class HomeViewModel(
 
 
     fun onUserSearchChange(searchText: String) {
-        _uiState.value = _uiState.value.copy(searchedUser = searchText)
+        _uiState.value = _uiState.value.copy(
+            searchedUser = searchText,
+            playersList = emptyList(),
+            searchDone = false,
+            loadingPlayersList = false,
+            errorPlayersList = false,
+        )
+    }
 
-        if (searchText.isEmpty()) {
-            _uiState.value = _uiState.value.copy(
-                playersList = emptyList(),
-                errorPlayersList = false
-            )
-            return
-        } else {
-            _uiState.value = _uiState.value.copy(
-                loadingPlayersList = true,
-                errorPlayersList = false
-            )
-        }
+
+    fun onUserSearch() {
+        if (uiState.value.searchedUser.isEmpty()) return
+
+        _uiState.value = _uiState.value.copy(loadingPlayersList = true,)
 
         viewModelScope.launch {
-            findPlayerUseCase.invoke(searchText)
+            findPlayerUseCase.invoke(uiState.value.searchedUser)
                 .onSuccess { players ->
                     _uiState.value = _uiState.value.copy(
                         playersList = players,
+                        searchDone = true,
                         loadingPlayersList = false,
                         errorPlayersList = false
                     )
@@ -138,11 +141,32 @@ class HomeViewModel(
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
                         playersList = emptyList(),
+                        searchDone = false,
                         loadingPlayersList = false,
                         errorPlayersList = true,
                         error = e
                     )
                 }
+        }
+    }
+
+
+    fun onClickInviteUser(invitedPlayerId: String) {
+        viewModelScope.launch {
+            createGameUseCase.invoke(privateGame = true)
+                .onSuccess { gameId ->
+                    inviteUserUseCase.invoke(invitedPlayerId, gameId)
+                        .onSuccess {
+                            _uiState.value = _uiState.value.copy(hasJoined = true)
+                        }
+                        .onFailure { e ->
+                            _uiState.value = _uiState.value.copy(error = e)
+                        }
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
+
         }
     }
 

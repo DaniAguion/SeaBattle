@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,6 +84,7 @@ fun HomeScreen(
         modifier = modifier,
         searchedUser = homeUiState.searchedUser,
         playersList = homeUiState.playersList,
+        searchDone = homeUiState.searchDone,
         loadingPlayersList = homeUiState.loadingPlayersList,
         errorPlayersList = homeUiState.errorPlayersList,
         gamesList = homeUiState.gamesList,
@@ -88,7 +92,8 @@ fun HomeScreen(
         loadingGamesList = homeUiState.loadingGamesList,
         onClickCreateGame = homeViewModel::onClickCreateGame,
         onUserSearchChange = homeViewModel::onUserSearchChange,
-        onClickInviteUser = { },
+        onUserSearch = homeViewModel::onUserSearch,
+        onClickInviteUser = homeViewModel::onClickInviteUser,
         onClickJoinGame = homeViewModel::onClickJoinGame,
     )
 }
@@ -99,6 +104,7 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     searchedUser: String,
     playersList: List<Player>,
+    searchDone: Boolean,
     loadingPlayersList: Boolean,
     errorPlayersList: Boolean,
     gamesList : List<Game>,
@@ -106,6 +112,7 @@ fun HomeScreenContent(
     errorGamesList : Boolean,
     onClickCreateGame: () -> Unit,
     onUserSearchChange: (String) -> Unit,
+    onUserSearch: () -> Unit,
     onClickInviteUser: (String) -> Unit,
     onClickJoinGame: (String) -> Unit,
 ) {
@@ -181,11 +188,17 @@ fun HomeScreenContent(
                     onValueChange = onUserSearchChange,
                     label = { Text(stringResource(R.string.search_user)) },
                     trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = { onUserSearch() }
+                    ),
                     modifier = Modifier
                         .padding(vertical = 16.dp, horizontal = 24.dp)
                         .fillMaxWidth()
                 )
-
             }
         }
 
@@ -200,7 +213,7 @@ fun HomeScreenContent(
                 }
             }
             !errorPlayersList -> {
-                if (playersList.isEmpty() && searchedUser.isNotEmpty()) {
+                if (searchDone && playersList.isEmpty()) {
                     item {
                         Card(
                             shape = RoundedCornerShape(8.dp),
@@ -222,13 +235,11 @@ fun HomeScreenContent(
                     }
                 }
 
-                items(items = playersList, key = { it.userId }) { game ->
-                    Text(
-                        text = game.displayName,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
+                items(items = playersList, key = { it.userId }) { player ->
+                    PlayerCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        player = player,
+                        inviteClick = onClickInviteUser,
                     )
                 }
             }
@@ -334,6 +345,7 @@ fun HomeScreenPreview(){
             modifier = Modifier.fillMaxSize(),
             searchedUser = "",
             playersList = emptyList(),
+            searchDone = false,
             loadingPlayersList = false,
             errorPlayersList = false,
             gamesList = listOf(sampleGame),
@@ -341,6 +353,7 @@ fun HomeScreenPreview(){
             errorGamesList = false,
             onClickCreateGame = { },
             onUserSearchChange = { },
+            onUserSearch = { },
             onClickInviteUser = { },
             onClickJoinGame = { }
         )

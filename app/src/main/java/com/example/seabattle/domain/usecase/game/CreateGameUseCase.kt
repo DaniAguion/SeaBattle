@@ -26,7 +26,7 @@ class CreateGameUseCase(
     val ioDispatcher: CoroutineDispatcher,
     val sessionService: SessionService,
 ) {
-    suspend operator fun invoke(privateGame: Boolean): Result<Unit>
+    suspend operator fun invoke(privateGame: Boolean): Result<String>
     = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
@@ -69,7 +69,7 @@ class CreateGameUseCase(
             userGamesRepository.updateCurrentGameId(userId, gameId).getOrThrow()
             // Register the gameId in the session
             sessionService.setCurrentGameId(gameId)
-            return@runCatching
+            return@runCatching gameId
         }
             .onFailure { e ->
                 Timber.e(e, "CreateGameUseCase failed.")

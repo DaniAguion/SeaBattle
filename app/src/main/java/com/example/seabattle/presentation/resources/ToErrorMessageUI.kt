@@ -25,6 +25,9 @@ fun Throwable.toErrorMessageUI(): Int {
         is AuthError.NetworkConnection -> R.string.error_network_connection
         is AuthError.Unknown -> R.string.error_unknown
         is UserError.UserProfileNotFound -> R.string.error_user_not_found
+        is UserError.UserGamesNotFound -> R.string.error_user_not_found
+        is UserError.InvalidUserGamesData -> R.string.error_user_data_not_valid
+        is UserError.InvalidGuest -> R.string.error_invalid_guest
         is GameError.GameNotFound -> R.string.error_game_not_found
         is GameError.InvalidData -> R.string.error_game_not_valid
         is GameError.InvalidGameState -> R.string.error_invalid_game_state

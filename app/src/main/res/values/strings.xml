@@ -118,4 +118,8 @@
     <string name="invite_user">Invite to Game</string>
     <string name="search_user">Search Username</string>
     <string name="user_not_found">User not found</string>
+    <string name="join_button">Join</string>
+    <string name="invite_button">Invite</string>
+    <string name="error_user_data_not_valid">n error occurred with the game data</string>
+    <string name="error_invalid_guest">Invalid guest</string>
 </resources>

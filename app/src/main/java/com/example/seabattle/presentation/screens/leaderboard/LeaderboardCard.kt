@@ -48,38 +48,29 @@ fun UserCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-
-        ){
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Text(
+                text = position.toString() + "º",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(end = 20.dp)
+            )
             Row(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = position.toString() + "º",
+                    text = user?.displayName ?: "",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = user?.score.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(end = 20.dp)
                 )
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = user?.displayName ?: "",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = user?.score.toString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(end = 20.dp)
-                    )
-                }
             }
         }
     }

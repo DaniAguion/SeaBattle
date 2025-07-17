@@ -43,14 +43,14 @@ fun PlayersInfoHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
-        CardPlayer(player = player1)
-        CardPlayer(player = player2)
+        PlayerStatusCard(player = player1)
+        PlayerStatusCard(player = player2)
     }
 }
 
 
 @Composable
-fun CardPlayer(
+fun PlayerStatusCard(
     player: Player,
 ){
     Card {

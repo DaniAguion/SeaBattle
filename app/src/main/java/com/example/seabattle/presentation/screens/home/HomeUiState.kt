@@ -6,6 +6,7 @@ import com.example.seabattle.domain.entity.Player
 data class HomeUiState (
     val searchedUser: String = "",
     val playersList: List<Player> = emptyList(),
+    val searchDone: Boolean = false,
     val loadingPlayersList: Boolean = false,
     val errorPlayersList: Boolean = false,
     val gamesList: List<Game>,

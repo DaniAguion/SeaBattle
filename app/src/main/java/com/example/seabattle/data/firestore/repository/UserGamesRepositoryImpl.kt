@@ -69,7 +69,7 @@ class UserGamesRepositoryImpl(
                 if (!snapshot.metadata.isFromCache) {
                     val userGamesEntity = try {
                         snapshot.toObject(UserGamesDto::class.java)?.toEntity()
-                            ?: throw UserError.InvalidData()
+                            ?: throw UserError.InvalidUserGamesData()
                     } catch (e: Exception) {
                         trySend(Result.failure(e.toDataError()))
                         return@addSnapshotListener
@@ -159,7 +159,7 @@ class UserGamesRepositoryImpl(
                 // Fetch the user games document to check the sent invitation
                 val snapshot = transaction.get(userGamesDoc)
                 if (!snapshot.exists()) throw UserError.UserGamesNotFound()
-                val userGamesDto = snapshot.toObject(UserGamesDto::class.java) ?: throw UserError.InvalidData()
+                val userGamesDto = snapshot.toObject(UserGamesDto::class.java) ?: throw UserError.InvalidUserGamesData()
                 val invitationDto = userGamesDto.sentGameInvitation ?: return@runTransaction
 
                 // Remove the invitation from the host and guest user games
