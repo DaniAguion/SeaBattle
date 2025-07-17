@@ -113,7 +113,7 @@
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
-    <string name="no_available_games">There is not available games</string>
+    <string name="no_games_available">No games available</string>
     <string name="invite_to_play_title">Invite an user to play</string>
     <string name="invite_user">Invite to Game</string>
     <string name="search_user">Search Username</string>
@@ -123,6 +123,6 @@
     <string name="error_user_data_not_valid">n error occurred with the game data</string>
     <string name="error_invalid_guest">Invalid guest</string>
     <string name="invitations_title">Received Invitations</string>
-    <string name="no_invitations">There is no invitations</string>
+    <string name="no_invitations">No invitations received</string>
     <string name="reject_button">Reject</string>
 </resources>

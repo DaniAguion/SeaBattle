@@ -345,7 +345,7 @@ fun HomeScreenContent(
             // Available Games Section
             item{
                 Text(
-                    text = stringResource(R.string.list_games_title),
+                    text = stringResource(R.string.list_games_title) + " (${gamesList.size})",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
@@ -378,7 +378,7 @@ fun HomeScreenContent(
                                     .padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = stringResource(R.string.no_available_games),
+                                    text = stringResource(R.string.no_games_available),
                                     textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier
