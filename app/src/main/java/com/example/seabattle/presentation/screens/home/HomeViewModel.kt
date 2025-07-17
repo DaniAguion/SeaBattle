@@ -6,8 +6,8 @@ import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
+import com.example.seabattle.domain.usecase.user.FindPlayerUseCase
 import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
-import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val createGameUseCase: CreateGameUseCase,
+    private val findPlayerUseCase: FindPlayerUseCase,
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
     private val listenUserGamesUseCase: ListenUserGamesUseCase,
@@ -56,7 +57,7 @@ class HomeViewModel(
 
 
     fun startGettingGames() {
-        _uiState.value = _uiState.value.copy(loadingList = true)
+        _uiState.value = _uiState.value.copy(loadingGamesList = true)
         // Start listening to fetch games
         getGamesJob = viewModelScope.launch {
             getGamesUseCase.invoke()
@@ -65,15 +66,15 @@ class HomeViewModel(
                         .onSuccess { games ->
                             _uiState.value = _uiState.value.copy(
                                 gamesList = games,
-                                errorList = false,
-                                loadingList = false
+                                errorGameList = false,
+                                loadingGamesList = false
                             )
                         }
                         .onFailure { e ->
                             _uiState.value = _uiState.value.copy(
                                 gamesList = emptyList(),
-                                errorList = true,
-                                loadingList = false,
+                                errorGameList = true,
+                                loadingGamesList = false,
                                 error = e
                             )
                         }
@@ -107,6 +108,44 @@ class HomeViewModel(
                 }
         }
     }
+
+
+    fun onUserSearchChange(searchText: String) {
+        _uiState.value = _uiState.value.copy(searchedUser = searchText)
+
+        if (searchText.isEmpty()) {
+            _uiState.value = _uiState.value.copy(
+                playersList = emptyList(),
+                errorPlayersList = false
+            )
+            return
+        } else {
+            _uiState.value = _uiState.value.copy(
+                loadingPlayersList = true,
+                errorPlayersList = false
+            )
+        }
+
+        viewModelScope.launch {
+            findPlayerUseCase.invoke(searchText)
+                .onSuccess { players ->
+                    _uiState.value = _uiState.value.copy(
+                        playersList = players,
+                        loadingPlayersList = false,
+                        errorPlayersList = false
+                    )
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(
+                        playersList = emptyList(),
+                        loadingPlayersList = false,
+                        errorPlayersList = true,
+                        error = e
+                    )
+                }
+        }
+    }
+
 
 
     fun onClickJoinGame(gameId: String) {

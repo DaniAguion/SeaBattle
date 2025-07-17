@@ -22,7 +22,7 @@ import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
-import com.example.seabattle.domain.usecase.user.FindUserUseCase
+import com.example.seabattle.domain.usecase.user.FindPlayerUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
 import com.example.seabattle.domain.usecase.userGames.InviteUserUseCase
@@ -40,7 +40,7 @@ val domainModule = module {
     factory { ListenUserUseCase(get()) }
     factory { GetAuthUserUseCase(get(), get(), get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }
-    factory { FindUserUseCase(get(), get()) }
+    factory { FindPlayerUseCase(get(), get()) }
 
     // User Games Use cases
     factory { ListenUserGamesUseCase(get(), get(), get()) }

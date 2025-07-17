@@ -114,4 +114,8 @@
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
     <string name="no_available_games">There is not available games</string>
+    <string name="invite_to_play_title">Invite an user to play</string>
+    <string name="invite_user">Invite to Game</string>
+    <string name="search_user">Search Username</string>
+    <string name="user_not_found">User not found</string>
 </resources>

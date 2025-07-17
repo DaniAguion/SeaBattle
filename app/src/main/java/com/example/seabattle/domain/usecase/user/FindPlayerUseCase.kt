@@ -1,6 +1,6 @@
 package com.example.seabattle.domain.usecase.user
 
-import com.example.seabattle.domain.entity.User
+import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.domain.errors.DomainError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.UserRepository
@@ -9,17 +9,17 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
-class FindUserUseCase(
+class FindPlayerUseCase(
     val userRepository: UserRepository,
     val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(userName: String): Result<List<User>> = withContext(ioDispatcher) {
+    suspend operator fun invoke(userName: String): Result<List<Player>> = withContext(ioDispatcher) {
         runCatching {
-            val foundUsers = userRepository.findUserByName(userName).getOrThrow()
+            val foundUsers = userRepository.findPlayerByName(userName).getOrThrow()
             return@runCatching foundUsers
         }
         .onFailure { e ->
-            Timber.e(e, "FindUserUseCase failed.")
+            Timber.e(e, "FindPlayerUseCase failed.")
         }
         .recoverCatching { throwable ->
             if (throwable is UserError) throw throwable

@@ -1,11 +1,13 @@
 package com.example.seabattle.data.firestore.repository
 
 import com.example.seabattle.data.firestore.dto.BasicPlayerDto
+import com.example.seabattle.data.firestore.dto.PlayerDto
 import com.example.seabattle.data.firestore.dto.UserDto
 import com.example.seabattle.data.firestore.errors.toDataError
 import com.example.seabattle.data.firestore.mappers.toDto
 import com.example.seabattle.data.firestore.mappers.toEntity
 import com.example.seabattle.domain.entity.BasicPlayer
+import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.errors.UserError
@@ -80,7 +82,7 @@ class UserRepositoryImpl(
 
 
     // Get a user by their userName or partial userName from the Firestore database
-    override suspend fun findUserByName(userName: String) : Result<List<User>> = withContext(ioDispatcher) {
+    override suspend fun findPlayerByName(userName: String) : Result<List<Player>> = withContext(ioDispatcher) {
         runCatching {
             val querySnapshot = usersCollection
                 .whereGreaterThanOrEqualTo("displayName", userName)
@@ -90,10 +92,10 @@ class UserRepositoryImpl(
                 .get()
                 .await()
 
-            val usersList : List<User> = querySnapshot.documents.mapNotNull {
-                it.toObject(UserDto::class.java)?.toEntity()
+            val playersList : List<Player> = querySnapshot.documents.mapNotNull {
+                it.toObject(PlayerDto::class.java)?.toEntity()
             }
-            return@runCatching usersList
+            return@runCatching playersList
         }
         .recoverCatching { throwable ->
             throw throwable as? UserError ?: throwable.toDataError()

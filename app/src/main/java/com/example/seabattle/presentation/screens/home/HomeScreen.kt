@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +37,7 @@ import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import com.example.seabattle.presentation.resources.toErrorMessageUI
@@ -73,10 +79,16 @@ fun HomeScreen(
 
     HomeScreenContent(
         modifier = modifier,
-        gameList = homeUiState.gamesList,
-        errorList = homeUiState.errorList,
-        loadingList = homeUiState.loadingList,
+        searchedUser = homeUiState.searchedUser,
+        playersList = homeUiState.playersList,
+        loadingPlayersList = homeUiState.loadingPlayersList,
+        errorPlayersList = homeUiState.errorPlayersList,
+        gamesList = homeUiState.gamesList,
+        errorGamesList = homeUiState.errorGameList,
+        loadingGamesList = homeUiState.loadingGamesList,
         onClickCreateGame = homeViewModel::onClickCreateGame,
+        onUserSearchChange = homeViewModel::onUserSearchChange,
+        onClickInviteUser = { },
         onClickJoinGame = homeViewModel::onClickJoinGame,
     )
 }
@@ -85,10 +97,16 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
-    gameList : List<Game>,
-    errorList : Boolean,
-    loadingList : Boolean,
+    searchedUser: String,
+    playersList: List<Player>,
+    loadingPlayersList: Boolean,
+    errorPlayersList: Boolean,
+    gamesList : List<Game>,
+    loadingGamesList : Boolean,
+    errorGamesList : Boolean,
     onClickCreateGame: () -> Unit,
+    onUserSearchChange: (String) -> Unit,
+    onClickInviteUser: (String) -> Unit,
     onClickJoinGame: (String) -> Unit,
 ) {
 
@@ -116,6 +134,7 @@ fun HomeScreenContent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
+                    .padding(bottom = 12.dp)
                     .fillMaxWidth()
             )
         }
@@ -128,7 +147,7 @@ fun HomeScreenContent(
                 shape = MaterialTheme.shapes.large,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp, horizontal = 24.dp),
+                    .padding(all = 24.dp),
             ) {
                 Text(
                     text = stringResource(R.string.create_game),
@@ -139,6 +158,93 @@ fun HomeScreenContent(
         }
 
 
+        // Invite an User
+        item{
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                elevation = CardDefaults.cardElevation(16.dp),
+                modifier = Modifier
+                    .padding(all = 24.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.invite_to_play_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+                OutlinedTextField(
+                    value = searchedUser,
+                    onValueChange = onUserSearchChange,
+                    label = { Text(stringResource(R.string.search_user)) },
+                    trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                    modifier = Modifier
+                        .padding(vertical = 16.dp, horizontal = 24.dp)
+                        .fillMaxWidth()
+                )
+
+            }
+        }
+
+        // List of Users
+        when {
+            loadingPlayersList -> {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+            !errorPlayersList -> {
+                if (playersList.isEmpty() && searchedUser.isNotEmpty()) {
+                    item {
+                        Card(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                            elevation = CardDefaults.cardElevation(4.dp),
+                            modifier = modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.user_not_found),
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+
+                                )
+                        }
+                    }
+                }
+
+                items(items = playersList, key = { it.userId }) { game ->
+                    Text(
+                        text = game.displayName,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            else -> {
+                item {
+                    Text(
+                        text = stringResource(R.string.error_get_users),
+                        modifier = Modifier.padding(8.dp),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+
+
+        
         // List of Games
         item{
             Card(
@@ -152,16 +258,17 @@ fun HomeScreenContent(
                 Text(
                     text = stringResource(R.string.list_games_title),
                     style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
+                        .fillMaxSize()
                         .padding(vertical = 16.dp)
-                        .fillMaxSize(),
                 )
             }
         }
 
         when {
-            loadingList -> {
+            loadingGamesList -> {
                 item {
                     HorizontalDivider(thickness = 2.dp)
                     CircularProgressIndicator(
@@ -170,8 +277,8 @@ fun HomeScreenContent(
                     )
                 }
             }
-            !errorList -> {
-                if (gameList.isEmpty()) {
+            !errorGamesList -> {
+                if (gamesList.isEmpty()) {
                     item {
                         Card(
                             shape = RoundedCornerShape(8.dp),
@@ -196,7 +303,7 @@ fun HomeScreenContent(
                     }
                 }
 
-                items(items = gameList, key = { it.gameId }) { game ->
+                items(items = gamesList, key = { it.gameId }) { game ->
                     GameCard(
                         gameId = game.gameId,
                         playerName = game.player1.displayName,
@@ -215,7 +322,6 @@ fun HomeScreenContent(
                 }
             }
         }
-
     }
 }
 
@@ -226,10 +332,16 @@ fun HomeScreenPreview(){
     SeaBattleTheme{
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
-            errorList = false,
-            loadingList = false,
-            gameList = listOf(sampleGame),
+            searchedUser = "",
+            playersList = emptyList(),
+            loadingPlayersList = false,
+            errorPlayersList = false,
+            gamesList = listOf(sampleGame),
+            loadingGamesList = false,
+            errorGamesList = false,
             onClickCreateGame = { },
+            onUserSearchChange = { },
+            onClickInviteUser = { },
             onClickJoinGame = { }
         )
     }
