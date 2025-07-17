@@ -60,7 +60,7 @@ fun PlayerCard(
                         )
                 )
                 Text(
-                    text = player.displayName ?: "",
+                    text = player.displayName,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                 )

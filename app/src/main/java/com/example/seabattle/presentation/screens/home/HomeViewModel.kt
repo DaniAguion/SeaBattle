@@ -152,6 +152,8 @@ class HomeViewModel(
 
 
     fun onClickInviteUser(invitedPlayerId: String) {
+        if (invitedPlayerId.isEmpty() || invitedPlayerId == sessionService.getCurrentUserId()) return
+
         viewModelScope.launch {
             createGameUseCase.invoke(privateGame = true)
                 .onSuccess { gameId ->

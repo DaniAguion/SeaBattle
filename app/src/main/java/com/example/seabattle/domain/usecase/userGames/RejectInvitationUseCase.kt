@@ -25,9 +25,7 @@ class RejectInvitationUseCase(
     = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            if (userId.isEmpty()) {
-                throw UserError.UserProfileNotFound()
-            }
+            if (userId.isEmpty()) throw UserError.UserProfileNotFound()
 
             val gameId = invitation.gameId
             if (gameId.isEmpty()) throw GameError.GameNotFound()

@@ -24,9 +24,8 @@ class InviteUserUseCase(
         runCatching {
             val userId = sessionService.getCurrentUserId()
 
-            if (invitedPlayerId.isEmpty() || userId == invitedPlayerId) {
-                throw UserError.InvalidGuest()
-            }
+            if (userId.isEmpty() ||invitedPlayerId.isEmpty()) throw UserError.UserProfileNotFound()
+            if (userId == invitedPlayerId) throw UserError.InvalidGuest()
 
             val user = userRepository.getUserById(userId).getOrThrow()
             val invitedPlayer = userRepository.getUserById(invitedPlayerId).getOrThrow()
