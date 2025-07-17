@@ -30,7 +30,7 @@ class CreateGameUseCase(
     = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            val user = userRepository.getUser(userId).getOrThrow()
+            val user = userRepository.getUserById(userId).getOrThrow()
 
             // Create the game in the repository
             val gameId = UUID.randomUUID().toString()

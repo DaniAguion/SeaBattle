@@ -27,7 +27,7 @@ class LoginUserUseCase (
 
             // If user logged with Google, check if the user already exists in Firestore
             if (loginMethod is LoginMethod.Google) {
-                val existingProfile = userRepository.getUser(userProfile.userId).getOrNull()
+                val existingProfile = userRepository.getUserById(userProfile.userId).getOrNull()
                 if (existingProfile == null) {
                     userRepository.createUser(userProfile).getOrThrow()
                     userGamesRepository.createUserGames(userProfile.userId).getOrThrow()

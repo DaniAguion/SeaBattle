@@ -22,6 +22,8 @@ class UserRepositoryImpl(
     private val usersCollection = db.collection("users")
 
 
+
+    // Create a new user in the Firestore database
     override suspend fun createUser(user: User) : Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userDto = user.toDto()
@@ -38,7 +40,25 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun getUser(userId: String) : Result<User> = withContext(ioDispatcher) {
+
+    // Delete a user by their userId from the Firestore database
+    override suspend fun deleteUser(userId: String): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            usersCollection
+                .document(userId)
+                .delete()
+                .await()
+        }
+            .map { _ -> }
+            .recoverCatching { throwable ->
+                throw throwable as? UserError ?: throwable.toDataError()
+            }
+    }
+
+
+
+    // Get a user by their userId from the Firestore database
+    override suspend fun getUserById(userId: String) : Result<User> = withContext(ioDispatcher) {
         runCatching {
             val document = usersCollection
                 .document(userId)
@@ -58,20 +78,31 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun deleteUser(userId: String): Result<Unit> = withContext(ioDispatcher) {
+
+    // Get a user by their userName or partial userName from the Firestore database
+    override suspend fun findUserByName(userName: String) : Result<List<User>> = withContext(ioDispatcher) {
         runCatching {
-            usersCollection
-                .document(userId)
-                .delete()
+            val querySnapshot = usersCollection
+                .whereGreaterThanOrEqualTo("displayName", userName)
+                .whereLessThanOrEqualTo("displayName", userName + "\uf8ff")
+                .orderBy("displayName", DESCENDING)
+                .limit(5)
+                .get()
                 .await()
+
+            val usersList : List<User> = querySnapshot.documents.mapNotNull {
+                it.toObject(UserDto::class.java)?.toEntity()
+            }
+            return@runCatching usersList
         }
-        .map { _ -> }
         .recoverCatching { throwable ->
             throw throwable as? UserError ?: throwable.toDataError()
         }
     }
 
 
+
+    // Get the leaderboard of users sorted by their scores
     override suspend fun getLeaderboard(): Result<List<BasicPlayer>> = withContext(ioDispatcher) {
         runCatching {
             val querySnapshot = usersCollection
@@ -81,7 +112,9 @@ class UserRepositoryImpl(
                 .get()
                 .await()
 
-            val usersList : List<BasicPlayer> = querySnapshot.documents.mapNotNull { it.toObject(BasicPlayerDto::class.java)?.toEntity() }
+            val usersList : List<BasicPlayer> = querySnapshot.documents.mapNotNull {
+                it.toObject(BasicPlayerDto::class.java)?.toEntity()
+            }
             return@runCatching usersList
         }
         .recoverCatching { throwable ->
@@ -90,6 +123,8 @@ class UserRepositoryImpl(
     }
 
 
+
+    // Get the position of a user in the leaderboard based on their score
     override suspend fun getUserPosition(userId: String, userScore: Int): Result<Int> = withContext(ioDispatcher) {
         runCatching {
             val querySnapshot = usersCollection

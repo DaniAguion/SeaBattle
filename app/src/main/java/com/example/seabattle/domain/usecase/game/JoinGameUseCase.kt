@@ -26,7 +26,7 @@ class JoinGameUseCase(
     suspend operator fun invoke(gameId: String): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            val user = userRepository.getUser(userId).getOrThrow()
+            val user = userRepository.getUserById(userId).getOrThrow()
 
             // Function to validate the game state and join the game.
             fun joinGame(game: Game): Map<String, Any> {

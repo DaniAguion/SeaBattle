@@ -128,26 +128,18 @@ fun HomeScreenContent(
 
         // Create Game
         item {
-            Column(
+            Button(
+                onClick = { onClickCreateGame() },
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 32.dp, horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = { onClickCreateGame() },
-                    shape = MaterialTheme.shapes.large,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = dimensionResource(R.dimen.padding_small))
-                ) {
-                    Text(
-                        text = stringResource(R.string.create_game),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.create_game),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(4.dp)
+                )
             }
         }
 
@@ -162,19 +154,14 @@ fun HomeScreenContent(
                     .fillMaxWidth()
                     .padding(top = 32.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Text(
+                    text = stringResource(R.string.list_games_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(vertical = 16.dp)
                         .fillMaxSize(),
-                ){
-                    Text(
-                        text = stringResource(R.string.list_games_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
+                )
             }
         }
 

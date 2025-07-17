@@ -23,8 +23,8 @@ class InviteUserUseCase(
     = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            val user = userRepository.getUser(userId).getOrThrow()
-            val invitedPlayer = userRepository.getUser(invitedPlayerId).getOrThrow()
+            val user = userRepository.getUserById(userId).getOrThrow()
+            val invitedPlayer = userRepository.getUserById(invitedPlayerId).getOrThrow()
 
             val invitation = Invitation(
                 gameId = gameId,

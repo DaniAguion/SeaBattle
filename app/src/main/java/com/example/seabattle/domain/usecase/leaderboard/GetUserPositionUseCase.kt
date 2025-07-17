@@ -16,7 +16,7 @@ class GetUserPositionUseCase(
     suspend operator fun invoke(): Result<Int> = withContext(ioDispatcher) {
         runCatching {
             val userId = sessionService.getCurrentUserId()
-            val user = userRepository.getUser(userId).getOrThrow()
+            val user = userRepository.getUserById(userId).getOrThrow()
 
             val userPosition = userRepository.getUserPosition(userId = userId, userScore = user.score ).getOrThrow()
             return@runCatching userPosition

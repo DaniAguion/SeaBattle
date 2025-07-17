@@ -32,7 +32,7 @@ class FinishGameUseCase(
             backendRepository.finishGame(gameId).getOrThrow()
 
             // Return the score based on the userId
-            val user = userRepository.getUser(userId).getOrThrow()
+            val user = userRepository.getUserById(userId).getOrThrow()
             return@runCatching user.score
         }
             .onFailure { e ->

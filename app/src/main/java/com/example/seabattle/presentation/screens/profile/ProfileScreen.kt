@@ -261,20 +261,15 @@ fun ProfileScreenContent(
                     .fillMaxWidth()
                     .padding(top = 32.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Text(
+                    text = stringResource(R.string.history_header),
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxSize(),
-                ){
-                    Text(
-                        text = stringResource(R.string.history_header),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    HorizontalDivider(thickness = 1.dp)
-                }
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                )
+                HorizontalDivider(thickness = 1.dp)
             }
         }
 
