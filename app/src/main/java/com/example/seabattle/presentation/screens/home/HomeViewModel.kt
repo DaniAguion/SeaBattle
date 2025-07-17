@@ -106,9 +106,6 @@ class HomeViewModel(
     fun onClickCreateGame() {
         viewModelScope.launch {
             createGameUseCase.invoke(privateGame = false)
-                .onSuccess {
-                    _uiState.value = _uiState.value.copy(hasJoined = true)
-                }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(error = e)
                 }
@@ -162,9 +159,6 @@ class HomeViewModel(
             createGameUseCase.invoke(privateGame = true)
                 .onSuccess { gameId ->
                     inviteUserUseCase.invoke(invitedPlayerId, gameId)
-                        .onSuccess {
-                            _uiState.value = _uiState.value.copy(hasJoined = true)
-                        }
                         .onFailure { e ->
                             _uiState.value = _uiState.value.copy(error = e)
                         }
@@ -181,9 +175,6 @@ class HomeViewModel(
     fun onClickJoinGame(gameId: String) {
         viewModelScope.launch {
             joinGameUseCase.invoke(gameId)
-                .onSuccess {
-                    _uiState.value = _uiState.value.copy(hasJoined = true)
-                }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(error = e)
                 }
