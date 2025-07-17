@@ -3,7 +3,6 @@ package com.example.seabattle.domain.usecase.user
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.User
 import com.example.seabattle.domain.errors.DomainError
-import com.example.seabattle.domain.errors.GameError
 import com.example.seabattle.domain.errors.UserError
 import com.example.seabattle.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher

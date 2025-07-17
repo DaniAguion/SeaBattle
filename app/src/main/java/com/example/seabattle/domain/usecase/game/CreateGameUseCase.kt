@@ -41,8 +41,9 @@ class CreateGameUseCase(
             val boardForPlayer2 = gameBoardRepository.getGameBoard()
             val player1Ships = gameBoardRepository.getShipList()
 
-            var game = Game(
+            val game = Game(
                 gameId = gameId,
+                privateGame = privateGame,
                 player1 = Player(
                     userId = user.userId,
                     displayName = user.displayName,
