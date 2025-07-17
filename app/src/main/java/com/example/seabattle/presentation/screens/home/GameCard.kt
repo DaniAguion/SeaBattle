@@ -29,15 +29,14 @@ fun GameCard(
 ) {
     Card(
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(4.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 24.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
 
         ){

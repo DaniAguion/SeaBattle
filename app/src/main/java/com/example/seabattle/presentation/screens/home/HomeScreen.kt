@@ -2,6 +2,11 @@ package com.example.seabattle.presentation.screens.home
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,12 +17,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -40,6 +46,7 @@ import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
+import com.example.seabattle.domain.entity.Invitation
 import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
@@ -83,6 +90,7 @@ fun HomeScreen(
     HomeScreenContent(
         modifier = modifier,
         searchedUser = homeUiState.searchedUser,
+        invitationsList = homeUiState.invitationsList,
         playersList = homeUiState.playersList,
         searchDone = homeUiState.searchDone,
         loadingPlayersList = homeUiState.loadingPlayersList,
@@ -102,6 +110,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
+    invitationsList: List<Invitation>,
     searchedUser: String,
     playersList: List<Player>,
     searchDone: Boolean,
@@ -116,78 +125,99 @@ fun HomeScreenContent(
     onClickInviteUser: (String) -> Unit,
     onClickJoinGame: (String) -> Unit,
 ) {
-
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)
-            .fillMaxSize(),
-
-    ) {
-        // Header
-        item {
-            Text(
-                text = stringResource(R.string.home_header_title),
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 36.dp, bottom = 12.dp)
-                    .padding(horizontal = 24.dp)
-            )
-            Text(
-                text = stringResource(R.string.home_header_desc),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 12.dp)
-                    .fillMaxWidth()
-            )
-        }
-
-
-        // Create Game
-        item {
-            Button(
-                onClick = { onClickCreateGame() },
-                shape = MaterialTheme.shapes.large,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 24.dp),
-            ) {
+            .fillMaxSize()
+    ){
+        // Header and Create Game Button
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 36.dp)
+                .padding(vertical = 12.dp)
+        ) {
+            item{
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                ){
+                    Icon(
+                        imageVector = if (invitationsList.isNotEmpty()) {Icons.Default.Notifications} else {Icons.Default.NotificationsNone},
+                        contentDescription = "Invitations Icon",
+                        modifier = Modifier
+                            .clickable {
+                                if (invitationsList.isNotEmpty()) {
+                                    // Navigate to Invitations screen
+                                    // navController.navigate(Screen.Invitations.title)
+                                }
+                            }
+                            .size(48.dp)
+                    )
+                }
+            }
+            // Header Title and Description
+            item {
                 Text(
-                    text = stringResource(R.string.create_game),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(4.dp)
+                    text = stringResource(R.string.home_header_title),
+                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+                Text(
+                    text = stringResource(R.string.home_header_desc),
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(bottom = 36.dp)
+                        .fillMaxWidth()
                 )
             }
-        }
 
+            // Create Game Button
+            item {
+                Button(
+                    onClick = { onClickCreateGame() },
+                    shape = MaterialTheme.shapes.large,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 48.dp)
+                    ,
+                ) {
+                    Text(
+                        text = stringResource(R.string.create_game),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+            }
 
-        // Invite an User
-        item{
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                elevation = CardDefaults.cardElevation(16.dp),
-                modifier = Modifier
-                    .padding(all = 24.dp)
-                    .fillMaxWidth()
-            ) {
+            // Invite User Section
+            item {
                 Text(
                     text = stringResource(R.string.invite_to_play_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
                 OutlinedTextField(
                     value = searchedUser,
                     onValueChange = onUserSearchChange,
                     label = { Text(stringResource(R.string.search_user)) },
-                    trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                    trailingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Search
@@ -196,76 +226,71 @@ fun HomeScreenContent(
                         onSearch = { onUserSearch() }
                     ),
                     modifier = Modifier
-                        .padding(vertical = 16.dp, horizontal = 24.dp)
+                        .padding(top= 16.dp, bottom = 24.dp)
                         .fillMaxWidth()
                 )
             }
-        }
 
-        // List of Users
-        when {
-            loadingPlayersList -> {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
-            }
-            !errorPlayersList -> {
-                if (searchDone && playersList.isEmpty()) {
+
+            // List of Players
+            when {
+                loadingPlayersList -> {
                     item {
-                        Card(
-                            shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                            elevation = CardDefaults.cardElevation(4.dp),
-                            modifier = modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.user_not_found),
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp),
-
-                                )
-                        }
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
                     }
                 }
 
-                items(items = playersList, key = { it.userId }) { player ->
-                    PlayerCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        player = player,
-                        inviteClick = onClickInviteUser,
-                    )
+                !errorPlayersList -> {
+                    if (searchDone && playersList.isEmpty()) {
+                        item {
+                            Card(
+                                shape = RoundedCornerShape(8.dp),
+                                elevation = CardDefaults.cardElevation(8.dp),
+                                modifier = modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.user_not_found),
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+
+                                    )
+                            }
+                        }
+                    }
+
+                    items(items = playersList, key = { it.userId }) { player ->
+                        PlayerCard(
+                            player = player,
+                            inviteClick = onClickInviteUser,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom=8.dp),
+                        )
+                    }
+                }
+
+                else -> {
+                    item {
+                        Text(
+                            text = stringResource(R.string.error_get_users),
+                            modifier = Modifier.padding(8.dp),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
-            else -> {
-                item {
-                    Text(
-                        text = stringResource(R.string.error_get_users),
-                        modifier = Modifier.padding(8.dp),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        }
 
 
-        
-        // List of Games
-        item{
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                elevation = CardDefaults.cardElevation(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp)
-            ) {
+
+            // List of Games
+            item{
                 Text(
                     text = stringResource(R.string.list_games_title),
                     style = MaterialTheme.typography.titleLarge,
@@ -276,60 +301,59 @@ fun HomeScreenContent(
                         .padding(vertical = 16.dp)
                 )
             }
-        }
 
-        when {
-            loadingGamesList -> {
-                item {
-                    HorizontalDivider(thickness = 2.dp)
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
-            }
-            !errorGamesList -> {
-                if (gamesList.isEmpty()) {
+
+            // List of Games
+            when {
+                loadingGamesList -> {
                     item {
-                        Card(
-                            shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                            elevation = CardDefaults.cardElevation(4.dp),
-                            modifier = modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.no_available_games),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
+                !errorGamesList -> {
+                    if (gamesList.isEmpty()) {
+                        item {
+                            Card(
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                                elevation = CardDefaults.cardElevation(4.dp),
+                                modifier = modifier
                                     .fillMaxWidth()
-                                    .padding(24.dp),
+                                    .padding(bottom = 8.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.no_available_games),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
 
-                            )
+                                    )
+                            }
                         }
                     }
-                } else {
-                    item {
-                        HorizontalDivider(thickness = 2.dp)
+
+                    items(items = gamesList, key = { it.gameId }) { game ->
+                        GameCard(
+                            gameId = game.gameId,
+                            playerName = game.player1.displayName,
+                            gameClick = onClickJoinGame,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
                     }
                 }
-
-                items(items = gamesList, key = { it.gameId }) { game ->
-                    GameCard(
-                        gameId = game.gameId,
-                        playerName = game.player1.displayName,
-                        gameClick = onClickJoinGame,
-                        modifier = Modifier
-                    )
-                }
-            }
-            else -> {
-                item {
-                    Text(
-                        text = stringResource(R.string.error_get_games),
-                        modifier = Modifier.padding(8.dp),
-                        color = MaterialTheme.colorScheme.error
-                    )
+                else -> {
+                    item {
+                        Text(
+                            text = stringResource(R.string.error_get_games),
+                            modifier = Modifier.padding(8.dp),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }
@@ -344,11 +368,16 @@ fun HomeScreenPreview(){
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
             searchedUser = "",
+            invitationsList = emptyList(),
             playersList = emptyList(),
             searchDone = false,
             loadingPlayersList = false,
             errorPlayersList = false,
-            gamesList = listOf(sampleGame),
+            gamesList = listOf(
+                sampleGame,
+                sampleGame.copy(gameId = "2"),
+                sampleGame.copy(gameId = "3")
+            ),
             loadingGamesList = false,
             errorGamesList = false,
             onClickCreateGame = { },

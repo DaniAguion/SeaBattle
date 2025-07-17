@@ -36,10 +36,9 @@ fun PlayerCard(
     inviteClick: (String) -> Unit = {}
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(8.dp),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
