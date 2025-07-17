@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.home
+package com.example.seabattle.presentation.screens.home.resources
 
 
 import androidx.compose.foundation.background

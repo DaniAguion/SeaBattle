@@ -1,4 +1,4 @@
-package com.example.seabattle.presentation.screens.home
+package com.example.seabattle.presentation.screens.home.resources
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,6 +24,7 @@ import com.example.seabattle.presentation.theme.SeaBattleTheme
 fun GameCard(
     playerName: String,
     gameId: String,
+    score: Int,
     gameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -36,13 +37,13 @@ fun GameCard(
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 24.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
 
         ){
             Text(
-                text = "Game of $playerName",
-                style = MaterialTheme.typography.titleLarge,
+                text = "Against $playerName ($score)",
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(0.7f),
             )
             Button (
@@ -65,6 +66,7 @@ fun GameCardPreview() {
     SeaBattleTheme {
         GameCard(
             gameId = "2",
+            score = 1500,
             playerName = "MeuPixel",
             gameClick = {}
         )

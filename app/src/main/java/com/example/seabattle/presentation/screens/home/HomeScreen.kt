@@ -1,12 +1,14 @@
 package com.example.seabattle.presentation.screens.home
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -33,6 +35,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +56,9 @@ import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import com.example.seabattle.presentation.resources.toErrorMessageUI
+import com.example.seabattle.presentation.screens.home.resources.GameCard
+import com.example.seabattle.presentation.screens.home.resources.InvitationCard
+import com.example.seabattle.presentation.screens.home.resources.PlayerCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -103,6 +111,7 @@ fun HomeScreen(
         onUserSearch = homeViewModel::onUserSearch,
         onClickInviteUser = homeViewModel::onClickInviteUser,
         onClickJoinGame = homeViewModel::onClickJoinGame,
+        onClickReject = homeViewModel::onClickRejectInvitation,
     )
 }
 
@@ -124,7 +133,10 @@ fun HomeScreenContent(
     onUserSearch: () -> Unit,
     onClickInviteUser: (String) -> Unit,
     onClickJoinGame: (String) -> Unit,
+    onClickReject: (Invitation) -> Unit,
 ) {
+    var expandedOptions by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -138,28 +150,6 @@ fun HomeScreenContent(
                 .padding(horizontal = 36.dp)
                 .padding(vertical = 12.dp)
         ) {
-            item{
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                ){
-                    Icon(
-                        imageVector = if (invitationsList.isNotEmpty()) {Icons.Default.Notifications} else {Icons.Default.NotificationsNone},
-                        contentDescription = "Invitations Icon",
-                        modifier = Modifier
-                            .clickable {
-                                if (invitationsList.isNotEmpty()) {
-                                    // Navigate to Invitations screen
-                                    // navController.navigate(Screen.Invitations.title)
-                                }
-                            }
-                            .size(48.dp)
-                    )
-                }
-            }
             // Header Title and Description
             item {
                 Text(
@@ -168,7 +158,7 @@ fun HomeScreenContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 12.dp)
+                        .padding(top= 24.dp, bottom = 12.dp)
                 )
                 Text(
                     text = stringResource(R.string.home_header_desc),
@@ -271,7 +261,7 @@ fun HomeScreenContent(
                             inviteClick = onClickInviteUser,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom=8.dp),
+                                .padding(bottom = 8.dp),
                         )
                     }
                 }
@@ -289,7 +279,70 @@ fun HomeScreenContent(
 
 
 
-            // List of Games
+            // Invitation Section
+            item{
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { expandedOptions = !expandedOptions }
+                        .fillMaxWidth()
+                        .padding(top= 12.dp, bottom = 24.dp)
+                ){
+                    Text(
+                        text = stringResource(R.string.invitations_title) + " (${invitationsList.size})",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                    Icon(
+                        imageVector = if (expandedOptions) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = if (expandedOptions) "Collapse" else "Expand"
+                    )
+                }
+            }
+
+
+            // Invitations List
+            item{
+                AnimatedVisibility(
+                    visible = expandedOptions,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    if (invitationsList.isEmpty()) {
+                        Card(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                            elevation = CardDefaults.cardElevation(4.dp),
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_invitations),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+                            )
+                        }
+                    } else {
+                         invitationsList.forEach { invitation ->
+                             InvitationCard(
+                                invitation = invitation,
+                                onClickJoin = onClickJoinGame,
+                                onClickReject = onClickReject,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+
+            // Available Games Section
             item{
                 Text(
                     text = stringResource(R.string.list_games_title),
@@ -341,6 +394,7 @@ fun HomeScreenContent(
                         GameCard(
                             gameId = game.gameId,
                             playerName = game.player1.displayName,
+                            score = game.player1.score,
                             gameClick = onClickJoinGame,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -384,7 +438,8 @@ fun HomeScreenPreview(){
             onUserSearchChange = { },
             onUserSearch = { },
             onClickInviteUser = { },
-            onClickJoinGame = { }
+            onClickJoinGame = { },
+            onClickReject = { _ -> }
         )
     }
 }

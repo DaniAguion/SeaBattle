@@ -3,6 +3,7 @@ package com.example.seabattle.data.local
 import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.entity.Game
 import com.example.seabattle.domain.entity.GameHistory
+import com.example.seabattle.domain.entity.Invitation
 import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.domain.entity.Ship
 import com.example.seabattle.domain.entity.ShipPiece
@@ -193,4 +194,11 @@ val sampleGameHistory = GameHistory(
     player2 = sampleBasicPlayersList[1],
     scoreTransacted = 14,
     playedAt = sampleGame.updatedAt
+)
+
+
+val sampleInvitation = Invitation(
+    gameId = "f074ffb3-2bdd-4edc-97b4-8a423d3705af",
+    invitedTo = sampleBasicPlayersList[0],
+    invitedBy = sampleBasicPlayersList[1]
 )

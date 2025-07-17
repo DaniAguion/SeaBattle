@@ -122,4 +122,7 @@
     <string name="invite_button">Invite</string>
     <string name="error_user_data_not_valid">n error occurred with the game data</string>
     <string name="error_invalid_guest">Invalid guest</string>
+    <string name="invitations_title">Received Invitations</string>
+    <string name="no_invitations">There is no invitations</string>
+    <string name="reject_button">Reject</string>
 </resources>

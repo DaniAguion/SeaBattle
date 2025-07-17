@@ -136,7 +136,7 @@ class UserGamesRepositoryImpl(
 
                 transaction.update(
                     documentGuestRef,
-                    "invitedGameId",
+                    "gamesInvitations",
                     FieldValue.arrayUnion(invitationDto)
                 )
             }.await()
@@ -174,7 +174,7 @@ class UserGamesRepositoryImpl(
 
                 transaction.update(
                     documentGuestRef,
-                    "invitedGameId",
+                    "gamesInvitations",
                     FieldValue.arrayRemove(invitationDto)
                 )
             }.await()
@@ -214,7 +214,7 @@ class UserGamesRepositoryImpl(
                 // Remove the invitation from the guest user (current user)
                 transaction.update(
                     documentGuestRef,
-                    "invitedGameId",
+                    "gamesInvitations",
                     FieldValue.arrayRemove(invitationDto)
                 )
             }.await()

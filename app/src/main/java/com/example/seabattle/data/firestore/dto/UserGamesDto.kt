@@ -4,7 +4,7 @@ data class UserGamesDto(
     val userId: String = "",
     val currentGameId: String? = null,
     val sentGameInvitation: InvitationDto? = null,
-    val gameInvitations: List<InvitationDto> = emptyList()
+    val gamesInvitations: List<InvitationDto> = emptyList()
 )
 
 

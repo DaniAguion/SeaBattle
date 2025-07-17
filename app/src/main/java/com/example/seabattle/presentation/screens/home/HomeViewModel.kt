@@ -3,12 +3,14 @@ package com.example.seabattle.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.entity.Invitation
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
 import com.example.seabattle.domain.usecase.user.FindPlayerUseCase
 import com.example.seabattle.domain.usecase.userGames.InviteUserUseCase
 import com.example.seabattle.domain.usecase.userGames.ListenUserGamesUseCase
+import com.example.seabattle.domain.usecase.userGames.RejectInvitationUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,7 @@ class HomeViewModel(
     private val getGamesUseCase: GetGamesUseCase,
     private val joinGameUseCase: JoinGameUseCase,
     private val listenUserGamesUseCase: ListenUserGamesUseCase,
+    private val rejectInvitationUseCase: RejectInvitationUseCase,
     private val sessionService: SessionService
 ) : ViewModel() {
 
@@ -47,6 +50,7 @@ class HomeViewModel(
                                 sessionService.setCurrentGameId(userGames.currentGameId)
                                 _uiState.value = _uiState.value.copy(hasJoined = true)
                             }
+                            _uiState.value = _uiState.value.copy(invitationsList = userGames.gamesInvitations)
                         }
                         .onFailure { e ->
                             _uiState.value = _uiState.value.copy(
@@ -126,7 +130,7 @@ class HomeViewModel(
     fun onUserSearch() {
         if (uiState.value.searchedUser.isEmpty()) return
 
-        _uiState.value = _uiState.value.copy(loadingPlayersList = true,)
+        _uiState.value = _uiState.value.copy(loadingPlayersList = true)
 
         viewModelScope.launch {
             findPlayerUseCase.invoke(uiState.value.searchedUser)
@@ -180,6 +184,16 @@ class HomeViewModel(
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(hasJoined = true)
                 }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
+        }
+    }
+
+
+    fun onClickRejectInvitation(invitation: Invitation) {
+        viewModelScope.launch {
+            rejectInvitationUseCase.invoke(invitation)
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(error = e)
                 }
