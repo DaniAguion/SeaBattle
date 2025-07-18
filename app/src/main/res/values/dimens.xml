@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_title">40dp</dimen>
-    <dimen name="padding_big">32dp</dimen>
+    <dimen name="padding_larger">48dp</dimen>
+    <dimen name="padding_large">32dp</dimen>
+    <dimen name="content_padding">24dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <!-- Cell size for the grid layout -->
@@ -14,5 +16,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="padding_min">4dp</dimen>
 
 </resources>

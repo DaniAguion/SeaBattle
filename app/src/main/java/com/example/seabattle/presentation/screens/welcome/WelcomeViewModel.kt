@@ -54,12 +54,22 @@ class WelcomeViewModel(
         _uiState.value = _uiState.value.copy(passwordError = validationResult)
     }
 
+    fun onRepeatPasswordUpdate(repeatedPasswordField: String) {
+        validateRepeatPassword(repeatedPasswordField)
+        _uiState.value = _uiState.value.copy(repeatedPassword = repeatedPasswordField)
+    }
+
+    private fun validateRepeatPassword(password: String){
+        val validationResult = Validator.validatePassword(password)
+        _uiState.value = _uiState.value.copy(repeatedPasswordError = validationResult)
+    }
+
     fun onLoginButtonClicked() {
         validateEmail(_uiState.value.email)
         validatePassword(_uiState.value.password)
 
         if((uiState.value.emailError != null) || (uiState.value.passwordError != null)){
-            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.LOGIN_UNSUCCESSFUL)
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.INVALID_FIELDS)
             return
         }
 
@@ -91,12 +101,20 @@ class WelcomeViewModel(
         validateUsername(_uiState.value.username)
         validateEmail(_uiState.value.email)
         validateNewPassword(_uiState.value.password)
+        validateRepeatPassword(_uiState.value.repeatedPassword)
+
 
         if ((uiState.value.usernameError != null) ||
             (uiState.value.emailError != null) ||
-            (uiState.value.passwordError != null)
+            (uiState.value.passwordError != null) ||
+            (uiState.value.repeatedPasswordError != null)
         ){
-            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.REGISTER_UNSUCCESSFUL)
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.INVALID_FIELDS)
+            return
+        }
+
+        if (_uiState.value.password != _uiState.value.repeatedPassword) {
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.PASSWORDS_DOES_NOT_MATCH)
             return
         }
 
@@ -147,6 +165,17 @@ class WelcomeViewModel(
                 _uiState.value = _uiState.value.copy(isLoggedIn = false)
             }
         }
+    }
+
+    fun onResetError() {
+        _uiState.value = _uiState.value.copy(
+            usernameError = null,
+            emailError = null,
+            passwordError = null,
+            repeatedPasswordError = null,
+            error = null,
+            msgResult = null
+        )
     }
 
     fun onErrorShown(){

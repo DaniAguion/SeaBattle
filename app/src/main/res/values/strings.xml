@@ -18,6 +18,9 @@
     <string name="login_unsuccessful">Sign In try unsuccessful</string>
     <string name="register_successful">Sign up successful!</string>
     <string name="register_unsuccessful">Sign up try unsuccessful!</string>
+    <string name="repeat_password">Repeat the password</string>
+    <string name="invalid_fields">Some field is invalid</string>
+    <string name="passwords_does_not_match">Repeated password does not match</string>
 
     // Validation email and password messages
     <string name="error_empty_username">Please introduce your username</string>
@@ -43,6 +46,8 @@
     <string name="error_user_not_auth">User is not authenticated.</string>
     <string name="error_presence_status">An error occurred setting the offline/online status.</string>
     <string name="error_user_not_found">User not found.</string>
+    <string name="error_user_data_not_valid">An error occurred with the game data</string>
+    <string name="error_invalid_guest">Invalid guest</string>
 
 
     // Home Screen
@@ -55,6 +60,16 @@
     <string name="list_games_title">Available games</string>
     <string name="error_empty_gameName">Please, name the new game.</string>
     <string name="error_get_games">Error getting games from server</string>
+    <string name="no_games_available">No games available</string>
+    <string name="invite_to_play_title">Invite an user to play</string>
+    <string name="invite_user">Invite to Game</string>
+    <string name="search_user">Search Username</string>
+    <string name="user_not_found">User not found</string>
+    <string name="join_button">Join</string>
+    <string name="invite_button">Invite</string>
+    <string name="invitations_title">Received Invitations</string>
+    <string name="no_invitations">No invitations received</string>
+    <string name="reject_button">Reject</string>
 
     // Game Screen
     <string name="leave_dialog_title">Confirm you want to leave</string>
@@ -113,16 +128,4 @@
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
-    <string name="no_games_available">No games available</string>
-    <string name="invite_to_play_title">Invite an user to play</string>
-    <string name="invite_user">Invite to Game</string>
-    <string name="search_user">Search Username</string>
-    <string name="user_not_found">User not found</string>
-    <string name="join_button">Join</string>
-    <string name="invite_button">Invite</string>
-    <string name="error_user_data_not_valid">n error occurred with the game data</string>
-    <string name="error_invalid_guest">Invalid guest</string>
-    <string name="invitations_title">Received Invitations</string>
-    <string name="no_invitations">No invitations received</string>
-    <string name="reject_button">Reject</string>
 </resources>

@@ -39,7 +39,7 @@ fun PlayersInfoHeader(
 ) {
     Row(
         modifier = modifier
-            .padding(bottom = dimensionResource(R.dimen.padding_big)),
+            .padding(bottom = dimensionResource(R.dimen.padding_large)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){

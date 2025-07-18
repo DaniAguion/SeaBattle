@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,9 +75,11 @@ fun WelcomeScreen(
     WelcomeScreenContent(
         modifier = modifier,
         welcomeUiState = welcomeUiState,
+        onResetError = welcomeViewModel::onResetError,
         onUsernameUpdate = welcomeViewModel::onUsernameUpdate,
         onEmailUpdate = welcomeViewModel::onEmailUpdate,
         onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
+        onPasswordRepeatUpdate = welcomeViewModel::onRepeatPasswordUpdate,
         onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
         onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
         onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(context) }
@@ -87,9 +90,11 @@ fun WelcomeScreen(
 fun WelcomeScreenContent(
     modifier: Modifier = Modifier,
     welcomeUiState: WelcomeUiState = WelcomeUiState(),
+    onResetError: () -> Unit = {},
     onUsernameUpdate: (String) -> Unit = {},
     onEmailUpdate: (String) -> Unit = {},
     onPasswordUpdate: (String) -> Unit = {},
+    onPasswordRepeatUpdate: (String) -> Unit = {},
     onLoginButtonClicked: () -> Unit = {},
     onRegisterButtonClicked: () -> Unit = {},
     onGoogleButtonClicked: () -> Unit = {},
@@ -103,39 +108,99 @@ fun WelcomeScreenContent(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(dimensionResource(R.dimen.content_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         // Header
         item {
-            Text(
-                text = stringResource(R.string.welcome_page_title),
-                fontSize = 32.sp,
-                style = MaterialTheme.typography.displayLarge
-            )
-            Text(
-                text = stringResource(R.string.welcome_page_desc),
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillParentMaxHeight(0.3f)
+            ){
+                Text(
+                    text = stringResource(R.string.welcome_page_title),
+                    fontSize = 32.sp,
+                    style = MaterialTheme.typography.displayLarge
+                )
+                Text(
+                    text = stringResource(R.string.welcome_page_desc),
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(
+                            top = dimensionResource(R.dimen.padding_small),
+                            bottom = dimensionResource(R.dimen.padding_medium)
+                        )
+
+                )
+            }
         }
 
+
+        // Google button
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(R.dimen.content_padding))
+                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    .fillParentMaxHeight(0.1f)
+            ) {
+                Button(
+                    onClick = onGoogleButtonClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.access_with_google))
+                }
+            }
+        }
+
+
         //Forms to login and register
-        item{
-            HorizontalPager(state = pagerState) { page ->
+        item {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                containerColor = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillParentMaxHeight(0.1f)
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(text = title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            onResetError()
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        }
+                    )
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) { page ->
                 when (page) {
                     0 -> {
                         Column(
-                            modifier = Modifier
-                                .height(350.dp)
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                                .fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(dimensionResource(R.dimen.padding_medium))
                         ) {
                             CommonForm(
+                                registerFields = false,
                                 welcomeUiState = welcomeUiState,
                                 onEmailUpdate = onEmailUpdate,
                                 onPasswordUpdate = onPasswordUpdate
@@ -151,37 +216,19 @@ fun WelcomeScreenContent(
 
                     1 -> {
                         Column(
-                            modifier = Modifier
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                                .fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(dimensionResource(R.dimen.padding_medium))
                         ) {
-                            OutlinedTextField(
-                                value = welcomeUiState.username,
-                                onValueChange = onUsernameUpdate,
-                                label = { Text(stringResource(R.string.username)) },
-                                singleLine = true,
-                                isError = welcomeUiState.usernameError != null,
-                                supportingText = {
-                                    welcomeUiState.usernameError?.let {
-                                        Text(
-                                            text = stringResource(it.idString),
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    autoCorrectEnabled = false,
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Done
-                                ),
-                                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
-                            )
                             CommonForm(
+                                registerFields = true,
                                 welcomeUiState = welcomeUiState,
                                 onEmailUpdate = onEmailUpdate,
-                                onPasswordUpdate = onPasswordUpdate
+                                onPasswordUpdate = onPasswordUpdate,
+                                onUsernameUpdate = onUsernameUpdate,
+                                onPasswordRepeatUpdate = onPasswordRepeatUpdate
                             )
                             Button(
                                 onClick = onRegisterButtonClicked,
@@ -193,33 +240,6 @@ fun WelcomeScreenContent(
                     }
                 }
             }
-            TabRow(selectedTabIndex = pagerState.currentPage) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(text = title) },
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        }
-                    )
-                }
-            }
-        }
-
-        // Google button
-        item {
-            Button(
-                onClick = onGoogleButtonClicked,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_big))
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(horizontal = dimensionResource(R.dimen.padding_small)),
-            ) {
-                Text(stringResource(R.string.access_with_google))
-            }
         }
     }
 }
@@ -227,15 +247,40 @@ fun WelcomeScreenContent(
 
 @Composable
 fun CommonForm(
+    registerFields: Boolean,
     welcomeUiState : WelcomeUiState,
     onEmailUpdate: (String) -> Unit,
-    onPasswordUpdate: (String) -> Unit
+    onPasswordUpdate: (String) -> Unit,
+    onUsernameUpdate: (String) -> Unit = {  }, // Optional for login only
+    onPasswordRepeatUpdate: (String) -> Unit = {  } // Optional for login only
 ){
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
+        if (registerFields) {
+            OutlinedTextField(
+                value = welcomeUiState.username,
+                onValueChange = onUsernameUpdate,
+                label = { Text(stringResource(R.string.username)) },
+                singleLine = true,
+                isError = welcomeUiState.usernameError != null,
+                supportingText = {
+                    welcomeUiState.usernameError?.let {
+                        Text(
+                            text = stringResource(it.idString),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
+            )
+        }
         OutlinedTextField(
             value = welcomeUiState.email,
             onValueChange = onEmailUpdate,
@@ -254,9 +299,7 @@ fun CommonForm(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
-
+            )
         )
         OutlinedTextField(
             value = welcomeUiState.password,
@@ -277,9 +320,31 @@ fun CommonForm(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+            )
         )
+        if (registerFields) {
+            OutlinedTextField(
+                value = welcomeUiState.repeatedPassword,
+                onValueChange = onPasswordRepeatUpdate,
+                label = { Text(stringResource(R.string.repeat_password)) },
+                singleLine = true,
+                isError = welcomeUiState.repeatedPasswordError != null,
+                supportingText = {
+                    welcomeUiState.repeatedPasswordError?.let {
+                        Text(
+                            text = stringResource(it.idString),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                )
+            )
+        }
     }
     Spacer(
         modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
@@ -310,12 +375,24 @@ fun CommonForm(
                     color = Color.Red
                 )
             }
+            InfoMessages.PASSWORDS_DOES_NOT_MATCH -> {
+                Text(
+                    text = stringResource(R.string.passwords_does_not_match),
+                    color = Color.Red
+                )
+            }
+            InfoMessages.INVALID_FIELDS -> {
+                Text(
+                    text = stringResource(R.string.invalid_fields),
+                    color = Color.Red
+                )
+            }
         }
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = "id:small_phone")
 @Composable
 fun WelcomeScreenPreview() {
     SeaBattleTheme {
