@@ -108,7 +108,7 @@ fun WelcomeScreenContent(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(dimensionResource(R.dimen.content_padding)),
+        contentPadding = PaddingValues(dimensionResource(R.dimen.padding_container)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -148,7 +148,7 @@ fun WelcomeScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .padding(horizontal = dimensionResource(R.dimen.content_padding))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_container))
                     .padding(bottom = dimensionResource(R.dimen.padding_medium))
                     .fillParentMaxHeight(0.1f)
             ) {

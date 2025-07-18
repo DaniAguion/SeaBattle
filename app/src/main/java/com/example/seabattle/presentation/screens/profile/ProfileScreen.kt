@@ -17,17 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -158,7 +155,7 @@ fun ProfileScreenContent(
     LazyColumn(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(top = 32.dp)
+            .padding(dimensionResource(R.dimen.padding_container))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -170,7 +167,9 @@ fun ProfileScreenContent(
                 Image(
                     painter = painterResource(id = R.drawable.account_box_40px),
                     contentDescription = "User photo",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .padding(top= dimensionResource(R.dimen.padding_medium))
+                        .size(dimensionResource(R.dimen.profile_image_size))
                 )
             } else {
                 AsyncImage(
@@ -178,21 +177,23 @@ fun ProfileScreenContent(
                     contentDescription = "User photo",
                     contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.account_box_40px),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .padding(top= dimensionResource(R.dimen.padding_medium))
+                        .size(dimensionResource(R.dimen.profile_image_size))
                 )
             }
         }
         item {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dimensionResource(R.dimen.padding_medium)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
             ){
                 Text(
                     text = user.displayName,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(
                     text = user.email,
@@ -205,7 +206,7 @@ fun ProfileScreenContent(
             Button(
                 onClick = onLogoutButtonClicked,
                 modifier = Modifier
-                    .widthIn(min = 200.dp)
+                    .widthIn(min = dimensionResource(R.dimen.button_min_width))
                     .padding(bottom = dimensionResource(R.dimen.padding_medium)),
             ) {
                 Text("SignOut")
@@ -223,7 +224,7 @@ fun ProfileScreenContent(
             ) {
                 Text(
                     text = stringResource(R.string.account_options),
-                    fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
+                    style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
                 Icon(
@@ -249,29 +250,23 @@ fun ProfileScreenContent(
             }
         }
 
+
         // Played Games Title
         item{
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                elevation = CardDefaults.cardElevation(16.dp),
+            Text(
+                text = stringResource(R.string.history_header),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.history_header),
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                )
-                HorizontalDivider(thickness = 1.dp)
-            }
+                    .fillMaxSize()
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_large),
+                        bottom = dimensionResource(R.dimen.padding_medium),
+                    )
+            )
         }
+
 
 
         // Played Games List
@@ -289,9 +284,10 @@ fun ProfileScreenContent(
                     PlayedGameCard(
                         userId = user.userId,
                         game = playedGame,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = dimensionResource(R.dimen.padding_small))
                     )
-                    HorizontalDivider(thickness = 1.dp)
                 }
             }
 
@@ -299,7 +295,7 @@ fun ProfileScreenContent(
                 item {
                     Text(
                         text = stringResource(R.string.error_get_history),
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
                         color = MaterialTheme.colorScheme.error
                     )
                 }

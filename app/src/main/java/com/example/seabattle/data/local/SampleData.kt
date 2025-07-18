@@ -180,7 +180,7 @@ val sampleGame = Game(
 
 val sampleBasicPlayersList = listOf(
     BasicPlayer(userId = "1", displayName = "Player1", score = 100),
-    BasicPlayer(userId = "2", displayName = "Player2", score = 90),
+    BasicPlayer(userId = "2", displayName = "Daniel Alvarez Aguion", score = 90),
     BasicPlayer(userId = "3", displayName = "Player3", score = 80),
     BasicPlayer(userId = "4", displayName = "Player4", score = 70),
     BasicPlayer(userId = "5", displayName = "Player5", score = 60)

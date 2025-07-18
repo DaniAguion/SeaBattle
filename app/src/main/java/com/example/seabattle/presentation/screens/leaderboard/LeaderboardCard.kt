@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -65,11 +68,20 @@ fun UserCard(
                 Text(
                     text = user?.displayName ?: "",
                     style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(end = dimensionResource(id = R.dimen.padding_small))
+                        .weight(0.7f),
                 )
                 Text(
                     text = user?.score.toString(),
+                    textAlign = TextAlign.End,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(end = 20.dp)
+                    modifier = Modifier
+                        .padding(end = dimensionResource(id = R.dimen.padding_small))
+                        .weight(0.3f)
+
                 )
             }
         }

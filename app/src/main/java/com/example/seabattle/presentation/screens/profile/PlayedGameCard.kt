@@ -20,8 +20,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
@@ -38,11 +40,9 @@ fun PlayedGameCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        shape = RoundedCornerShape(8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -50,15 +50,16 @@ fun PlayedGameCard(
                 .fillMaxWidth()
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ){
                 Text(
                     text = if (userId == game.winnerId) {stringResource(id = R.string.victory)} else {stringResource(id = R.string.defeat)},
                     style = MaterialTheme.typography.titleMedium,
                     color = if (userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
                 )
                 Text(
                     text = "( " + if (userId == game.player1.userId) {
@@ -75,22 +76,25 @@ fun PlayedGameCard(
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 PlayerInfo(
-                    player = game.player1
+                    player = game.player1,
+                    modifier = Modifier.weight(0.4f)
                 )
                 Text(
                     text = stringResource(id = R.string.vs),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = SemiBold
                     ),
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(R.dimen.padding_medium))
                 )
                 PlayerInfo(
-                    player = game.player2
+                    player = game.player2,
+                    modifier = Modifier.weight(0.4f)
                 )
             }
         }
@@ -101,30 +105,36 @@ fun PlayedGameCard(
 
 @Composable
 fun PlayerInfo(
-    player: BasicPlayer
+    player: BasicPlayer,
+    modifier: Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         if (player.photoUrl.isEmpty()) {
             Image(
                 painter = painterResource(id = R.drawable.account_box_40px),
                 contentDescription = "User photo",
-                modifier = Modifier.size(40.dp)
+
             )
         } else {
             AsyncImage(
                 model = player.photoUrl,
                 contentDescription = "User photo",
-                modifier = Modifier.size(40.dp),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.account_box_40px),
+                modifier = Modifier
+                    .size(dimensionResource(R.dimen.profile_image_size))
             )
         }
 
         Text(
             text = player.displayName,
             style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Clip,
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_small))
         )
