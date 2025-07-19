@@ -27,7 +27,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
@@ -90,13 +89,13 @@ fun PlayerStatusCard(
                     Image(
                         painter = painterResource(id = R.drawable.account_box_40px),
                         contentDescription = "User photo",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(dimensionResource(R.dimen.profile_image_size))
                     )
                 } else {
                     AsyncImage(
                         model = player.photoUrl,
                         contentDescription = "User photo",
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.size(dimensionResource(R.dimen.profile_image_size)),
                         contentScale = ContentScale.Crop,
                         error = painterResource(id = R.drawable.account_box_40px),
                     )

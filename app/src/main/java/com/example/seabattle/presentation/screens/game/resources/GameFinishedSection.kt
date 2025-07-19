@@ -77,7 +77,7 @@ fun GameFinishedSection(
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
                 )
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(dimensionResource(R.dimen.progress_size)),
                     strokeWidth = 2.dp
                 )
             }
@@ -132,7 +132,6 @@ fun GameFinishedSection(
                     ),
                     modifier = Modifier
                         .padding(dimensionResource(R.dimen.padding_xsmall))
-                        .sizeIn(minWidth = 150.dp)
                 ) {
                     Text(text = stringResource(R.string.leave_game_button))
                 }

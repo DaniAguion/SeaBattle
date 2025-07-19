@@ -9,4 +9,5 @@ data class ProfileUiState(
     val loadingList: Boolean = true,
     val error: Throwable? = null,
     val deleteDialog: Boolean = false,
+    val deleteConfirmationText: String = "",
 )

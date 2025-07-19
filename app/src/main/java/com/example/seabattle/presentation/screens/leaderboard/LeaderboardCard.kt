@@ -35,7 +35,7 @@ fun UserCard(
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
         border = BorderStroke(
             width = if (position > 3 || position == 0) { Dp.Hairline } else { 4.dp },
             color = if (position == 1) {

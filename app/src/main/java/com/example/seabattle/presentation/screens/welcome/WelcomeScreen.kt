@@ -36,7 +36,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
@@ -144,21 +143,13 @@ fun WelcomeScreenContent(
 
         // Google button
         item {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Button(
+                onClick = onGoogleButtonClicked,
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(R.dimen.padding_container))
                     .padding(bottom = dimensionResource(R.dimen.padding_small))
-                    .fillParentMaxHeight(0.1f)
             ) {
-                Button(
-                    onClick = onGoogleButtonClicked,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.access_with_google))
-                }
+                Text(stringResource(R.string.access_with_google),)
             }
         }
 
@@ -207,7 +198,6 @@ fun WelcomeScreenContent(
                             )
                             Button(
                                 onClick = onLoginButtonClicked,
-                                Modifier.widthIn(min = 250.dp)
                             ) {
                                 Text(stringResource(R.string.submit))
                             }
@@ -232,7 +222,7 @@ fun WelcomeScreenContent(
                             )
                             Button(
                                 onClick = onRegisterButtonClicked,
-                                Modifier.widthIn(min = 250.dp)
+
                             ) {
                                 Text(stringResource(R.string.submit))
                             }

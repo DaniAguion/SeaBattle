@@ -100,6 +100,12 @@ class ProfileViewModel(
     }
 
 
+    // Function to delete confirmation text
+    fun onDeleteConfirmTextUpdated(textField: String) {
+        _uiState.value = _uiState.value.copy(deleteConfirmationText = textField)
+    }
+
+
     fun onErrorShown(){
         _uiState.value = _uiState.value.copy(error = null)
     }

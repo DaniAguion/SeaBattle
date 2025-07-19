@@ -56,6 +56,9 @@ import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.draw.clip
 
 
 @Composable
@@ -98,9 +101,33 @@ fun ProfileScreen(
         AlertDialog(
             onDismissRequest = { profileViewModel.onClickCancel() },
             title = { Text(stringResource(R.string.delete_account_title)) },
-            text = { Text(stringResource(R.string.delete_account_title_msg)) },
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_xsmall)),
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Text(stringResource(R.string.delete_account_title_msg))
+                    OutlinedTextField(
+                        value = profileUiState.deleteConfirmationText,
+                        onValueChange = { profileViewModel.onDeleteConfirmTextUpdated(it) },
+                        label = { Text(stringResource(R.string.delete_confirmation_text)) },
+                        singleLine = true,
+                        isError = profileUiState.deleteConfirmationText != "Delete",
+                        supportingText = {
+                            if (profileUiState.deleteConfirmationText != "Delete") {
+                                Text(
+                                    text = stringResource(R.string.delete_confirmation_error),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    )
+                }
+            },
             confirmButton = {
                 Button(
+                    enabled = profileUiState.deleteConfirmationText == "Delete",
                     onClick = {
                         profileViewModel.onClickConfirm()
                     },
@@ -117,10 +144,6 @@ fun ProfileScreen(
                     onClick = {
                         profileViewModel.onClickCancel()
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 ) {
                     Text(stringResource(R.string.cancel_button))
                 }
@@ -153,12 +176,11 @@ fun ProfileScreenContent(
     var expandedOptions by remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(dimensionResource(R.dimen.padding_container))
-            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
+        modifier = modifier
+            .padding(dimensionResource(R.dimen.padding_container))
+            .fillMaxSize(),
 
     ) {
         // Profile Info
@@ -170,6 +192,7 @@ fun ProfileScreenContent(
                     modifier = Modifier
                         .padding(top= dimensionResource(R.dimen.padding_small))
                         .size(dimensionResource(R.dimen.profile_image_size))
+                        .clip(CircleShape)
                 )
             } else {
                 AsyncImage(
@@ -180,6 +203,7 @@ fun ProfileScreenContent(
                     modifier = Modifier
                         .padding(top= dimensionResource(R.dimen.padding_small))
                         .size(dimensionResource(R.dimen.profile_image_size))
+                        .clip(CircleShape)
                 )
             }
         }
@@ -274,7 +298,7 @@ fun ProfileScreenContent(
             loadingList ->
                 item {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(dimensionResource(R.dimen.progress_size)),
                         strokeWidth = 2.dp
                     )
                 }

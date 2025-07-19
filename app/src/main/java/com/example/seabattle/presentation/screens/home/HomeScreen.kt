@@ -228,7 +228,7 @@ fun HomeScreenContent(
                 loadingPlayersList -> {
                     item {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(dimensionResource(R.dimen.progress_size)),
                             strokeWidth = 2.dp
                         )
                     }
@@ -369,7 +369,7 @@ fun HomeScreenContent(
                 loadingGamesList -> {
                     item {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(dimensionResource(R.dimen.progress_size)),
                             strokeWidth = 2.dp
                         )
                     }
