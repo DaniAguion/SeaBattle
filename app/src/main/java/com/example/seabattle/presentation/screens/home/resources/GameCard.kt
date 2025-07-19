@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.seabattle.R
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 
@@ -42,7 +41,7 @@ fun GameCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(all = dimensionResource(id = R.dimen.padding_medium))
+                .padding(all = dimensionResource(id = R.dimen.padding_small))
                 .fillMaxWidth(),
         ){
             Row(
@@ -50,7 +49,7 @@ fun GameCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .weight(0.7f)
-                    .padding(end = dimensionResource(id = R.dimen.padding_small))
+                    .padding(end = dimensionResource(id = R.dimen.padding_xsmall))
             ){
                 Text(
                     text = "Against $playerName ($score)",
@@ -63,7 +62,7 @@ fun GameCard(
             }
             Button (
                 shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
                 onClick = { gameClick(gameId) },
                 modifier = Modifier.weight(0.3f)
 

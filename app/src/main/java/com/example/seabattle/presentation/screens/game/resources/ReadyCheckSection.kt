@@ -37,11 +37,11 @@ fun ReadyCheckSection(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_medium))
+            .padding(dimensionResource(R.dimen.padding_small))
     ) {
         Column(
             modifier = modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
+                .padding(dimensionResource(R.dimen.padding_small))
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -51,13 +51,13 @@ fun ReadyCheckSection(
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
                 modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                    .padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Text(
                 text = stringResource(R.string.ready_check_desc),
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                    .padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Text(
                 text = if (game.player1Ready) {
@@ -67,7 +67,7 @@ fun ReadyCheckSection(
                 },
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                    .padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Text(
                 text = if (game.player2Ready) {
@@ -77,7 +77,7 @@ fun ReadyCheckSection(
                 },
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
+                    .padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Row {
                 Button(
@@ -86,7 +86,7 @@ fun ReadyCheckSection(
                         containerColor = MaterialTheme.colorScheme.error
                     ),
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                         .sizeIn(minWidth = 150.dp)
                 ) {
                     Text(stringResource(R.string.leave_game_button))
@@ -98,7 +98,7 @@ fun ReadyCheckSection(
                     ),
                     enabled = enableReadyButton,
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                         .sizeIn(minWidth = 150.dp)
                 ) {
                     Text(stringResource(R.string.ready_button))

@@ -51,13 +51,13 @@ fun PlayersInfoHeader(
         PlayerStatusCard(
             player = player1,
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_small))
+                .padding(dimensionResource(id = R.dimen.padding_xsmall))
                 .weight(1f)
         )
         PlayerStatusCard(
             player = player2,
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_small))
+                .padding(dimensionResource(id = R.dimen.padding_xsmall))
                 .weight(1f)
         )
     }
@@ -79,7 +79,7 @@ fun PlayerStatusCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_small))
+                .padding(dimensionResource(R.dimen.padding_xsmall))
         ){
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -108,7 +108,7 @@ fun PlayerStatusCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = SemiBold,
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                 )
 
             }

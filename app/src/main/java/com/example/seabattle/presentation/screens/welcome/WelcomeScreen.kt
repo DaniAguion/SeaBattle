@@ -133,8 +133,8 @@ fun WelcomeScreenContent(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .padding(
-                            top = dimensionResource(R.dimen.padding_small),
-                            bottom = dimensionResource(R.dimen.padding_medium)
+                            top = dimensionResource(R.dimen.padding_xsmall),
+                            bottom = dimensionResource(R.dimen.padding_small)
                         )
 
                 )
@@ -149,7 +149,7 @@ fun WelcomeScreenContent(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(R.dimen.padding_container))
-                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
                     .fillParentMaxHeight(0.1f)
             ) {
                 Button(
@@ -197,7 +197,7 @@ fun WelcomeScreenContent(
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(dimensionResource(R.dimen.padding_medium))
+                                .padding(dimensionResource(R.dimen.padding_small))
                         ) {
                             CommonForm(
                                 registerFields = false,
@@ -220,7 +220,7 @@ fun WelcomeScreenContent(
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(dimensionResource(R.dimen.padding_medium))
+                                .padding(dimensionResource(R.dimen.padding_small))
                         ) {
                             CommonForm(
                                 registerFields = true,
@@ -347,7 +347,7 @@ fun CommonForm(
         }
     }
     Spacer(
-        modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
+        modifier = Modifier.height(dimensionResource(R.dimen.padding_xsmall))
     )
     welcomeUiState.msgResult?.let { msgResult ->
         when (msgResult) {

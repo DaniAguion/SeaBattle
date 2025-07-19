@@ -45,11 +45,11 @@ fun GameFinishedSection(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_medium))
+            .padding(dimensionResource(R.dimen.padding_small))
     ) {
         Column(
             modifier = modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
+                .padding(dimensionResource(R.dimen.padding_small))
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -58,7 +58,7 @@ fun GameFinishedSection(
                 text = stringResource(R.string.game_finished),
                 fontSize = 24.sp,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_xsmall))
             )
             Text(
                 text = if(game.winnerId == userId){
@@ -68,13 +68,13 @@ fun GameFinishedSection(
                 },
                 fontSize = 18.sp,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
             if (initialScore == userScore) {
                 Text(
                     text = stringResource(R.string.calculating_score),
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
                 )
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
@@ -86,11 +86,11 @@ fun GameFinishedSection(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.padding_medium))
+                    .padding(vertical = dimensionResource(R.dimen.padding_small))
             ){
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
@@ -110,7 +110,7 @@ fun GameFinishedSection(
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
                     modifier = Modifier.weight(1f)
                 ) {
                     AnimatedScoreDisplay(score = initialScore)
@@ -131,7 +131,7 @@ fun GameFinishedSection(
                         containerColor = MaterialTheme.colorScheme.primary,
                     ),
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                         .sizeIn(minWidth = 150.dp)
                 ) {
                     Text(text = stringResource(R.string.leave_game_button))

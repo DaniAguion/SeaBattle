@@ -62,7 +62,7 @@ fun WaitGameSection(
 
     Column(
         modifier = modifier
-            .padding(dimensionResource(R.dimen.padding_medium))
+            .padding(dimensionResource(R.dimen.padding_small))
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -73,18 +73,18 @@ fun WaitGameSection(
             text = stringResource(R.string.waiting_player),
             fontSize = 20.sp,
             fontWeight = SemiBold,
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
         )
         if (game.gameState == "WAITING_FOR_PLAYER") {
             Text(
                 text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),
                 fontSize = 18.sp,
                 color = if (waitingTime >= 300) Color.Red else Color.Unspecified,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Button(
                 onClick = onClickLeave,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
             ) {
                 Text(text = stringResource(R.string.leave_game_button))
             }

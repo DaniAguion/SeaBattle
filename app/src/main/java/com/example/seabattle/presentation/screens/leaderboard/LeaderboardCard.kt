@@ -48,17 +48,17 @@ fun UserCard(
                 colorResource(id = R.color.none_color)
             }
         ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.card_elevation))
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
             Text(
                 text = position.toString() + "º",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(end = 20.dp)
+                modifier = Modifier.padding(end = dimensionResource(id = R.dimen.padding_small))
             )
             Row(
                 modifier = Modifier.weight(1f),
@@ -68,18 +68,19 @@ fun UserCard(
                 Text(
                     text = user?.displayName ?: "",
                     style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .padding(end = dimensionResource(id = R.dimen.padding_small))
+                        .padding(end = dimensionResource(id = R.dimen.padding_xsmall))
                         .weight(0.7f),
                 )
                 Text(
                     text = user?.score.toString(),
                     textAlign = TextAlign.End,
+                    maxLines = 1,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
-                        .padding(end = dimensionResource(id = R.dimen.padding_small))
+                        .padding(end = dimensionResource(id = R.dimen.padding_xsmall))
                         .weight(0.3f)
 
                 )

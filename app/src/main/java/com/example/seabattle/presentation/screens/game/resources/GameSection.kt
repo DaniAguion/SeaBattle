@@ -52,7 +52,7 @@ fun GameSection(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (delayedCurrentPlayer == userId) {
@@ -60,14 +60,14 @@ fun GameSection(
                 text = stringResource(R.string.your_turn),
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
         } else {
             Text(
                 text = stringResource(R.string.oponnent_turn),
                 fontSize = 20.sp,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
         }
         AnimatedContent(

@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -147,8 +148,7 @@ fun HomeScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 36.dp)
-                .padding(vertical = 12.dp)
+                .padding(all = dimensionResource(R.dimen.padding_container))
         ) {
             // Header Title and Description
             item {
@@ -158,14 +158,14 @@ fun HomeScreenContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top= 24.dp, bottom = 12.dp)
+                        .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                 )
                 Text(
                     text = stringResource(R.string.home_header_desc),
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(bottom = 36.dp)
+                        .padding(bottom = dimensionResource(R.dimen.padding_medium))
                         .fillMaxWidth()
                 )
             }
@@ -176,15 +176,13 @@ fun HomeScreenContent(
                     onClick = { onClickCreateGame() },
                     shape = MaterialTheme.shapes.large,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .padding(bottom = 48.dp)
+                        .padding(bottom = dimensionResource(R.dimen.padding_large))
                     ,
                 ) {
                     Text(
                         text = stringResource(R.string.create_game),
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_min))
                     )
                 }
             }
@@ -196,7 +194,9 @@ fun HomeScreenContent(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
+                        .fillMaxSize()
                 )
                 OutlinedTextField(
                     value = searchedUser,
@@ -216,7 +216,8 @@ fun HomeScreenContent(
                         onSearch = { onUserSearch() }
                     ),
                     modifier = Modifier
-                        .padding(top= 16.dp, bottom = 24.dp)
+                        .padding(
+                            bottom = dimensionResource(R.dimen.padding_medium))
                         .fillMaxWidth()
                 )
             }
@@ -237,8 +238,8 @@ fun HomeScreenContent(
                     if (searchDone && playersList.isEmpty()) {
                         item {
                             Card(
-                                shape = RoundedCornerShape(8.dp),
-                                elevation = CardDefaults.cardElevation(8.dp),
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
+                                elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.card_elevation)),
                                 modifier = modifier.fillMaxWidth(),
                             ) {
                                 Text(
@@ -248,7 +249,7 @@ fun HomeScreenContent(
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(24.dp),
+                                        .padding(dimensionResource(R.dimen.padding_medium)),
 
                                     )
                             }
@@ -261,7 +262,7 @@ fun HomeScreenContent(
                             inviteClick = onClickInviteUser,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp),
+                                .padding(bottom = dimensionResource(R.dimen.padding_xsmall)),
                         )
                     }
                 }
@@ -270,7 +271,7 @@ fun HomeScreenContent(
                     item {
                         Text(
                             text = stringResource(R.string.error_get_users),
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall)),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -287,7 +288,10 @@ fun HomeScreenContent(
                     modifier = Modifier
                         .clickable { expandedOptions = !expandedOptions }
                         .fillMaxWidth()
-                        .padding(top= 12.dp, bottom = 24.dp)
+                        .padding(
+                            top= dimensionResource(R.dimen.padding_small),
+                            bottom = dimensionResource(R.dimen.padding_medium)
+                        )
                 ){
                     Text(
                         text = stringResource(R.string.invitations_title) + " (${invitationsList.size})",
@@ -312,12 +316,12 @@ fun HomeScreenContent(
                 ) {
                     if (invitationsList.isEmpty()) {
                         Card(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                            elevation = CardDefaults.cardElevation(4.dp),
+                            elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.card_elevation)),
                             modifier = modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp)
+                                .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                         ) {
                             Text(
                                 text = stringResource(R.string.no_invitations),
@@ -325,7 +329,7 @@ fun HomeScreenContent(
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(24.dp),
+                                    .padding(dimensionResource(R.dimen.padding_medium)),
                             )
                         }
                     } else {
@@ -334,7 +338,8 @@ fun HomeScreenContent(
                                 invitation = invitation,
                                 onClickJoin = onClickJoinGame,
                                 onClickReject = onClickReject,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier
+                                    .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                             )
                         }
                     }
@@ -351,7 +356,10 @@ fun HomeScreenContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(vertical = 16.dp)
+                        .padding(
+                            top = dimensionResource(R.dimen.padding_medium),
+                            bottom = dimensionResource(R.dimen.padding_small)
+                        )
                 )
             }
 
@@ -370,12 +378,12 @@ fun HomeScreenContent(
                     if (gamesList.isEmpty()) {
                         item {
                             Card(
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                                elevation = CardDefaults.cardElevation(4.dp),
+                                elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.card_elevation)),
                                 modifier = modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 8.dp)
+                                    .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                             ) {
                                 Text(
                                     text = stringResource(R.string.no_games_available),
@@ -383,7 +391,7 @@ fun HomeScreenContent(
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(24.dp),
+                                        .padding(dimensionResource(R.dimen.padding_medium)),
 
                                     )
                             }
@@ -396,7 +404,7 @@ fun HomeScreenContent(
                             playerName = game.player1.displayName,
                             score = game.player1.score,
                             gameClick = onClickJoinGame,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                         )
                     }
                 }
@@ -404,7 +412,7 @@ fun HomeScreenContent(
                     item {
                         Text(
                             text = stringResource(R.string.error_get_games),
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall)),
                             color = MaterialTheme.colorScheme.error
                         )
                     }

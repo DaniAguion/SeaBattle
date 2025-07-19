@@ -43,8 +43,8 @@ fun InvitationCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = dimensionResource(id = R.dimen.padding_small),
-                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                    vertical = dimensionResource(id = R.dimen.padding_xsmall),
+                    horizontal = dimensionResource(id = R.dimen.padding_small)
                 )
 
         ){
@@ -55,7 +55,7 @@ fun InvitationCard(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .weight(0.5f)
-                    .padding(end = dimensionResource(id = R.dimen.padding_small))
+                    .padding(end = dimensionResource(id = R.dimen.padding_xsmall))
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -65,7 +65,7 @@ fun InvitationCard(
                 Button (
                     shape = MaterialTheme.shapes.medium,
                     onClick = { onClickJoin(invitation.gameId) },
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = dimensionResource(id = R.dimen.padding_min))
@@ -83,7 +83,7 @@ fun InvitationCard(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error
                     ),
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
                     onClick = { onClickReject(invitation) },
                     modifier = Modifier.weight(1f)
                 ) {

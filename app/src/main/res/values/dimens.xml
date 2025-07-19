@@ -9,10 +9,11 @@
 
     <!-- General paddings -->
     <dimen name="padding_title">40dp</dimen>
-    <dimen name="padding_larger">48dp</dimen>
+    <dimen name="padding_xlarge">48dp</dimen>
     <dimen name="padding_large">32dp</dimen>
-    <dimen name="padding_medium">16dp</dimen>
-    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">24dp</dimen>
+    <dimen name="padding_small">16dp</dimen>
+    <dimen name="padding_xsmall">8dp</dimen>
 
     <!-- Cell size for the grid layout -->
     <dimen name="cell_size">32dp</dimen>

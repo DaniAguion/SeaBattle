@@ -64,7 +64,7 @@ fun GameBoard(
     val windowSize = LocalWindowInfo.current.containerSize
     val screenWidthDp = with(density) { windowSize.width.toDp() }
     val screenHeightDp = with(density) { windowSize.height.toDp() }
-    val padding = dimensionResource(R.dimen.padding_medium)
+    val padding = dimensionResource(R.dimen.padding_small)
     val cellPadding = dimensionResource(R.dimen.cell_padding)
     val availableWidth = screenWidthDp - (padding * 2) - cellPadding * 2 * boardSize
     val availableHeight = screenHeightDp - (padding* 2) - cellPadding * 2 * boardSize
@@ -79,8 +79,8 @@ fun GameBoard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = dimensionResource(R.dimen.padding_medium),
-                    horizontal = dimensionResource(R.dimen.padding_medium)
+                    vertical = dimensionResource(R.dimen.padding_small),
+                    horizontal = dimensionResource(R.dimen.padding_small)
                 ),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

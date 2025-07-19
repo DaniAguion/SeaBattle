@@ -22,7 +22,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,115 +82,99 @@ fun LeaderBoardContent(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier
-            .padding(24.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = dimensionResource(R.dimen.padding_container))
     ) {
-        // Header
+        // Header Title and Description
         item {
             Text(
                 text = stringResource(R.string.leaderboard_header_title),
+                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
+            )
+            Text(
+                text = stringResource(R.string.leaderboard_header_desc),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
                     .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 6.dp)
             )
         }
-        item {
+
+
+        // Header for the user's position
+        item{
             Text(
-                text = stringResource(R.string.leaderboard_header_desc),
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                text = stringResource(R.string.your_position),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp)
+                    .fillMaxSize()
+                    .padding(vertical = dimensionResource(R.dimen.padding_small))
             )
         }
+
+
+        // User's card
+        item{
+            UserCard(
+                user = user,
+                position = userPosition ?: 0,
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+            )
+        }
+
+
+        // Header for the ranking list
+        item{
+            Text(
+                text = stringResource(R.string.ranking_header),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = dimensionResource(R.dimen.padding_small))
+            )
+        }
+
+        // Users list
         item {
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                elevation = CardDefaults.cardElevation(4.dp),
-                modifier = Modifier.padding(vertical = 16.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.your_position),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp)
-                    )
-                    UserCard(
-                        user = user,
-                        position = userPosition ?: 0,
-                        modifier = Modifier
+            when {
+                loadingList -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
                     )
                 }
-            }
-        }
-        item {
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                elevation = CardDefaults.cardElevation(4.dp),
-                modifier = Modifier.padding(vertical = 16.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.ranking_header),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp)
-                    )
-                    when {
-                        loadingList -> {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
-                            )
-                        }
 
-                        !errorList -> {
-                            usersList.forEach { user ->
-                                UserCard(
-                                    user = user,
-                                    position = usersList.indexOf(user) + 1,
-                                    modifier = Modifier
-                                )
-                            }
-                        }
-
-                        else -> {
-                            Text(
-                                text = stringResource(R.string.error_get_users),
-                                modifier = Modifier.padding(8.dp),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
+                !errorList -> {
+                    usersList.forEach { user ->
+                        UserCard(
+                            user = user,
+                            position = usersList.indexOf(user) + 1,
+                            modifier = Modifier
+                                .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
+                                .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                        )
                     }
+                }
+
+                else -> {
+                    Text(
+                        text = stringResource(R.string.error_get_users),
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall)),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }

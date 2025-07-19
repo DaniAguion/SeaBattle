@@ -47,7 +47,7 @@ fun PlayerCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
-                .padding(all = dimensionResource(id = R.dimen.padding_medium))
+                .padding(all = dimensionResource(id = R.dimen.padding_small))
                 .fillMaxWidth(),
         ) {
             Row(
@@ -67,14 +67,14 @@ fun PlayerCard(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 3,
                     modifier = Modifier.padding(
-                        start = dimensionResource(id = R.dimen.padding_medium),
-                        end = dimensionResource(id = R.dimen.padding_small)
+                        start = dimensionResource(id = R.dimen.padding_small),
+                        end = dimensionResource(id = R.dimen.padding_xsmall)
                     )
                 )
             }
             Button (
                 shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
                 onClick = { inviteClick(player.userId) },
                 modifier = Modifier.weight(0.3f)
             ) {

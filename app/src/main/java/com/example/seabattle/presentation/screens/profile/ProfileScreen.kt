@@ -168,7 +168,7 @@ fun ProfileScreenContent(
                     painter = painterResource(id = R.drawable.account_box_40px),
                     contentDescription = "User photo",
                     modifier = Modifier
-                        .padding(top= dimensionResource(R.dimen.padding_medium))
+                        .padding(top= dimensionResource(R.dimen.padding_small))
                         .size(dimensionResource(R.dimen.profile_image_size))
                 )
             } else {
@@ -178,7 +178,7 @@ fun ProfileScreenContent(
                     contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.account_box_40px),
                     modifier = Modifier
-                        .padding(top= dimensionResource(R.dimen.padding_medium))
+                        .padding(top= dimensionResource(R.dimen.padding_small))
                         .size(dimensionResource(R.dimen.profile_image_size))
                 )
             }
@@ -186,10 +186,10 @@ fun ProfileScreenContent(
         item {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_xsmall)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(dimensionResource(R.dimen.padding_medium)),
+                    .padding(dimensionResource(R.dimen.padding_small)),
             ){
                 Text(
                     text = user.displayName,
@@ -207,7 +207,7 @@ fun ProfileScreenContent(
                 onClick = onLogoutButtonClicked,
                 modifier = Modifier
                     .widthIn(min = dimensionResource(R.dimen.button_min_width))
-                    .padding(bottom = dimensionResource(R.dimen.padding_medium)),
+                    .padding(bottom = dimensionResource(R.dimen.padding_small)),
             ) {
                 Text("SignOut")
             }
@@ -243,7 +243,7 @@ fun ProfileScreenContent(
                         containerColor = MaterialTheme.colorScheme.error
                     ),
                     modifier = Modifier
-                        .padding(top = dimensionResource(R.dimen.padding_medium))
+                        .padding(top = dimensionResource(R.dimen.padding_small))
                 ) {
                     Text("Delete Account")
                 }
@@ -262,7 +262,7 @@ fun ProfileScreenContent(
                     .fillMaxSize()
                     .padding(
                         top = dimensionResource(R.dimen.padding_large),
-                        bottom = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_small),
                     )
             )
         }
@@ -286,7 +286,7 @@ fun ProfileScreenContent(
                         game = playedGame,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = dimensionResource(R.dimen.padding_small))
+                            .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
                     )
                 }
             }
@@ -295,7 +295,7 @@ fun ProfileScreenContent(
                 item {
                     Text(
                         text = stringResource(R.string.error_get_history),
-                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall)),
                         color = MaterialTheme.colorScheme.error
                     )
                 }

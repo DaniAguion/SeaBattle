@@ -22,8 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
@@ -46,7 +44,7 @@ fun PlayedGameCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(all = dimensionResource(R.dimen.padding_medium))
+                .padding(all = dimensionResource(R.dimen.padding_small))
                 .fillMaxWidth()
         ) {
             Row(
@@ -59,7 +57,7 @@ fun PlayedGameCard(
                     style = MaterialTheme.typography.titleMedium,
                     color = if (userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                 )
                 Text(
                     text = "( " + if (userId == game.player1.userId) {
@@ -72,7 +70,7 @@ fun PlayedGameCard(
                     .copy(fontWeight = SemiBold),
                     color = if (userId == game.winnerId) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_small))
+                        .padding(dimensionResource(R.dimen.padding_xsmall))
                 )
             }
             Row(
@@ -90,7 +88,7 @@ fun PlayedGameCard(
                         fontWeight = SemiBold
                     ),
                     modifier = Modifier
-                        .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                        .padding(horizontal = dimensionResource(R.dimen.padding_small))
                 )
                 PlayerInfo(
                     player = game.player2,
@@ -136,7 +134,7 @@ fun PlayerInfo(
             maxLines = 2,
             overflow = TextOverflow.Clip,
             modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_small))
+                .padding(dimensionResource(R.dimen.padding_xsmall))
         )
     }
 }
