@@ -1,5 +1,6 @@
 package com.example.seabattle.presentation.screens.welcome
 
+import com.example.seabattle.presentation.resources.InfoMessages
 import com.example.seabattle.presentation.resources.ValidationError
 
 data class WelcomeUiState(
@@ -15,14 +16,5 @@ data class WelcomeUiState(
     val msgResult: InfoMessages? = null,
     val error: Throwable? = null,
 )
-
-enum class InfoMessages {
-    LOGIN_SUCCESSFUL,
-    LOGIN_UNSUCCESSFUL,
-    REGISTER_SUCCESSFUL,
-    REGISTER_UNSUCCESSFUL,
-    PASSWORDS_DOES_NOT_MATCH,
-    INVALID_FIELDS
-}
 
 

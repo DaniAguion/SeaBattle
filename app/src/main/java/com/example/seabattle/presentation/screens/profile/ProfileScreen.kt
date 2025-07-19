@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -57,8 +55,15 @@ import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.theme.SeaBattleTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.seabattle.presentation.resources.InfoMessages
+import com.example.seabattle.presentation.resources.ValidationError
 
 
 @Composable
@@ -155,11 +160,16 @@ fun ProfileScreen(
     ProfileScreenContent(
         modifier = modifier,
         user = profileUiState.user,
+        userNameField = profileUiState.userNameField,
+        userNameError = profileUiState.userNameError,
         historyList = profileUiState.user.history.reversed(),
         errorList = profileUiState.errorList,
         loadingList = profileUiState.loadingList,
+        msgResult = profileUiState.msgResult,
         onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked,
-        onDeleteAccountClicked = profileViewModel::onDeleteAccountClicked
+        onDeleteAccountClicked = profileViewModel::onDeleteAccountClicked,
+        onUserNameUpdate = profileViewModel::onUsernameUpdate,
+        onChangeUsernameClicked = profileViewModel::onChangeUsernameClicked,
     )
 }
 
@@ -167,13 +177,18 @@ fun ProfileScreen(
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     user: User,
+    userNameField: String,
+    userNameError: ValidationError? = null,
     historyList: List<GameHistory> = emptyList(),
     errorList: Boolean,
     loadingList: Boolean,
+    msgResult: InfoMessages? = null,
     onLogoutButtonClicked: () -> Unit = {},
-    onDeleteAccountClicked: () -> Unit = {}
+    onDeleteAccountClicked: () -> Unit = {},
+    onUserNameUpdate: (String) -> Unit = {},
+    onChangeUsernameClicked: () -> Unit = {},
 ) {
-    var expandedOptions by remember { mutableStateOf(false) }
+    var expandedOptions by remember { mutableStateOf(true) }
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -230,7 +245,6 @@ fun ProfileScreenContent(
             Button(
                 onClick = onLogoutButtonClicked,
                 modifier = Modifier
-                    .widthIn(min = dimensionResource(R.dimen.button_min_width))
                     .padding(bottom = dimensionResource(R.dimen.padding_small)),
             ) {
                 Text("SignOut")
@@ -240,11 +254,11 @@ fun ProfileScreenContent(
         // Account Options Section
         item {
             Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expandedOptions = !expandedOptions },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(R.string.account_options),
@@ -261,15 +275,99 @@ fun ProfileScreenContent(
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
-                Button(
-                    onClick = onDeleteAccountClicked,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    ),
-                    modifier = Modifier
-                        .padding(top = dimensionResource(R.dimen.padding_small))
-                ) {
-                    Text("Delete Account")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    OutlinedTextField(
+                        value = userNameField,
+                        onValueChange = onUserNameUpdate,
+                        label = { Text(stringResource(R.string.username_label)) },
+                        singleLine = true,
+                        isError = userNameError != null,
+                        supportingText = {
+                            userNameError?.let {
+                                Text(
+                                    text = stringResource(it.idString),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            autoCorrectEnabled = false,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = dimensionResource(R.dimen.padding_small),
+                                bottom = dimensionResource(R.dimen.padding_xsmall)
+                            )
+                    )
+                    Button(
+                        onClick = onChangeUsernameClicked,
+                        modifier = Modifier
+                            .padding(bottom = dimensionResource(R.dimen.padding_xsmall))
+                    ) {
+                        Text(stringResource(R.string.change_username_button))
+                    }
+                    msgResult?.let { msgResult ->
+                        when (msgResult) {
+                            InfoMessages.CHANGE_SUCCESSFUL -> {
+                                Text(
+                                    text = stringResource(R.string.change_successful),
+                                    color = colorResource(id = R.color.success_text_color)
+                                )
+                            }
+
+                            InfoMessages.CHANGE_UNSUCCESSFUL -> {
+                                Text(
+                                    text = stringResource(R.string.change_unsuccessful),
+                                    color = colorResource(id = R.color.unsuccessful_text_color)
+                                )
+                            }
+
+                            InfoMessages.INVALID_USERNAME -> {
+                                Text(
+                                    text = stringResource(R.string.invalid_username),
+                                    color = colorResource(id = R.color.unsuccessful_text_color)
+                                )
+                            }
+
+                            InfoMessages.INVALID_PASSWORD -> {
+                                Text(
+                                    text = stringResource(R.string.invalid_password),
+                                    color = colorResource(id = R.color.unsuccessful_text_color)
+                                )
+                            }
+
+                            InfoMessages.PASSWORDS_DOES_NOT_MATCH -> {
+                                Text(
+                                    text = stringResource(R.string.passwords_does_not_match),
+                                    color = colorResource(id = R.color.unsuccessful_text_color)
+                                )
+                            }
+
+                            else -> {
+                                // No message to show, other errors should not happen here
+                            }
+                        }
+                    }
+                    Button(
+                        onClick = onDeleteAccountClicked,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        ),
+                        modifier = Modifier
+                            .padding(
+                                top = dimensionResource(R.dimen.padding_small),
+                                bottom = dimensionResource(R.dimen.padding_small)
+                            )
+                    ) {
+                        Text(stringResource(R.string.delete_account_button))
+                    }
                 }
             }
         }
@@ -329,17 +427,19 @@ fun ProfileScreenContent(
 }
 
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun ProfilePreview(){
+fun ProfileScreenPreview(){
     SeaBattleTheme {
         ProfileScreenContent(
             modifier = Modifier.fillMaxSize(),
             user = sampleUser,
+            userNameField = sampleUser.displayName,
+            userNameError = null,
             historyList = sampleUser.history,
             errorList = false,
             loadingList = false,
-            onLogoutButtonClicked = {}
+            msgResult = null
         )
     }
 }

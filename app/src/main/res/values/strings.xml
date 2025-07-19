@@ -18,9 +18,8 @@
     <string name="login_unsuccessful">Sign In try unsuccessful</string>
     <string name="register_successful">Sign up successful!</string>
     <string name="register_unsuccessful">Sign up try unsuccessful!</string>
-    <string name="repeat_password">Repeat the password</string>
-    <string name="invalid_fields">Some field is invalid</string>
-    <string name="passwords_does_not_match">Repeated password does not match</string>
+    <string name="invalid_fields">Invalid Fields</string>
+
 
     // Validation email and password messages
     <string name="error_empty_username">Please introduce your username</string>
@@ -48,6 +47,7 @@
     <string name="error_user_not_found">User not found.</string>
     <string name="error_user_data_not_valid">An error occurred with the game data</string>
     <string name="error_invalid_guest">Invalid guest</string>
+    <string name="error_invalid_game_name">Game name is not valid.</string>
 
 
     // Home Screen
@@ -124,10 +124,20 @@
     <string name="delete_button">Delete</string>
     <string name="cancel_button">Cancel</string>
     <string name="error_recent_login_required">Recent login required. Please log in again.</string>
+    <string name="delete_confirmation_text">Delete confirmation</string>
+    <string name="delete_confirmation_error">Write \"Delete\" before confirm</string>
+    <string name="delete_account_button">Delete Account</string>
+    <string name="change_username_button">Change Username</string>
+    <string name="username_label">Username</string>
+    <string name="change_successful">Change successful!</string>
+    <string name="change_unsuccessful">Change unsuccessful!</string>
+
 
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
-    <string name="delete_confirmation_text">Delete confirmation</string>
-    <string name="delete_confirmation_error">Write \"Delete\" before confirm</string>
+    <string name="repeat_password">Repeat the password</string>
+    <string name="passwords_does_not_match">Repeated password does not match</string>
+    <string name="invalid_username">Invalid Username</string>
+    <string name="invalid_password">Invalid Username</string>
 </resources>

@@ -4,7 +4,7 @@ object Validator {
 
     fun validateUsername(username: String): ValidationError? {
         if (username.isBlank()) return ValidationError.EmptyUsername
-        val usernameRegex = Regex("^[a-zA-Z0-9_]{3,15}\$")
+        val usernameRegex = Regex("^[a-zA-Z0-9_]{3,12}\$")
         return if (usernameRegex.matches(username)) null else ValidationError.InvalidUsername
     }
 

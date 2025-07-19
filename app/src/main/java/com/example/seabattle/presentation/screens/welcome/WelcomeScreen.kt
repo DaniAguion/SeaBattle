@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -29,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
+import com.example.seabattle.presentation.resources.InfoMessages
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.Tabs
 import com.example.seabattle.presentation.theme.SeaBattleTheme
@@ -344,38 +345,41 @@ fun CommonForm(
             InfoMessages.LOGIN_SUCCESSFUL -> {
                 Text(
                     text = stringResource(R.string.login_successful),
-                    color = Color.Green
+                    color = colorResource(id = R.color.success_text_color)
                 )
             }
             InfoMessages.LOGIN_UNSUCCESSFUL -> {
                 Text(
                     text = stringResource(R.string.login_unsuccessful),
-                    color = Color.Red
+                    color = colorResource(id = R.color.unsuccessful_text_color)
                 )
             }
             InfoMessages.REGISTER_SUCCESSFUL -> {
                 Text(
                     text = stringResource(R.string.register_successful),
-                    color = Color.Green
+                    color = colorResource(id = R.color.success_text_color)
                 )
             }
             InfoMessages.REGISTER_UNSUCCESSFUL -> {
                 Text(
                     text = stringResource(R.string.register_unsuccessful),
-                    color = Color.Red
+                    color = colorResource(id = R.color.unsuccessful_text_color)
                 )
             }
             InfoMessages.PASSWORDS_DOES_NOT_MATCH -> {
                 Text(
                     text = stringResource(R.string.passwords_does_not_match),
-                    color = Color.Red
+                    color = colorResource(id = R.color.unsuccessful_text_color)
                 )
             }
             InfoMessages.INVALID_FIELDS -> {
                 Text(
                     text = stringResource(R.string.invalid_fields),
-                    color = Color.Red
+                    color = colorResource(id = R.color.unsuccessful_text_color)
                 )
+            }
+            else -> {
+                // No message to show, other errors should not happen here
             }
         }
     }

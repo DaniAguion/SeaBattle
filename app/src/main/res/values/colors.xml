@@ -21,4 +21,7 @@
     <color name="gold_color">#E0FFCA28</color>
     <color name="silver_color">#C0C0C0</color>
     <color name="bronze_color">#D9CD7F32</color>
+
+    <color name="success_text_color">#2C6A1C</color>
+    <color name="unsuccessful_text_color">#CFC50404</color>
 </resources>

@@ -2,10 +2,13 @@ package com.example.seabattle.presentation.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seabattle.domain.usecase.user.ChangeUserNameUseCase
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.user.ListenUserUseCase
 import com.example.seabattle.domain.usecase.user.LogoutUserUseCase
+import com.example.seabattle.presentation.resources.InfoMessages
+import com.example.seabattle.presentation.resources.Validator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +21,15 @@ class ProfileViewModel(
     private val logoutUseCase: LogoutUserUseCase,
     private val listenUserUseCase: ListenUserUseCase,
     private val getUserProfile: GetUserProfileUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val changeUserName: ChangeUserNameUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState())
     var uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     // Listeners use to observe the game updates
     private var updateUIJob: Job? = null
+
 
 
     fun startListening() {
@@ -48,6 +53,7 @@ class ProfileViewModel(
                 .onSuccess { userProfile ->
                     _uiState.value = _uiState.value.copy(
                         user = userProfile,
+                        userNameField = userProfile.displayName,
                         loadingList = false,
                         errorList = false
                     )
@@ -69,6 +75,40 @@ class ProfileViewModel(
             logoutUseCase()
         }
     }
+
+    // Function to handle username field update
+    fun onUsernameUpdate(usernameField: String) {
+        validateUsername(usernameField)
+        _uiState.value = _uiState.value.copy(userNameField = usernameField)
+    }
+
+    // Function to validate the username
+    private fun validateUsername(username: String){
+        val validationResult = Validator.validateUsername(username)
+        _uiState.value = _uiState.value.copy(userNameError = validationResult)
+    }
+
+
+    // Function to handle change username button click
+    fun onChangeUsernameClicked(){
+        validateUsername(_uiState.value.userNameField)
+        if (_uiState.value.userNameError != null) {
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.INVALID_USERNAME)
+        }
+
+
+        viewModelScope.launch {
+            changeUserName.invoke(uiState.value.userNameField)
+                .onSuccess { result ->
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.CHANGE_SUCCESSFUL)
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                    _uiState.value = _uiState.value.copy(msgResult = InfoMessages.CHANGE_UNSUCCESSFUL)
+                }
+        }
+    }
+
 
     // Function to handle delete account button click
     fun onDeleteAccountClicked() {

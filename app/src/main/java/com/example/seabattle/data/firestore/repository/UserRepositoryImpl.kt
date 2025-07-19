@@ -80,6 +80,20 @@ class UserRepositoryImpl(
     }
 
 
+    override suspend fun changeUserName(userId: String, newUserName: String): Result<Unit> = withContext(ioDispatcher) {
+        runCatching {
+            usersCollection
+                .document(userId)
+                .update("displayName", newUserName)
+                .await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable as? UserError ?: throwable.toDataError()
+        }
+    }
+
+
 
     // Get a user by their userName or partial userName from the Firestore database
     override suspend fun findPlayerByName(userName: String) : Result<List<Player>> = withContext(ioDispatcher) {

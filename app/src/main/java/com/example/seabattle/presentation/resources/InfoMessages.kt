@@ -1,0 +1,14 @@
+package com.example.seabattle.presentation.resources
+
+enum class InfoMessages {
+    LOGIN_SUCCESSFUL,
+    LOGIN_UNSUCCESSFUL,
+    REGISTER_SUCCESSFUL,
+    REGISTER_UNSUCCESSFUL,
+    PASSWORDS_DOES_NOT_MATCH,
+    INVALID_FIELDS,
+    CHANGE_SUCCESSFUL,
+    CHANGE_UNSUCCESSFUL,
+    INVALID_USERNAME,
+    INVALID_PASSWORD
+}
