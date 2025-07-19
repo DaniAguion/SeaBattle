@@ -58,7 +58,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -188,7 +187,7 @@ fun ProfileScreenContent(
     onUserNameUpdate: (String) -> Unit = {},
     onChangeUsernameClicked: () -> Unit = {},
 ) {
-    var expandedOptions by remember { mutableStateOf(true) }
+    var expandedOptions by remember { mutableStateOf(false ) }
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,

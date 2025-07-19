@@ -88,7 +88,7 @@
 
     // Game Screen - Ready Check Section
     <string name="ready_check_title">Confirm when you are ready!</string>
-    <string name="ready_check_desc">Waiting for players to be ready...</string>
+    <string name="ready_check_desc">Waiting for players to be ready</string>
     <string name="player_ready">%s - Ready</string>
     <string name="player_not_ready">%s - Not Ready</string>
     <string name="ready_button">Ready</string>
@@ -103,7 +103,7 @@
     <string name="loser_message">You have lost :(</string>
     <string name="initial_score">Initial Score:</string>
     <string name="your_score">Your Score:</string>
-    <string name="calculating_score">Calculating score...</string>
+    <string name="calculating_score">Calculating score</string>
 
     // Leaderboard Screen
     <string name="leaderboard_header_title">Leaderboard</string>

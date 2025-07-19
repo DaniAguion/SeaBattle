@@ -27,10 +27,4 @@ object Validator {
         }
         return validatePassword(password)
     }
-
-    fun validateGameName(gameName: String): ValidationError? {
-        if (gameName.isBlank()) return ValidationError.EmptyGameName
-        if (gameName.length < 4) return ValidationError.GameNameShort
-        return null
-    }
 }
