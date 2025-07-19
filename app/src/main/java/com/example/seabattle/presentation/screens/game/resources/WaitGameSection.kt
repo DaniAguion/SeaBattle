@@ -79,7 +79,7 @@ fun WaitGameSection(
             Text(
                 text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),
                 fontSize = 18.sp,
-                color = if (waitingTime >= 300) Color.Red else Color.Black,
+                color = if (waitingTime >= 300) Color.Red else Color.Unspecified,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
             )
             Button(

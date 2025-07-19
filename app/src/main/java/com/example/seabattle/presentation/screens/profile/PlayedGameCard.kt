@@ -40,13 +40,13 @@ fun PlayedGameCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.card_corner_radius)),
+        elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.card_elevation)),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(all = dimensionResource(R.dimen.padding_medium))
                 .fillMaxWidth()
         ) {
             Row(

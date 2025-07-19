@@ -4,6 +4,7 @@ package com.example.seabattle.presentation.screens.home.resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Player
@@ -36,46 +39,53 @@ fun PlayerCard(
     inviteClick: (String) -> Unit = {}
 ) {
     Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.card_corner_radius)),
+        elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.card_elevation)),
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier
+                .padding(all = dimensionResource(id = R.dimen.padding_medium))
+                .fillMaxWidth(),
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(0.7f)
             ){
                 Box(
                     modifier = Modifier
-                        .size(16.dp)
+                        .size(dimensionResource(id = R.dimen.status_size))
                         .background(
                             color = if (player.status == "online") colorResource(id = R.color.user_online_color) else Color.Gray,
                             shape = CircleShape
                         )
                 )
                 Text(
-                    text = player.displayName,
+                    text = "${player.displayName} (${player.score})",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 16.dp, end = 8.dp),
-                )
-                Text(
-                    text = "(${player.score})",
-                    style = MaterialTheme.typography.titleMedium
+                    maxLines = 3,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(id = R.dimen.padding_medium),
+                        end = dimensionResource(id = R.dimen.padding_small)
+                    )
                 )
             }
             Button (
-                shape = MaterialTheme.shapes.large,
-                onClick = { inviteClick(player.userId) }
+                shape = MaterialTheme.shapes.medium,
+                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                onClick = { inviteClick(player.userId) },
+                modifier = Modifier.weight(0.3f)
             ) {
                 Text(
                     text = stringResource(id = R.string.invite_button),
+                    textAlign = TextAlign.Center,
                     maxLines = 1,
-                    style = MaterialTheme.typography.titleLarge)
+                    style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

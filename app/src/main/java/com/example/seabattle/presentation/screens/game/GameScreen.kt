@@ -30,7 +30,9 @@ import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.sampleGame
@@ -211,9 +213,10 @@ fun GameScreenContent(
     ) {
         item {
             PlayersInfoHeader(
-                modifier = modifier,
                 player1 = game.player1,
-                player2 = game.player2
+                player2 = game.player2,
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(R.dimen.padding_large)),
             )
         }
 
