@@ -27,11 +27,11 @@ class RejectInvitationUseCase(
             val userId = sessionService.getCurrentUserId()
             if (userId.isEmpty()) throw UserError.UserProfileNotFound()
 
+            // Delete the invitation from both players data
+            userGamesRepository.rejectInvitation(invitation).getOrThrow()
+
             val gameId = invitation.gameId
             if (gameId.isEmpty()) throw GameError.GameNotFound()
-
-            // Delete the invitation from both players data
-            userGamesRepository.cancelInvitation(userId).getOrThrow()
 
             val game = gameRepository.getGame(gameId).getOrThrow()
 

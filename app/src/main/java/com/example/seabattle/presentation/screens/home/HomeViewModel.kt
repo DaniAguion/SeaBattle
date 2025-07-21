@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.SessionService
 import com.example.seabattle.domain.entity.Invitation
+import com.example.seabattle.domain.entity.Player
 import com.example.seabattle.domain.usecase.game.CreateGameUseCase
 import com.example.seabattle.domain.usecase.game.GetGamesUseCase
 import com.example.seabattle.domain.usecase.game.JoinGameUseCase
@@ -170,6 +171,10 @@ class HomeViewModel(
         }
     }
 
+
+    fun enableInviteButton(guestPlayer: Player): Boolean {
+        return guestPlayer.userId != sessionService.getCurrentUserId() && guestPlayer.status == "online"
+    }
 
 
     fun onClickJoinGame(gameId: String) {

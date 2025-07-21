@@ -113,6 +113,7 @@ fun HomeScreen(
         onClickInviteUser = homeViewModel::onClickInviteUser,
         onClickJoinGame = homeViewModel::onClickJoinGame,
         onClickReject = homeViewModel::onClickRejectInvitation,
+        enableInviteButton = homeViewModel::enableInviteButton
     )
 }
 
@@ -135,6 +136,7 @@ fun HomeScreenContent(
     onClickInviteUser: (String) -> Unit,
     onClickJoinGame: (String) -> Unit,
     onClickReject: (Invitation) -> Unit,
+    enableInviteButton: (Player) -> Boolean
 ) {
     var expandedOptions by remember { mutableStateOf(false) }
 
@@ -260,6 +262,7 @@ fun HomeScreenContent(
                         PlayerCard(
                             player = player,
                             inviteClick = onClickInviteUser,
+                            enableInvite = enableInviteButton(player),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = dimensionResource(R.dimen.padding_xsmall)),
@@ -447,7 +450,8 @@ fun HomeScreenPreview(){
             onUserSearch = { },
             onClickInviteUser = { },
             onClickJoinGame = { },
-            onClickReject = { _ -> }
+            onClickReject = { _ -> },
+            enableInviteButton = { true }
         )
     }
 }

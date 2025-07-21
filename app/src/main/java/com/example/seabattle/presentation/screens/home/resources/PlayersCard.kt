@@ -36,6 +36,7 @@ import com.example.seabattle.presentation.theme.SeaBattleTheme
 fun PlayerCard(
     modifier: Modifier,
     player: Player,
+    enableInvite: Boolean,
     inviteClick: (String) -> Unit = {}
 ) {
     Card(
@@ -76,6 +77,7 @@ fun PlayerCard(
                 shape = MaterialTheme.shapes.medium,
                 contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
                 onClick = { inviteClick(player.userId) },
+                enabled = enableInvite,
                 modifier = Modifier.weight(0.3f)
             ) {
                 Text(
@@ -100,6 +102,7 @@ fun PlayerCardPreview(){
         PlayerCard(
             modifier = Modifier.fillMaxWidth(),
             player = sampleGame.player1,
+            enableInvite = true,
         )
     }
 }
