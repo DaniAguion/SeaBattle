@@ -48,8 +48,12 @@ class GameViewModel(
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
+    // Inject the SoundManager to handle sound effects
     private val soundManager: SoundManager by inject()
+    private val _isMuted = MutableStateFlow(soundManager.isMuted)
+    val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
 
+    // Initialize jobs needed for listening to game updates and checking for AFK
     private var listenGameJob: Job? = null
     private var checkClaimJob: Job? = null
     private var lastClaimDialogDismissalTime: Long = 0L
@@ -353,5 +357,12 @@ class GameViewModel(
         listenGameJob = null
         checkClaimJob?.cancel()
         checkClaimJob = null
+    }
+
+
+    // Function to mute/unmute the sound
+    fun toggleMute() {
+        soundManager.toggleMute()
+        _isMuted.value = soundManager.isMuted
     }
 }

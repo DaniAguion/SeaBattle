@@ -30,7 +30,15 @@ import com.example.seabattle.presentation.screens.Screen
 import com.example.seabattle.presentation.screens.game.resources.ReadyCheckSection
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +58,7 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel(),
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
+    val soundMutedState by gameViewModel.isMuted.collectAsState()
     val context = LocalContext.current
 
     // Get the current back stack entry to determine the current route
@@ -58,6 +67,7 @@ fun GameScreen(
     val currentRoute = navBackStackEntry.value?.destination?.route ?: Screen.Game.name
 
     var showLeaveDialog by remember { mutableStateOf(false) }
+
 
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
@@ -170,6 +180,7 @@ fun GameScreen(
 
     GameScreenContent(
         modifier = modifier,
+        soundMuted = soundMutedState,
         game = gameUiState.game,
         userId = gameUiState.userId,
         userScore = gameUiState.userScore,
@@ -178,13 +189,15 @@ fun GameScreen(
         onClickLeave = { showLeaveDialog = true },
         onClickCell = gameViewModel::onClickCell,
         enableClickCell = gameViewModel::enableClickCell,
-        enableSeeShips = gameViewModel::enableSeeShips
+        enableSeeShips = gameViewModel::enableSeeShips,
+        toggleMute = gameViewModel::toggleMute
     )
 }
 
 @Composable
 fun GameScreenContent(
     modifier: Modifier,
+    soundMuted: Boolean,
     game: Game?,
     userId: String,
     userScore: Int,
@@ -193,7 +206,8 @@ fun GameScreenContent(
     onClickLeave: () -> Unit = {},
     onClickCell: (row: Int, col: Int) -> Unit = { _, _ -> },
     enableClickCell: (gameBoardOwner: String) -> Boolean = { true },
-    enableSeeShips: (watcher: String) -> Boolean = { false }
+    enableSeeShips: (watcher: String) -> Boolean = { false },
+    toggleMute: () -> Unit = {}
 ) {
     if (game == null) {
         Box(
@@ -216,8 +230,24 @@ fun GameScreenContent(
                 player1 = game.player1,
                 player2 = game.player2,
                 modifier = Modifier
-                    .padding(bottom = dimensionResource(R.dimen.padding_large)),
             )
+        }
+
+        item {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(R.dimen.padding_xsmall))
+            ) {
+                IconButton(onClick = { toggleMute() }) {
+                    Icon(
+                        imageVector = if (soundMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                        contentDescription = if (soundMuted) stringResource(R.string.unmute_sound) else stringResource(R.string.mute_sound),
+                        tint = if (soundMuted) Color.Gray else Color.Unspecified
+                    )
+                }
+            }
         }
 
         // Screen waiting for players to be ready
@@ -281,6 +311,7 @@ fun GameScreenPreview(){
     SeaBattleTheme {
         GameScreenContent(
             modifier = Modifier.fillMaxSize(),
+            soundMuted = false,
             game = sampleGame.copy(
                 gameState = GameState.IN_PROGRESS.name,
             ),
