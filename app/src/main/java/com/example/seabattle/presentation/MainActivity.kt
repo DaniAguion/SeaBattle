@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.seabattle.ConnectivityObserver
+import com.example.seabattle.data.sound.SoundManagerImpl
 import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
 import com.example.seabattle.domain.usecase.user.ListenUserUseCase
@@ -18,7 +19,7 @@ import timber.log.Timber
 
 
 class MainActivity : ComponentActivity() {
-    private val soundManager: SoundManager by inject()
+    private val soundManagerImpl: SoundManagerImpl by inject()
     private val setPresenceUseCase: SetPresenceUseCase by inject()
     private val listenPresenceUseCase: ListenPresenceUseCase by inject()
     private val listenUserUseCase: ListenUserUseCase by inject()
@@ -95,7 +96,7 @@ class MainActivity : ComponentActivity() {
     // When the activity is destroyed, release the sound manager resources
     override fun onDestroy() {
         super.onDestroy()
-        soundManager.release()
+        soundManagerImpl.release()
     }
 }
 

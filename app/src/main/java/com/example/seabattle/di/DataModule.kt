@@ -8,11 +8,13 @@ import com.example.seabattle.data.firestore.repository.GameRepositoryImpl
 import com.example.seabattle.data.firestore.repository.UserGamesRepositoryImpl
 import com.example.seabattle.data.functions.BackendRepositoryImpl
 import com.example.seabattle.data.realtimedb.PresenceRepoImpl
+import com.example.seabattle.data.sound.SoundManagerImpl
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
 import com.example.seabattle.domain.repository.PresenceRepository
 import com.example.seabattle.domain.repository.BackendRepository
+import com.example.seabattle.domain.repository.SoundManagerRepo
 import com.example.seabattle.domain.repository.UserGamesRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -41,4 +43,7 @@ val dataModule = module {
 
     // Firebase Cloud Functions
     single<BackendRepository> { BackendRepositoryImpl(get()) }
+
+    // Sound Manager
+    single<SoundManagerRepo> { SoundManagerImpl(get()) }
 }

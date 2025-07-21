@@ -17,7 +17,7 @@ import com.example.seabattle.domain.usecase.game.FinishGameUseCase
 import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
-import com.example.seabattle.presentation.SoundManager
+import com.example.seabattle.domain.repository.SoundManagerRepo
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +28,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import kotlin.getValue
 
 
 class GameViewModel(
@@ -43,13 +41,12 @@ class GameViewModel(
     private val enableClaimUseCase: EnableClaimUseCase,
     private val claimVictoryUseCase: ClaimVictoryUseCase,
     private val finishGameUseCase: FinishGameUseCase,
-    private val getUserProfileUseCase: GetUserProfileUseCase
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val soundManager: SoundManagerRepo
 ) : ViewModel(), KoinComponent {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState())
     var uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    // Inject the SoundManager to handle sound effects
-    private val soundManager: SoundManager by inject()
     private val _isMuted = MutableStateFlow(soundManager.isMuted)
     val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
 

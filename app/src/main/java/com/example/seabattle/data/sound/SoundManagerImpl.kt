@@ -1,23 +1,33 @@
-package com.example.seabattle.presentation
+package com.example.seabattle.data.sound
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.AudioAttributes
 import android.media.SoundPool
-import com.example.seabattle.R
 import androidx.core.content.edit
+import com.example.seabattle.R
+import com.example.seabattle.domain.repository.SoundManagerRepo
 
-class SoundManager(private val context: Context) {
+class SoundManagerImpl(private val context: Context) : SoundManagerRepo {
     private val soundPool: SoundPool
     private val soundMap = mutableMapOf<SoundEffect, Int>()
     private var loaded = false
     // Save the mute state in SharedPreferences
+
+    // SharedPreferences to persist the mute state across app restarts
+    // Define the necessary isMuted variable
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("sound_prefs", Context.MODE_PRIVATE)
-    private var _isMuted: Boolean = sharedPreferences.getBoolean("is_muted", false) // Leer el estado inicial
-
-    val isMuted: Boolean
+    private var _isMuted: Boolean = sharedPreferences.getBoolean("is_muted", false)
+    override val isMuted: Boolean
         get() = _isMuted
+
+
+    // Enum class to define sound effects
+    enum class SoundEffect {
+        WATER_SPLASH,
+        SHIP_HIT
+    }
 
 
     init {
@@ -44,35 +54,8 @@ class SoundManager(private val context: Context) {
     }
 
 
-
-    fun muteSound() {
-        _isMuted = true
-        sharedPreferences.edit { putBoolean("is_muted", true) }
-    }
-
-    fun unmuteSound() {
-        _isMuted = false
-        sharedPreferences.edit { putBoolean("is_muted", false) }
-    }
-
-    fun toggleMute() {
-        if (_isMuted) {
-            unmuteSound()
-        } else {
-            muteSound()
-        }
-    }
-
-
-    fun checkIsMuted(): Boolean {
-        return sharedPreferences.getBoolean("is_muted", false)
-    }
-
-
     private fun playSound(effect: SoundEffect) {
-        val soundMuted = checkIsMuted()
-
-        if (!soundMuted && loaded && soundMap.containsKey(effect)) {
+        if (!isMuted && loaded && soundMap.containsKey(effect)) {
             soundPool.play(
                 soundMap[effect]!!,
                 1f,
@@ -84,23 +67,22 @@ class SoundManager(private val context: Context) {
         }
     }
 
-    fun playWaterSplash() {
+    override fun toggleMute() {
+        _isMuted = !isMuted
+        sharedPreferences.edit { putBoolean("is_muted", isMuted) }
+    }
+
+    override fun playWaterSplash() {
         playSound(SoundEffect.WATER_SPLASH)
     }
 
-    fun playShipHit() {
+    override fun playShipHit() {
         playSound(SoundEffect.SHIP_HIT)
     }
 
 
     // Release the sound pool resources when no longer needed
-    fun release() {
+    override fun release() {
         soundPool.release()
-    }
-
-
-    enum class SoundEffect {
-        WATER_SPLASH,
-        SHIP_HIT
     }
 }
