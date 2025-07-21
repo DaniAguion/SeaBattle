@@ -1,6 +1,6 @@
 package com.example.seabattle.presentation.screens.welcome
 
-import android.widget.Toast
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +16,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -23,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,13 +59,17 @@ fun WelcomeScreen(
     welcomeViewModel: WelcomeViewModel = koinViewModel()
 ) {
     val welcomeUiState by welcomeViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
 
-    // Show a toast message when an error occurs
+    // Show a snack bar when an error occurs
     LaunchedEffect(key1 = welcomeUiState.error) {
         welcomeUiState.error?.let { error ->
-            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = context.getString(error.toErrorMessageUI()),
+                duration = SnackbarDuration.Short
+            )
             welcomeViewModel.onErrorShown()
         }
     }
@@ -72,26 +81,31 @@ fun WelcomeScreen(
         }
     }
 
-    WelcomeScreenContent(
-        modifier = modifier,
-        username = welcomeUiState.username,
-        email = welcomeUiState.email,
-        password = welcomeUiState.password,
-        repeatedPassword = welcomeUiState.repeatedPassword,
-        usernameError = welcomeUiState.usernameError,
-        emailError = welcomeUiState.emailError,
-        passwordError = welcomeUiState.passwordError,
-        repeatedPasswordError = welcomeUiState.repeatedPasswordError,
-        msgResult = welcomeUiState.msgResult,
-        onResetError = welcomeViewModel::onResetError,
-        onUsernameUpdate = welcomeViewModel::onUsernameUpdate,
-        onEmailUpdate = welcomeViewModel::onEmailUpdate,
-        onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
-        onPasswordRepeatUpdate = welcomeViewModel::onRepeatPasswordUpdate,
-        onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
-        onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
-        onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(context) }
-    )
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        WelcomeScreenContent(
+            modifier = modifier.padding(paddingValues),
+            username = welcomeUiState.username,
+            email = welcomeUiState.email,
+            password = welcomeUiState.password,
+            repeatedPassword = welcomeUiState.repeatedPassword,
+            usernameError = welcomeUiState.usernameError,
+            emailError = welcomeUiState.emailError,
+            passwordError = welcomeUiState.passwordError,
+            repeatedPasswordError = welcomeUiState.repeatedPasswordError,
+            msgResult = welcomeUiState.msgResult,
+            onResetError = welcomeViewModel::onResetError,
+            onUsernameUpdate = welcomeViewModel::onUsernameUpdate,
+            onEmailUpdate = welcomeViewModel::onEmailUpdate,
+            onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
+            onPasswordRepeatUpdate = welcomeViewModel::onRepeatPasswordUpdate,
+            onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
+            onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
+            onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(context) },
+        )
+    }
 }
 
 @Composable
@@ -166,7 +180,7 @@ fun WelcomeScreenContent(
                     .padding(horizontal = dimensionResource(R.dimen.padding_container))
                     .padding(bottom = dimensionResource(R.dimen.padding_small))
             ) {
-                Text(stringResource(R.string.access_with_google),)
+                Text(stringResource(R.string.access_with_google))
             }
         }
 
@@ -422,7 +436,7 @@ fun CommonForm(
 }
 
 
-@Preview(showBackground = true, device = "id:small_phone")
+@Preview(showBackground = true)
 @Composable
 fun WelcomeScreenPreview() {
     SeaBattleTheme {

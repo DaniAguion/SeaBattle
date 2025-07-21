@@ -2,7 +2,6 @@ package com.example.seabattle.presentation.screens.game
 
 
 import com.example.seabattle.R
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +36,10 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -58,6 +61,7 @@ fun GameScreen(
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
     val soundMutedState by gameViewModel.isMuted.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     // Get the current back stack entry to determine the current route
@@ -77,10 +81,13 @@ fun GameScreen(
     }
 
 
-    // Show a toast message when an error occurs
+    // Show a snack bar when an error occurs
     LaunchedEffect(key1 = gameUiState.error) {
         gameUiState.error?.let { error ->
-            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = context.getString(error.toErrorMessageUI()),
+                duration = SnackbarDuration.Short
+            )
             gameViewModel.onErrorShown()
         }
     }
@@ -177,20 +184,24 @@ fun GameScreen(
         )
     }
 
-    GameScreenContent(
-        modifier = modifier,
-        soundMuted = soundMutedState,
-        game = gameUiState.game,
-        userId = gameUiState.userId,
-        userScore = gameUiState.userScore,
-        onClickReady = gameViewModel::onClickReady,
-        enableReadyButton = gameViewModel::enableReadyButton,
-        onClickLeave = { showLeaveDialog = true },
-        onClickCell = gameViewModel::onClickCell,
-        enableClickCell = gameViewModel::enableClickCell,
-        enableSeeShips = gameViewModel::enableSeeShips,
-        toggleMute = gameViewModel::toggleMute
-    )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        GameScreenContent(
+            modifier = modifier.padding(paddingValues),
+            soundMuted = soundMutedState,
+            game = gameUiState.game,
+            userId = gameUiState.userId,
+            userScore = gameUiState.userScore,
+            onClickReady = gameViewModel::onClickReady,
+            enableReadyButton = gameViewModel::enableReadyButton,
+            onClickLeave = { showLeaveDialog = true },
+            onClickCell = gameViewModel::onClickCell,
+            enableClickCell = gameViewModel::enableClickCell,
+            enableSeeShips = gameViewModel::enableSeeShips,
+            toggleMute = gameViewModel::toggleMute
+        )
+    }
 }
 
 @Composable
@@ -308,7 +319,7 @@ fun GameScreenContent(
 fun GameScreenPreview(){
     SeaBattleTheme {
         GameScreenContent(
-            game = sampleGame.copy(gameState = GameState.IN_PROGRESS.name,),
+            game = sampleGame.copy(gameState = GameState.IN_PROGRESS.name),
             userId = sampleGame.player1.userId,
             userScore = sampleGame.player1.score
         )

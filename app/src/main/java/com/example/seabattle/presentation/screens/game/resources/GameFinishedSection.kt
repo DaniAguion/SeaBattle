@@ -55,7 +55,7 @@ fun GameFinishedSection(
         ) {
             Text(
                 text = stringResource(R.string.game_finished),
-                fontSize = 24.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_xsmall))
             )
@@ -65,14 +65,13 @@ fun GameFinishedSection(
                 } else {
                     stringResource(R.string.loser_message)
                 },
-                fontSize = 18.sp,
-                fontWeight = SemiBold,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
             if (initialScore == userScore) {
                 Text(
                     text = stringResource(R.string.calculating_score),
-                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
                 )
                 CircularProgressIndicator(

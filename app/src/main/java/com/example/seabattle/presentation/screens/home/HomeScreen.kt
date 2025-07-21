@@ -1,6 +1,6 @@
 package com.example.seabattle.presentation.screens.home
 
-import android.widget.Toast
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -29,6 +29,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -69,6 +73,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel  = koinViewModel()
 ) {
     val homeUiState by homeViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     // Stop listeners when the screen is disposed
@@ -80,10 +85,13 @@ fun HomeScreen(
         }
     }
 
-    // Show a toast message when an error occurs
+    // Show a snack bar when an error occurs
     LaunchedEffect(key1 = homeUiState.error) {
         homeUiState.error?.let { error ->
-            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = context.getString(error.toErrorMessageUI()),
+                duration = SnackbarDuration.Short
+            )
             homeViewModel.onErrorShown()
         }
     }
@@ -96,25 +104,30 @@ fun HomeScreen(
         }
     }
 
-    HomeScreenContent(
-        modifier = modifier,
-        searchedUser = homeUiState.searchedUser,
-        invitationsList = homeUiState.invitationsList,
-        playersList = homeUiState.playersList,
-        searchDone = homeUiState.searchDone,
-        loadingPlayersList = homeUiState.loadingPlayersList,
-        errorPlayersList = homeUiState.errorPlayersList,
-        gamesList = homeUiState.gamesList,
-        errorGamesList = homeUiState.errorGameList,
-        loadingGamesList = homeUiState.loadingGamesList,
-        onClickCreateGame = homeViewModel::onClickCreateGame,
-        onUserSearchChange = homeViewModel::onUserSearchChange,
-        onUserSearch = homeViewModel::onUserSearch,
-        onClickInviteUser = homeViewModel::onClickInviteUser,
-        onClickJoinGame = homeViewModel::onClickJoinGame,
-        onClickReject = homeViewModel::onClickRejectInvitation,
-        enableInviteButton = homeViewModel::enableInviteButton
-    )
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        HomeScreenContent(
+            modifier = modifier.padding(paddingValues),
+            searchedUser = homeUiState.searchedUser,
+            invitationsList = homeUiState.invitationsList,
+            playersList = homeUiState.playersList,
+            searchDone = homeUiState.searchDone,
+            loadingPlayersList = homeUiState.loadingPlayersList,
+            errorPlayersList = homeUiState.errorPlayersList,
+            gamesList = homeUiState.gamesList,
+            errorGamesList = homeUiState.errorGameList,
+            loadingGamesList = homeUiState.loadingGamesList,
+            onClickCreateGame = homeViewModel::onClickCreateGame,
+            onUserSearchChange = homeViewModel::onUserSearchChange,
+            onUserSearch = homeViewModel::onUserSearch,
+            onClickInviteUser = homeViewModel::onClickInviteUser,
+            onClickJoinGame = homeViewModel::onClickJoinGame,
+            onClickReject = homeViewModel::onClickRejectInvitation,
+            enableInviteButton = homeViewModel::enableInviteButton,
+        )
+    }
 }
 
 

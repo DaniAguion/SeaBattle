@@ -10,8 +10,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,14 +60,14 @@ fun GameSection(
         if (delayedCurrentPlayer == userId) {
             Text(
                 text = stringResource(R.string.your_turn),
-                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
         } else {
             Text(
                 text = stringResource(R.string.oponnent_turn),
-                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
@@ -111,7 +113,7 @@ fun GameSection(
 fun GameSectionPreview(){
     SeaBattleTheme {
         GameSection(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             game = sampleGame,
             userId = sampleGame.player1.userId
         )

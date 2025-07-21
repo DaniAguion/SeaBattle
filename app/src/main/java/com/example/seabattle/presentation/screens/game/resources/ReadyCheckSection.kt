@@ -17,7 +17,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
@@ -46,14 +45,14 @@ fun ReadyCheckSection(
         ) {
             Text(
                 text = stringResource(R.string.ready_check_title),
-                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_xsmall))
             )
             Text(
                 text = stringResource(R.string.ready_check_desc),
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_xsmall))
             )
@@ -63,7 +62,7 @@ fun ReadyCheckSection(
                 } else {
                     stringResource(R.string.player_not_ready, game.player1.displayName)
                 },
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_xsmall))
             )
@@ -73,7 +72,7 @@ fun ReadyCheckSection(
                 } else {
                     stringResource(R.string.player_not_ready, game.player2.displayName)
                 },
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_xsmall))
             )

@@ -132,7 +132,7 @@ fun PlayerInfo(
             text = player.displayName,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
-            overflow = TextOverflow.Clip,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_xsmall))
         )

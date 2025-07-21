@@ -1,7 +1,5 @@
 package com.example.seabattle.presentation.screens.leaderboard
 
-import android.widget.Toast
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,12 +7,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +40,7 @@ fun LeaderBoardScreen(
     leaderboardViewModel: LeaderboardViewModel  = koinViewModel()
 ) {
     val leaderboardUiState by leaderboardViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     // Load the leaderboard data when the screen is first composed
@@ -49,37 +53,44 @@ fun LeaderBoardScreen(
     }
 
 
-    // Show a toast message when an error occurs
+    // Show a snack bar when an error occurs
     LaunchedEffect(key1 = leaderboardUiState.error) {
         leaderboardUiState.error?.let { error ->
-            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = context.getString(error.toErrorMessageUI()),
+                duration = SnackbarDuration.Short
+            )
             leaderboardViewModel.onErrorShown()
         }
     }
 
 
-    LeaderBoardContent(
-        user = leaderboardUiState.user,
-        userPosition = leaderboardUiState.userPosition,
-        usersList = leaderboardUiState.usersList,
-        loadingList = leaderboardUiState.loadingList,
-        errorList = leaderboardUiState.errorList,
-        modifier = modifier
-    )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        LeaderBoardContent(
+            modifier = modifier.padding(paddingValues),
+            user = leaderboardUiState.user,
+            userPosition = leaderboardUiState.userPosition,
+            usersList = leaderboardUiState.usersList,
+            loadingList = leaderboardUiState.loadingList,
+            errorList = leaderboardUiState.errorList,
+        )
+    }
 }
 
 @Composable
 fun LeaderBoardContent(
+    modifier: Modifier = Modifier,
     user: BasicPlayer? = null,
     userPosition: Int? = null,
     usersList: List<BasicPlayer> = emptyList(),
     loadingList: Boolean = false,
     errorList: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(all = dimensionResource(R.dimen.padding_container))
     ) {

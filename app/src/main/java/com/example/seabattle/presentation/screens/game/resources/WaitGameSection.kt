@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +20,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
@@ -67,27 +67,24 @@ fun WaitGameSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-
         // Header
         Text(
             text = stringResource(R.string.waiting_player),
-            fontSize = 20.sp,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = SemiBold,
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
         )
-        if (game.gameState == "WAITING_FOR_PLAYER") {
-            Text(
-                text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),
-                fontSize = 18.sp,
-                color = if (waitingTime >= 300) Color.Red else Color.Unspecified,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
-            )
-            Button(
-                onClick = onClickLeave,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
-            ) {
-                Text(text = stringResource(R.string.leave_game_button))
-            }
+        Text(
+            text = stringResource(id = R.string.waiting_time, formatTime(waitingTime)),
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (waitingTime >= 300) Color.Red else Color.Unspecified,
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_xsmall))
+        )
+        Button(
+            onClick = onClickLeave,
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+        ) {
+            Text(text = stringResource(R.string.leave_game_button))
         }
     }
 }

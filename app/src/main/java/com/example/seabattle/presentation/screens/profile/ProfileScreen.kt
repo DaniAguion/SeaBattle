@@ -1,6 +1,6 @@
 package com.example.seabattle.presentation.screens.profile
 
-import android.widget.Toast
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -57,6 +57,10 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -72,6 +76,7 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel(),
 ) {
     val profileUiState by profileViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     // Stop listeners when the screen is disposed
@@ -84,15 +89,19 @@ fun ProfileScreen(
     }
 
 
-    // Show a toast message when an error occurs
+    // Show a snackbar when an error occurs
     LaunchedEffect(key1 = profileUiState.error) {
         profileUiState.error?.let { error ->
-            Toast.makeText(context, context.getString(error.toErrorMessageUI()), Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = context.getString(error.toErrorMessageUI()),
+                duration = SnackbarDuration.Short
+            )
             profileViewModel.onErrorShown()
         }
     }
 
 
+    // Navigate to Welcome screen if the user is not logged in
     LaunchedEffect(key1 = profileUiState.userLoggedIn) {
         if (!profileUiState.userLoggedIn) {
             navController.navigate(Screen.Welcome.title)
@@ -155,21 +164,24 @@ fun ProfileScreen(
         )
     }
 
-
-    ProfileScreenContent(
-        modifier = modifier,
-        user = profileUiState.user,
-        userNameField = profileUiState.userNameField,
-        userNameError = profileUiState.userNameError,
-        historyList = profileUiState.user.history.reversed(),
-        errorList = profileUiState.errorList,
-        loadingList = profileUiState.loadingList,
-        msgResult = profileUiState.msgResult,
-        onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked,
-        onDeleteAccountClicked = profileViewModel::onDeleteAccountClicked,
-        onUserNameUpdate = profileViewModel::onUsernameUpdate,
-        onChangeUsernameClicked = profileViewModel::onChangeUsernameClicked,
-    )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        ProfileScreenContent(
+            modifier = modifier.padding(paddingValues),
+            user = profileUiState.user,
+            userNameField = profileUiState.userNameField,
+            userNameError = profileUiState.userNameError,
+            historyList = profileUiState.user.history.reversed(),
+            errorList = profileUiState.errorList,
+            loadingList = profileUiState.loadingList,
+            msgResult = profileUiState.msgResult,
+            onLogoutButtonClicked = profileViewModel::onLogoutButtonClicked,
+            onDeleteAccountClicked = profileViewModel::onDeleteAccountClicked,
+            onUserNameUpdate = profileViewModel::onUsernameUpdate,
+            onChangeUsernameClicked = profileViewModel::onChangeUsernameClicked,
+        )
+    }
 }
 
 @Composable

@@ -94,8 +94,8 @@ class ProfileViewModel(
         validateUsername(_uiState.value.userNameField)
         if (_uiState.value.userNameError != null) {
             _uiState.value = _uiState.value.copy(msgResult = InfoMessages.INVALID_USERNAME)
+            return
         }
-
 
         viewModelScope.launch {
             changeUserName.invoke(uiState.value.userNameField)
