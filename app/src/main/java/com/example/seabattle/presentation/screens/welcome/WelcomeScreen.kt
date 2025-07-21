@@ -86,7 +86,7 @@ fun WelcomeScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         WelcomeScreenContent(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier,
             username = welcomeUiState.username,
             email = welcomeUiState.email,
             password = welcomeUiState.password,

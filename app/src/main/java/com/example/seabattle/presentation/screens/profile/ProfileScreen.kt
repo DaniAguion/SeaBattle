@@ -168,7 +168,7 @@ fun ProfileScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         ProfileScreenContent(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier,
             user = profileUiState.user,
             userNameField = profileUiState.userNameField,
             userNameError = profileUiState.userNameError,

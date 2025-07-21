@@ -109,7 +109,7 @@ fun HomeScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         HomeScreenContent(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier,
             searchedUser = homeUiState.searchedUser,
             invitationsList = homeUiState.invitationsList,
             playersList = homeUiState.playersList,

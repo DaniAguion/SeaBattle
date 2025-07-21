@@ -10,6 +10,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,7 +28,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.seabattle.R
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.domain.entity.Game
@@ -54,22 +54,22 @@ fun GameSection(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         if (delayedCurrentPlayer == userId) {
             Text(
                 text = stringResource(R.string.your_turn),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
         } else {
             Text(
                 text = stringResource(R.string.oponnent_turn),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = SemiBold,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium))
             )
         }
         AnimatedContent(

@@ -188,7 +188,7 @@ fun GameScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         GameScreenContent(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier,
             soundMuted = soundMutedState,
             game = gameUiState.game,
             userId = gameUiState.userId,
@@ -290,7 +290,9 @@ fun GameScreenContent(
         if (game.gameState == GameState.IN_PROGRESS.name) {
             item {
                 GameSection(
-                    modifier = modifier.fillMaxSize(),
+                    modifier = modifier
+                        .padding(bottom = dimensionResource(R.dimen.padding_large))
+                        .fillMaxSize(),
                     game = game,
                     userId = userId,
                     onClickCell = onClickCell,

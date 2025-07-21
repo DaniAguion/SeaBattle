@@ -69,7 +69,7 @@ fun LeaderBoardScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         LeaderBoardContent(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier,
             user = leaderboardUiState.user,
             userPosition = leaderboardUiState.userPosition,
             usersList = leaderboardUiState.usersList,
