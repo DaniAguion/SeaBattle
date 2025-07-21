@@ -195,11 +195,11 @@ fun GameScreen(
 
 @Composable
 fun GameScreenContent(
-    modifier: Modifier,
-    soundMuted: Boolean,
-    game: Game?,
-    userId: String,
-    userScore: Int,
+    modifier: Modifier = Modifier,
+    soundMuted: Boolean = false,
+    game: Game? = null,
+    userId: String = "",
+    userScore: Int = 0,
     onClickReady: () -> Unit = {},
     enableReadyButton: () -> Boolean = { true },
     onClickLeave: () -> Unit = {},
@@ -210,8 +210,8 @@ fun GameScreenContent(
 ) {
     if (game == null) {
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
-            , contentAlignment = Alignment.Center
         ) {
             // Empty state when the game is null
         }
@@ -219,10 +219,9 @@ fun GameScreenContent(
     }
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        modifier = modifier.fillMaxSize()
     ) {
         item {
             PlayersInfoHeader(
@@ -309,13 +308,9 @@ fun GameScreenContent(
 fun GameScreenPreview(){
     SeaBattleTheme {
         GameScreenContent(
-            modifier = Modifier.fillMaxSize(),
-            soundMuted = false,
-            game = sampleGame.copy(
-                gameState = GameState.IN_PROGRESS.name,
-            ),
+            game = sampleGame.copy(gameState = GameState.IN_PROGRESS.name,),
             userId = sampleGame.player1.userId,
-            userScore = 100,
+            userScore = sampleGame.player1.score
         )
     }
 }

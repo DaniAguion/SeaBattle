@@ -175,12 +175,12 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
-    user: User,
-    userNameField: String,
+    user: User = User(),
+    userNameField: String = "",
     userNameError: ValidationError? = null,
     historyList: List<GameHistory> = emptyList(),
-    errorList: Boolean,
-    loadingList: Boolean,
+    errorList: Boolean = false,
+    loadingList: Boolean = false,
     msgResult: InfoMessages? = null,
     onLogoutButtonClicked: () -> Unit = {},
     onDeleteAccountClicked: () -> Unit = {},
@@ -431,14 +431,9 @@ fun ProfileScreenContent(
 fun ProfileScreenPreview(){
     SeaBattleTheme {
         ProfileScreenContent(
-            modifier = Modifier.fillMaxSize(),
             user = sampleUser,
             userNameField = sampleUser.displayName,
-            userNameError = null,
-            historyList = sampleUser.history,
-            errorList = false,
-            loadingList = false,
-            msgResult = null
+            historyList = sampleUser.history
         )
     }
 }

@@ -70,11 +70,11 @@ fun LeaderBoardScreen(
 
 @Composable
 fun LeaderBoardContent(
-    user: BasicPlayer?,
-    userPosition: Int?,
-    usersList: List<BasicPlayer>,
-    loadingList: Boolean,
-    errorList: Boolean,
+    user: BasicPlayer? = null,
+    userPosition: Int? = null,
+    usersList: List<BasicPlayer> = emptyList(),
+    loadingList: Boolean = false,
+    errorList: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -185,10 +185,7 @@ fun LeaderBoardPreview(){
         LeaderBoardContent(
             user = sampleBasicPlayersList.first(),
             userPosition = 1,
-            usersList = sampleBasicPlayersList,
-            loadingList = false,
-            errorList = false,
-            modifier = Modifier.fillMaxSize(),
+            usersList = sampleBasicPlayersList
         )
     }
 }

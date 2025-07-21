@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seabattle.R
 import com.example.seabattle.presentation.resources.InfoMessages
+import com.example.seabattle.presentation.resources.ValidationError
 import com.example.seabattle.presentation.resources.toErrorMessageUI
 import com.example.seabattle.presentation.screens.Tabs
 import com.example.seabattle.presentation.theme.SeaBattleTheme
@@ -73,7 +74,15 @@ fun WelcomeScreen(
 
     WelcomeScreenContent(
         modifier = modifier,
-        welcomeUiState = welcomeUiState,
+        username = welcomeUiState.username,
+        email = welcomeUiState.email,
+        password = welcomeUiState.password,
+        repeatedPassword = welcomeUiState.repeatedPassword,
+        usernameError = welcomeUiState.usernameError,
+        emailError = welcomeUiState.emailError,
+        passwordError = welcomeUiState.passwordError,
+        repeatedPasswordError = welcomeUiState.repeatedPasswordError,
+        msgResult = welcomeUiState.msgResult,
         onResetError = welcomeViewModel::onResetError,
         onUsernameUpdate = welcomeViewModel::onUsernameUpdate,
         onEmailUpdate = welcomeViewModel::onEmailUpdate,
@@ -88,7 +97,15 @@ fun WelcomeScreen(
 @Composable
 fun WelcomeScreenContent(
     modifier: Modifier = Modifier,
-    welcomeUiState: WelcomeUiState = WelcomeUiState(),
+    username: String = "",
+    email: String = "",
+    password: String = "",
+    repeatedPassword: String = "",
+    usernameError: ValidationError? = null,
+    emailError: ValidationError? = null,
+    passwordError: ValidationError? = null,
+    repeatedPasswordError: ValidationError? = null,
+    msgResult: InfoMessages? = null,
     onResetError: () -> Unit = {},
     onUsernameUpdate: (String) -> Unit = {},
     onEmailUpdate: (String) -> Unit = {},
@@ -192,7 +209,11 @@ fun WelcomeScreenContent(
                         ) {
                             CommonForm(
                                 registerFields = false,
-                                welcomeUiState = welcomeUiState,
+                                email = email,
+                                password = password,
+                                emailError = emailError,
+                                passwordError = passwordError,
+                                msgResult = msgResult,
                                 onEmailUpdate = onEmailUpdate,
                                 onPasswordUpdate = onPasswordUpdate
                             )
@@ -214,7 +235,15 @@ fun WelcomeScreenContent(
                         ) {
                             CommonForm(
                                 registerFields = true,
-                                welcomeUiState = welcomeUiState,
+                                username = username,
+                                email = email,
+                                password = password,
+                                repeatedPassword = repeatedPassword,
+                                usernameError = usernameError,
+                                emailError = emailError,
+                                passwordError = passwordError,
+                                repeatedPasswordError = repeatedPasswordError,
+                                msgResult = msgResult,
                                 onEmailUpdate = onEmailUpdate,
                                 onPasswordUpdate = onPasswordUpdate,
                                 onUsernameUpdate = onUsernameUpdate,
@@ -238,7 +267,15 @@ fun WelcomeScreenContent(
 @Composable
 fun CommonForm(
     registerFields: Boolean,
-    welcomeUiState : WelcomeUiState,
+    username: String = "",
+    email: String = "",
+    password: String = "",
+    repeatedPassword: String = "",
+    usernameError: ValidationError? = null,
+    emailError: ValidationError? = null,
+    passwordError: ValidationError? = null,
+    repeatedPasswordError: ValidationError? = null,
+    msgResult: InfoMessages? = null,
     onEmailUpdate: (String) -> Unit,
     onPasswordUpdate: (String) -> Unit,
     onUsernameUpdate: (String) -> Unit = {  }, // Optional for login only
@@ -251,13 +288,13 @@ fun CommonForm(
     ) {
         if (registerFields) {
             OutlinedTextField(
-                value = welcomeUiState.username,
+                value = username,
                 onValueChange = onUsernameUpdate,
                 label = { Text(stringResource(R.string.username)) },
                 singleLine = true,
-                isError = welcomeUiState.usernameError != null,
+                isError = usernameError != null,
                 supportingText = {
-                    welcomeUiState.usernameError?.let {
+                    usernameError?.let {
                         Text(
                             text = stringResource(it.idString),
                             color = MaterialTheme.colorScheme.error
@@ -272,13 +309,13 @@ fun CommonForm(
             )
         }
         OutlinedTextField(
-            value = welcomeUiState.email,
+            value = email,
             onValueChange = onEmailUpdate,
             label = { Text(stringResource(R.string.email)) },
             singleLine = true,
-            isError = welcomeUiState.emailError != null,
+            isError = emailError != null,
             supportingText = {
-                welcomeUiState.emailError?.let {
+                emailError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -292,13 +329,13 @@ fun CommonForm(
             )
         )
         OutlinedTextField(
-            value = welcomeUiState.password,
+            value = password,
             onValueChange = onPasswordUpdate,
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
-            isError = welcomeUiState.passwordError != null,
+            isError = passwordError != null,
             supportingText = {
-                welcomeUiState.passwordError?.let {
+                passwordError?.let {
                     Text(
                         text = stringResource(it.idString),
                         color = MaterialTheme.colorScheme.error
@@ -314,13 +351,13 @@ fun CommonForm(
         )
         if (registerFields) {
             OutlinedTextField(
-                value = welcomeUiState.repeatedPassword,
+                value = repeatedPassword,
                 onValueChange = onPasswordRepeatUpdate,
                 label = { Text(stringResource(R.string.repeat_password)) },
                 singleLine = true,
-                isError = welcomeUiState.repeatedPasswordError != null,
+                isError = repeatedPasswordError != null,
                 supportingText = {
-                    welcomeUiState.repeatedPasswordError?.let {
+                    repeatedPasswordError?.let {
                         Text(
                             text = stringResource(it.idString),
                             color = MaterialTheme.colorScheme.error
@@ -339,7 +376,7 @@ fun CommonForm(
     Spacer(
         modifier = Modifier.height(dimensionResource(R.dimen.padding_xsmall))
     )
-    welcomeUiState.msgResult?.let { msgResult ->
+    msgResult?.let { msgResult ->
         when (msgResult) {
             InfoMessages.LOGIN_SUCCESSFUL -> {
                 Text(

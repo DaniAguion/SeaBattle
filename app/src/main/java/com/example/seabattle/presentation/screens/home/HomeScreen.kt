@@ -121,22 +121,22 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
-    invitationsList: List<Invitation>,
-    searchedUser: String,
-    playersList: List<Player>,
-    searchDone: Boolean,
-    loadingPlayersList: Boolean,
-    errorPlayersList: Boolean,
-    gamesList : List<Game>,
-    loadingGamesList : Boolean,
-    errorGamesList : Boolean,
-    onClickCreateGame: () -> Unit,
-    onUserSearchChange: (String) -> Unit,
-    onUserSearch: () -> Unit,
-    onClickInviteUser: (String) -> Unit,
-    onClickJoinGame: (String) -> Unit,
-    onClickReject: (Invitation) -> Unit,
-    enableInviteButton: (Player) -> Boolean
+    invitationsList: List<Invitation> = emptyList(),
+    searchedUser: String = "",
+    playersList: List<Player> = emptyList(),
+    searchDone: Boolean = false,
+    loadingPlayersList: Boolean = false,
+    errorPlayersList: Boolean = false,
+    gamesList: List<Game> = emptyList(),
+    loadingGamesList: Boolean = false,
+    errorGamesList: Boolean = false,
+    onClickCreateGame: () -> Unit = {},
+    onUserSearchChange: (String) -> Unit = {},
+    onUserSearch: () -> Unit = {},
+    onClickInviteUser: (String) -> Unit = {},
+    onClickJoinGame: (String) -> Unit = {},
+    onClickReject: (Invitation) -> Unit = {},
+    enableInviteButton: (Player) -> Boolean = { true }
 ) {
     var expandedOptions by remember { mutableStateOf(false) }
 
@@ -431,27 +431,11 @@ fun HomeScreenContent(
 fun HomeScreenPreview(){
     SeaBattleTheme{
         HomeScreenContent(
-            modifier = Modifier.fillMaxSize(),
-            searchedUser = "",
-            invitationsList = emptyList(),
-            playersList = emptyList(),
-            searchDone = false,
-            loadingPlayersList = false,
-            errorPlayersList = false,
             gamesList = listOf(
                 sampleGame,
                 sampleGame.copy(gameId = "2"),
                 sampleGame.copy(gameId = "3")
             ),
-            loadingGamesList = false,
-            errorGamesList = false,
-            onClickCreateGame = { },
-            onUserSearchChange = { },
-            onUserSearch = { },
-            onClickInviteUser = { },
-            onClickJoinGame = { },
-            onClickReject = { _ -> },
-            enableInviteButton = { true }
         )
     }
 }
