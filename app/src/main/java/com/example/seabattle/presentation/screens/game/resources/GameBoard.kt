@@ -8,9 +8,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Card
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
@@ -38,6 +43,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getColor
 import com.example.seabattle.R
@@ -62,13 +68,16 @@ fun GameBoard(
     // Calculate screen width and height in dp
     val density = LocalDensity.current
     val windowSize = LocalWindowInfo.current.containerSize
+    val systemBarInsets = WindowInsets.systemBars.asPaddingValues()
     val screenWidthDp = with(density) { windowSize.width.toDp() }
     val screenHeightDp = with(density) { windowSize.height.toDp() }
     val padding = dimensionResource(R.dimen.padding_small)
     val cellPadding = dimensionResource(R.dimen.cell_padding)
     val availableWidth = screenWidthDp - (padding * 2) - cellPadding * 2 * boardSize
-    val availableHeight = screenHeightDp - (padding* 2) - cellPadding * 2 * boardSize
 
+    // Calculate the available height by subtracting the padding, cell padding, and system bar insets
+    // This ensures that the game board fits within the visible area of the screen
+    val availableHeight = screenHeightDp - (padding* 2) - cellPadding * 2 * boardSize - systemBarInsets.calculateTopPadding() - systemBarInsets.calculateBottomPadding()
     // Calculate the cell size based on the available width and height
     val calculatedCellSize = (minOf(availableWidth.value, availableHeight.value) / boardSize).dp
 
@@ -77,7 +86,6 @@ fun GameBoard(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(
                     vertical = dimensionResource(R.dimen.padding_small),
                     horizontal = dimensionResource(R.dimen.padding_small)

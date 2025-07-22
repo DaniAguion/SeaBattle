@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
 import com.example.seabattle.presentation.screens.leaderboard.LeaderBoardScreen
 import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
@@ -30,10 +32,17 @@ fun MyAppNavigation() {
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 
     Scaffold(
-        topBar = { SeaBattleTopBar() },
+        topBar = {
+            if (currentRoute == Screen.Game.title && isLandscape) {
+                // Hide the top bar to improve the game experience in landscape mode
+            } else {
+                SeaBattleTopBar()
+            }
+        },
         bottomBar = {
             when (currentRoute) {
                 Screen.LeaderBoard.title, Screen.Home.title, Screen.Profile.title -> {
