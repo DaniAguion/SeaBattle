@@ -26,7 +26,9 @@ class SoundManagerImpl(private val context: Context) : SoundManagerRepo {
     // Enum class to define sound effects
     enum class SoundEffect {
         WATER_SPLASH,
-        SHIP_HIT
+        SHIP_HIT,
+        VICTORY,
+        DEFEAT
     }
 
 
@@ -51,6 +53,8 @@ class SoundManagerImpl(private val context: Context) : SoundManagerRepo {
     private fun loadSounds() {
         soundMap[SoundEffect.WATER_SPLASH] = soundPool.load(context, R.raw.water, 1)
         soundMap[SoundEffect.SHIP_HIT] = soundPool.load(context, R.raw.ship_hit, 1)
+        soundMap[SoundEffect.VICTORY] = soundPool.load(context, R.raw.victory, 1)
+        soundMap[SoundEffect.DEFEAT] = soundPool.load(context, R.raw.defeat, 1)
     }
 
 
@@ -80,6 +84,13 @@ class SoundManagerImpl(private val context: Context) : SoundManagerRepo {
         playSound(SoundEffect.SHIP_HIT)
     }
 
+    override fun playVictory() {
+        playSound(SoundEffect.VICTORY)
+    }
+
+    override fun playDefeat() {
+        playSound(SoundEffect.DEFEAT)
+    }
 
     // Release the sound pool resources when no longer needed
     override fun release() {

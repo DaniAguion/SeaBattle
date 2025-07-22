@@ -221,6 +221,11 @@ class GameViewModel(
             finishGameUseCase.invoke( gameId = game.gameId )
                 .onSuccess { score ->
                     _uiState.value = _uiState.value.copy(userScore = score)
+                    if (game.winnerId == _uiState.value.userId) {
+                        soundManager.playVictory()
+                    } else {
+                        soundManager.playDefeat()
+                    }
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(error = e)

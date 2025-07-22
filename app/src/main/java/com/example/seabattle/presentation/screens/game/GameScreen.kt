@@ -252,8 +252,7 @@ fun GameScreenContent(
                 IconButton(onClick = { toggleMute() }) {
                     Icon(
                         imageVector = if (soundMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
-                        contentDescription = if (soundMuted) stringResource(R.string.unmute_sound) else stringResource(R.string.mute_sound),
-                        tint = if (soundMuted) Color.Gray else Color.Unspecified
+                        contentDescription = if (soundMuted) stringResource(R.string.unmute_sound) else stringResource(R.string.mute_sound)
                     )
                 }
             }

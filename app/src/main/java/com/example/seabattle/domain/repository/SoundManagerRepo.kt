@@ -5,5 +5,7 @@ interface SoundManagerRepo {
     fun toggleMute()
     fun playWaterSplash()
     fun playShipHit()
+    fun playVictory()
+    fun playDefeat()
     fun release()
 }
