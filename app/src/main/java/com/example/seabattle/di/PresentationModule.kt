@@ -21,6 +21,7 @@ val presentationModule = module {
         WelcomeViewModel(
             get(),
             get(),
+            get(),
             get()
         )
     }

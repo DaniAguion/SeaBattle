@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seabattle.domain.entity.LoginMethod
+import com.example.seabattle.domain.usecase.user.ForgotPassUseCase
 import com.example.seabattle.domain.usecase.user.LoginUserUseCase
 import com.example.seabattle.domain.usecase.user.RegisterUserUseCase
 import com.example.seabattle.presentation.resources.InfoMessages
@@ -20,6 +21,7 @@ import kotlin.onSuccess
 class WelcomeViewModel(
     private val loginUseCase: LoginUserUseCase,
     private val registerUseCase: RegisterUserUseCase,
+    private val forgotPassUseCase: ForgotPassUseCase,
     private val googleSignIn: GoogleSignIn
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(WelcomeUiState())
@@ -97,6 +99,31 @@ class WelcomeViewModel(
             }
         }
     }
+
+
+    fun onClickForgotPassword() {
+        validateEmail(_uiState.value.email)
+
+        if (uiState.value.emailError != null){
+            _uiState.value = _uiState.value.copy(msgResult = InfoMessages.INVALID_FIELDS)
+            return
+        }
+
+        viewModelScope.launch {
+            forgotPassUseCase.invoke(_uiState.value.email)
+                .onSuccess {
+                    _uiState.value =
+                        _uiState.value.copy(msgResult = InfoMessages.PASSWORD_RESET_SENT)
+                }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(
+                        error = e,
+                        msgResult = InfoMessages.PASSWORD_RESET_FAILED
+                    )
+                }
+        }
+    }
+
 
     fun onRegisterButtonClicked() {
         validateUsername(_uiState.value.username)

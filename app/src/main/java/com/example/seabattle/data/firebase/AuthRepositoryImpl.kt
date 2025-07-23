@@ -111,4 +111,15 @@ class AuthRepositoryImpl(
             throw throwable.toAuthError()
         }
     }
+
+
+    override suspend fun askForPasswordReset(email: String): Result<Unit>  = withContext(ioDispatcher) {
+        runCatching {
+            auth.sendPasswordResetEmail(email).await()
+            return@runCatching
+        }
+        .recoverCatching { throwable ->
+            throw throwable.toAuthError()
+        }
+    }
 }

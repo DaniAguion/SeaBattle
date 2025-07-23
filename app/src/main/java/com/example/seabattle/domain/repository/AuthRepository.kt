@@ -11,4 +11,5 @@ interface AuthRepository {
     fun logoutUser()
     fun isLoggedIn() : Boolean
     fun getAuthUserProfile(): Result<User>
+    suspend fun askForPasswordReset(email: String): Result<Unit>
 }

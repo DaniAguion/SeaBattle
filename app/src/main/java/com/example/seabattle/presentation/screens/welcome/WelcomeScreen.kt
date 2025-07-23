@@ -1,6 +1,7 @@
 package com.example.seabattle.presentation.screens.welcome
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -102,6 +103,7 @@ fun WelcomeScreen(
             onPasswordUpdate = welcomeViewModel::onPasswordUpdate,
             onPasswordRepeatUpdate = welcomeViewModel::onRepeatPasswordUpdate,
             onLoginButtonClicked = welcomeViewModel::onLoginButtonClicked,
+            onClickForgotPassword = welcomeViewModel::onClickForgotPassword,
             onRegisterButtonClicked = welcomeViewModel::onRegisterButtonClicked,
             onGoogleButtonClicked = { welcomeViewModel.onGoogleButtonClicked(context) },
         )
@@ -126,6 +128,7 @@ fun WelcomeScreenContent(
     onPasswordUpdate: (String) -> Unit = {},
     onPasswordRepeatUpdate: (String) -> Unit = {},
     onLoginButtonClicked: () -> Unit = {},
+    onClickForgotPassword: () -> Unit = {},
     onRegisterButtonClicked: () -> Unit = {},
     onGoogleButtonClicked: () -> Unit = {},
 ) {
@@ -222,14 +225,15 @@ fun WelcomeScreenContent(
                                 .padding(dimensionResource(R.dimen.padding_small))
                         ) {
                             CommonForm(
-                                registerFields = false,
+                                registerMode = false,
                                 email = email,
                                 password = password,
                                 emailError = emailError,
                                 passwordError = passwordError,
                                 msgResult = msgResult,
                                 onEmailUpdate = onEmailUpdate,
-                                onPasswordUpdate = onPasswordUpdate
+                                onPasswordUpdate = onPasswordUpdate,
+                                onClickForgotPassword = onClickForgotPassword
                             )
                             Button(
                                 onClick = onLoginButtonClicked,
@@ -248,7 +252,7 @@ fun WelcomeScreenContent(
                                 .padding(dimensionResource(R.dimen.padding_small))
                         ) {
                             CommonForm(
-                                registerFields = true,
+                                registerMode = true,
                                 username = username,
                                 email = email,
                                 password = password,
@@ -260,6 +264,7 @@ fun WelcomeScreenContent(
                                 msgResult = msgResult,
                                 onEmailUpdate = onEmailUpdate,
                                 onPasswordUpdate = onPasswordUpdate,
+                                onClickForgotPassword = onClickForgotPassword,
                                 onUsernameUpdate = onUsernameUpdate,
                                 onPasswordRepeatUpdate = onPasswordRepeatUpdate
                             )
@@ -280,7 +285,7 @@ fun WelcomeScreenContent(
 
 @Composable
 fun CommonForm(
-    registerFields: Boolean,
+    registerMode: Boolean,
     username: String = "",
     email: String = "",
     password: String = "",
@@ -292,15 +297,16 @@ fun CommonForm(
     msgResult: InfoMessages? = null,
     onEmailUpdate: (String) -> Unit,
     onPasswordUpdate: (String) -> Unit,
-    onUsernameUpdate: (String) -> Unit = {  }, // Optional for login only
-    onPasswordRepeatUpdate: (String) -> Unit = {  } // Optional for login only
+    onClickForgotPassword: () -> Unit,
+    onUsernameUpdate: (String) -> Unit = {  }, // Optional for register only
+    onPasswordRepeatUpdate: (String) -> Unit = {  }, // Optional for register only
 ){
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        if (registerFields) {
+        if (registerMode) {
             OutlinedTextField(
                 value = username,
                 onValueChange = onUsernameUpdate,
@@ -363,7 +369,17 @@ fun CommonForm(
                 imeAction = ImeAction.Done
             )
         )
-        if (registerFields) {
+        if (!registerMode) {
+            Text(
+                text = stringResource(R.string.forgot_password),
+                modifier = Modifier
+                    .clickable { onClickForgotPassword() }
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_xsmall),
+                        bottom = dimensionResource(R.dimen.padding_small)
+                    )
+            )
+        } else {
             OutlinedTextField(
                 value = repeatedPassword,
                 onValueChange = onPasswordRepeatUpdate,
@@ -387,9 +403,6 @@ fun CommonForm(
             )
         }
     }
-    Spacer(
-        modifier = Modifier.height(dimensionResource(R.dimen.padding_xsmall))
-    )
     msgResult?.let { msgResult ->
         when (msgResult) {
             InfoMessages.LOGIN_SUCCESSFUL -> {
@@ -428,12 +441,28 @@ fun CommonForm(
                     color = colorResource(id = R.color.unsuccessful_text_color)
                 )
             }
+            InfoMessages.PASSWORD_RESET_SENT -> {
+                Text(
+                    text = stringResource(R.string.password_reset_sent),
+                    color = colorResource(id = R.color.success_text_color)
+                )
+            }
+            InfoMessages.PASSWORD_RESET_FAILED -> {
+                Text(
+                    text = stringResource(R.string.password_reset_failed),
+                    color = colorResource(id = R.color.unsuccessful_text_color)
+                )
+            }
             else -> {
                 // No message to show, other errors should not happen here
             }
         }
     }
+    Spacer(
+        modifier = Modifier.height(dimensionResource(R.dimen.padding_small))
+    )
 }
+
 
 
 @Preview(showBackground = true)

@@ -18,7 +18,10 @@
     <string name="login_unsuccessful">Sign In try unsuccessful</string>
     <string name="register_successful">Sign up successful!</string>
     <string name="register_unsuccessful">Sign up try unsuccessful!</string>
+    <string name="repeat_password">Repeat the password</string>
+    <string name="passwords_does_not_match">Repeated password does not match</string>
     <string name="invalid_fields">Invalid Fields</string>
+    <string name="forgot_password">Did you forgot your password?</string>
 
 
     // Validation email and password messages
@@ -80,6 +83,8 @@
     <string name="claim_dialog_desc">Do you want to claim victory?</string>
     <string name="claim_dialog_confirm">Claim Victory</string>
     <string name="claim_dialog_cancel">Continue Playing</string>
+    <string name="unmute_sound">Unmute sound</string>
+    <string name="mute_sound">Mute sound</string>
 
     // Game Screen - Wait Game Section
     <string name="waiting_player">Waiting Player</string>
@@ -136,10 +141,8 @@
     // Others
     <string name="leave_game_button">Leave Game</string>
     <string name="error_action">Action has failed</string>
-    <string name="repeat_password">Repeat the password</string>
-    <string name="passwords_does_not_match">Repeated password does not match</string>
-    <string name="invalid_username">Invalid Username</string>
-    <string name="invalid_password">Invalid Username</string>
-    <string name="unmute_sound">Unmute sound</string>
-    <string name="mute_sound">Mute sound</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="password_reset_sent">Password reset email sent</string>
+    <string name="password_reset_failed">Try to reset password failed</string>
 </resources>

@@ -24,6 +24,7 @@ import com.example.seabattle.domain.usecase.leaderboard.GetUserPositionUseCase
 import com.example.seabattle.domain.usecase.user.ChangeUserNameUseCase
 import com.example.seabattle.domain.usecase.user.DeleteUserUseCase
 import com.example.seabattle.domain.usecase.user.FindPlayerUseCase
+import com.example.seabattle.domain.usecase.user.ForgotPassUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
 import com.example.seabattle.domain.usecase.userGames.InviteUserUseCase
@@ -43,6 +44,7 @@ val domainModule = module {
     factory { GetUserProfileUseCase(get(), get(), get()) }
     factory { FindPlayerUseCase(get(), get()) }
     factory { ChangeUserNameUseCase(get(), get(), get(), get()) }
+    factory { ForgotPassUseCase(get(), get()) }
 
     // User Games Use cases
     factory { ListenUserGamesUseCase(get(), get(), get()) }
