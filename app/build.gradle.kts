@@ -1,8 +1,15 @@
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+}
+
+val keysProperties = Properties().apply {
+    load(rootProject.file("keys.properties").inputStream())
 }
 
 
@@ -19,7 +26,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "WEB_CLIENT_ID", "\"535888489443-plcatcaacbg8b5a2v8abu9l7kireo4pi.apps.googleusercontent.com\"")
+        buildConfigField("String", "WEB_CLIENT_ID", "\"${keysProperties["WEB_CLIENT_ID"]}\"")
     }
 
     buildFeatures {
