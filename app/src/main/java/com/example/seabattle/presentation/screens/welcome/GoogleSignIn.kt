@@ -1,12 +1,11 @@
 package com.example.seabattle.presentation.screens.welcome
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import com.example.seabattle.R
+import com.example.seabattle.BuildConfig
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import timber.log.Timber
@@ -32,7 +31,7 @@ class GoogleSignIn() {
     suspend private fun buildCredentialRequest(context: Context): GetCredentialResponse {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(ContextCompat.getString(context, R.string.default_web_client_id))
+            .setServerClientId(BuildConfig.WEB_CLIENT_ID)
             .setAutoSelectEnabled(false)
             .build()
 
