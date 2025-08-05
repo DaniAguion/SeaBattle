@@ -22,7 +22,7 @@ object Validator {
 
     fun validateNewPassword(password: String): ValidationError? {
         if (validatePassword(password) == null){
-            val strongRegex = Regex(".*[A-Z].*[0-9].*")
+            val strongRegex = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$")
             return if (strongRegex.matches(password)) null else ValidationError.PasswordWeak
         }
         return validatePassword(password)
