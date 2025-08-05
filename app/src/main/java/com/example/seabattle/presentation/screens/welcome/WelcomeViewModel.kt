@@ -57,6 +57,11 @@ class WelcomeViewModel(
         _uiState.value = _uiState.value.copy(passwordError = validationResult)
     }
 
+    private fun validateNewPassword(password: String){
+        val validationResult = Validator.validateNewPassword(password)
+        _uiState.value = _uiState.value.copy(passwordError = validationResult)
+    }
+
     fun onRepeatPasswordUpdate(repeatedPasswordField: String) {
         validateRepeatPassword(repeatedPasswordField)
         _uiState.value = _uiState.value.copy(repeatedPassword = repeatedPasswordField)
