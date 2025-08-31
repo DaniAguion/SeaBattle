@@ -1,8 +1,6 @@
 package com.example.seabattle.data.firestore.mappers
 
-import com.example.seabattle.data.firestore.dto.BasicPlayerDto
 import com.example.seabattle.data.firestore.dto.GameHistoryDto
-import com.example.seabattle.domain.entity.BasicPlayer
 import com.example.seabattle.domain.entity.GameHistory
 
 

@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam ArrowColor DarkSlateGray
+skinparam ComponentBorderColor Black
+skinparam BackgroundColor #fdfdfd
+
+package "Pantalla de Principal" {
+    component "Pantalla Principal" as Home
+}
+
+package "Pantalla de Juego" {
+    component "Fase de Espera" as Waiting
+    component "Fase de Confirmación" as Checking
+    component "Fase de Juego" as Game
+    component "Fase Final" as Finish
+}
+
+' Flujo principal
+Home --> Waiting : crea una partida nueva
+Waiting --> Checking : se ha unido el 2º jugador
+Home --> Checking : se une a una partida existente
+Checking --> Home : un usuario abandona
+Checking --> Game : ambos usuarios confirman
+Game --> Finish : finaliza la partida / un usuario abandona
+Finish --> Home : el usuario vuelve a la pantalla principal
+@enduml

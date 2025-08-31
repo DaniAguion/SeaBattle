@@ -1,0 +1,38 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam ArrowColor DarkSlateGray
+skinparam ComponentBorderColor Black
+skinparam BackgroundColor #fdfdfd
+
+package "Inicio" {
+    component "Splash Screen\n" as SplashScreen
+}
+
+package "Sistema de Autenticación" {
+    component "Pantalla de Autenticación" as Welcome
+}
+
+package "Núcleo de la Aplicación" {
+    component "Pantalla Principal" as Home
+    component "Perfil de Usuario" as Profile
+    component "Clasificación" as Leaderboard
+    component "Pantalla de Juego" as Gameboard
+}
+
+' Flujo principal
+SplashScreen --> Welcome : no autenticado
+SplashScreen --> Home : autenticado
+
+Welcome --> Home : autenticado
+
+' Navegación interna
+Home <--> Gameboard : unión a partida
+Home <--> Profile : cambio de pestaña
+Home <--> Leaderboard : cambio de pestaña
+
+' Flujo dentro del juego
+Gameboard --> Home : partida finalizada
+
+@enduml
