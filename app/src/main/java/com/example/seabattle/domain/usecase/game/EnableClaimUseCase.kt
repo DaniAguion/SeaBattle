@@ -16,8 +16,7 @@ class EnableClaimUseCase() {
         val currentPlayerOffline = ((game.currentPlayer == game.player1.userId && game.player1.status != "online") ||
                 (game.currentPlayer == game.player2.userId && game.player2.status != "online"))
 
-        val updatedAtTime = game.updatedAt.time
-        val lastUpdate = (System.currentTimeMillis() - updatedAtTime)/ 1000
+        val lastUpdate = (System.currentTimeMillis() - game.updatedAt.toEpochMilli())/ 1000
 
         return (currentPlayerOffline && lastUpdate > 30) || (lastUpdate > 60)
     }

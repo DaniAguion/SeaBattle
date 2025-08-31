@@ -1,6 +1,7 @@
 package com.example.seabattle.data.firestore.dto
 
-import java.util.Date
+import com.google.firebase.Timestamp
+
 
 data class UserDto(
     val userId: String = "",
@@ -36,6 +37,6 @@ data class GameHistoryDto (
     val player1: BasicPlayerDto = BasicPlayerDto(),
     val player2: BasicPlayerDto = BasicPlayerDto(),
     val scoreTransacted: Long = 0L,
-    val playedAt: Date? = Date()
+    val playedAt: Timestamp? = null
 )
 

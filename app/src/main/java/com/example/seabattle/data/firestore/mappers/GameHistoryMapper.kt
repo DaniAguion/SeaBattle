@@ -4,7 +4,6 @@ import com.example.seabattle.data.firestore.dto.GameHistoryDto
 import com.example.seabattle.domain.entity.GameHistory
 
 
-
 fun GameHistoryDto.toEntity(): GameHistory =
     GameHistory(
         gameId = gameId,
@@ -12,9 +11,8 @@ fun GameHistoryDto.toEntity(): GameHistory =
         player1 = player1.toEntity(),
         player2 = player2.toEntity(),
         scoreTransacted = scoreTransacted,
-        playedAt = playedAt
+        playedAt = playedAt?.toInstant()
     )
-
 
 fun GameHistory.toDto(): GameHistoryDto =
     GameHistoryDto(
@@ -23,5 +21,5 @@ fun GameHistory.toDto(): GameHistoryDto =
         player1 = player1.toDto(),
         player2 = player2.toDto(),
         scoreTransacted = scoreTransacted,
-        playedAt = playedAt
+        playedAt = playedAt?.toTimestamp()
     )

@@ -1,6 +1,8 @@
 package com.example.seabattle.domain.entity
 
-import java.util.Date
+import java.time.Instant
+import java.time.Instant.now
+
 
 // Represents the user profile in the application
 data class User(
@@ -37,5 +39,5 @@ data class GameHistory (
     val player1: BasicPlayer,
     val player2: BasicPlayer,
     val scoreTransacted: Long = 0L,
-    val playedAt: Date? = Date()
+    val playedAt: Instant? = null
 )

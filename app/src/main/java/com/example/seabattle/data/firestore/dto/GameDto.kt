@@ -1,8 +1,8 @@
 package com.example.seabattle.data.firestore.dto
 
 import com.example.seabattle.domain.entity.Ship
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
-import java.util.Date
 
 
 /**
@@ -49,8 +49,8 @@ data class GameDto(
     var gameState: String = "",
     var winnerId: String? = null,
     var scoreTransacted: Boolean = false,
-    val createdAt: Date? = null,
-    var updatedAt: Date? = null,
-    var expireAt: Date? = null,
+    val createdAt: Timestamp? = null,
+    var updatedAt: Timestamp? = null,
+    var expireAt: Timestamp? = null,
 )
 

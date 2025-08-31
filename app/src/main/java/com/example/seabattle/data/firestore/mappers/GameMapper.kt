@@ -2,9 +2,7 @@ package com.example.seabattle.data.firestore.mappers
 
 import com.example.seabattle.data.firestore.dto.GameCreationDto
 import com.example.seabattle.data.firestore.dto.GameDto
-import com.example.seabattle.data.firestore.dto.PlayerDto
 import com.example.seabattle.domain.entity.Game
-import com.example.seabattle.domain.entity.Player
 
 
 // Function to convert Game DTO to Game Entity
@@ -23,9 +21,9 @@ fun GameDto.toEntity(): Game {
         currentPlayer = currentPlayer,
         gameState = gameState,
         winnerId = winnerId,
-        createdAt = createdAt,
-        expireAt = expireAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt?.toInstant(),
+        expireAt = expireAt?.toInstant(),
+        updatedAt = updatedAt?.toInstant(),
     )
 }
 

@@ -36,7 +36,7 @@ fun WaitGameSection(
 ) {
     var waitingTime by remember(game.createdAt) {
         val initialMillis: Long = game.createdAt?.let {
-            System.currentTimeMillis() - it.time
+            System.currentTimeMillis() - game.createdAt.toEpochMilli()
         } ?: 0L
         val initialSeconds = (initialMillis / 1000L).coerceAtLeast(0L).toInt()
         mutableStateOf(initialSeconds)
@@ -45,7 +45,7 @@ fun WaitGameSection(
     LaunchedEffect(waitingTime) {
         while (true) {
             val waitingTimeMS: Long = game.createdAt?.let {
-                System.currentTimeMillis() - it.time
+                System.currentTimeMillis() - game.createdAt.toEpochMilli()
             } ?: 0L
             waitingTime = (waitingTimeMS / 1000L).coerceAtLeast(0L).toInt()
             delay(1000L)

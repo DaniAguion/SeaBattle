@@ -1,6 +1,7 @@
 package com.example.seabattle.domain.entity
 
-import java.util.Date
+import java.time.Instant
+import java.time.Instant.now
 
 data class Game(
     val gameId: String,
@@ -17,9 +18,9 @@ data class Game(
     val gameState: String = "",
     val winnerId: String? = null,
     val scoreTransacted: Boolean = false,
-    val createdAt: Date? = Date(),
-    val expireAt: Date? = Date(),
-    val updatedAt: Date? = Date(),
+    val createdAt: Instant? = now(),
+    val expireAt: Instant? = now(),
+    val updatedAt: Instant? = now(),
 )
 
 
