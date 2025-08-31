@@ -1,5 +1,6 @@
 package com.example.seabattle.di
 
+import com.example.seabattle.data.connectivity.NetworkConnectivityObserver
 import com.example.seabattle.data.local.GameBoardRepositoryImpl
 import com.example.seabattle.domain.repository.AuthRepository
 import com.example.seabattle.data.firebase.AuthRepositoryImpl
@@ -9,6 +10,7 @@ import com.example.seabattle.data.firestore.repository.UserGamesRepositoryImpl
 import com.example.seabattle.data.functions.BackendRepositoryImpl
 import com.example.seabattle.data.realtimedb.PresenceRepoImpl
 import com.example.seabattle.data.sound.SoundManagerImpl
+import com.example.seabattle.domain.ConnectivityObserver
 import com.example.seabattle.domain.repository.GameBoardRepository
 import com.example.seabattle.domain.repository.UserRepository
 import com.example.seabattle.domain.repository.GameRepository
@@ -21,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -46,4 +49,7 @@ val dataModule = module {
 
     // Sound Manager
     single<SoundManagerRepo> { SoundManagerImpl(get()) }
+
+    // Network Connectivity Observer
+    single<ConnectivityObserver> { NetworkConnectivityObserver(androidApplication()) }
 }

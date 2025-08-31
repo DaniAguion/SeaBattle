@@ -48,7 +48,7 @@
     <string name="list_games_title">Partidas disponibles</string>
     <string name="error_get_games">Error al obtener las partidas del servidor</string>
     <string name="no_games_available">No hay partidas disponibles</string>
-    <string name="invite_to_play_title">Invitar a un usuario a jugar</string>
+    <string name="invite_to_play_title">Invitar a un usuario a partida</string>
     <string name="invite_user">Invitar a partida</string>
     <string name="search_user">Buscar nombre de usuario</string>
     <string name="user_not_found">Usuario no encontrado</string>

@@ -3,7 +3,7 @@ package com.example.seabattle.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.seabattle.ConnectivityObserver
+import com.example.seabattle.domain.ConnectivityObserver
 import com.example.seabattle.domain.repository.SoundManagerRepo
 import com.example.seabattle.domain.usecase.presence.ListenPresenceUseCase
 import com.example.seabattle.domain.usecase.presence.SetPresenceUseCase
