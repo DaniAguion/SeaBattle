@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Sea Battle</string>
+    // Tabs Titles
+    <string name="tab_home">Home</string>
+    <string name="tab_leaderboard">Leader Board</string>
+    <string name="tab_profile">Profile</string>
 
     // Splash Screen
     <string name="error_splash_screen">Error, it wasn\'t possible to retrieve user information.</string>
@@ -50,18 +54,14 @@
     <string name="error_user_not_found">User not found.</string>
     <string name="error_user_data_not_valid">An error occurred with the game data</string>
     <string name="error_invalid_guest">Invalid guest</string>
-    <string name="error_invalid_game_name">Game name is not valid.</string>
+
 
 
     // Home Screen
     <string name="home_header_title">Welcome!</string>
     <string name="home_header_desc">Join a game or create a new one to start playing</string>
-    <string name="gameName">Game Name</string>
-    <string name="error_gameName">Game Name is too short</string>
-    <string name="error_invalid_gameName">Game Name too short</string>
     <string name="create_game">Create Game</string>
     <string name="list_games_title">Available games</string>
-    <string name="error_empty_gameName">Please, name the new game.</string>
     <string name="error_get_games">Error getting games from server</string>
     <string name="no_games_available">No games available</string>
     <string name="invite_to_play_title">Invite an user to play</string>
@@ -88,7 +88,6 @@
 
     // Game Screen - Wait Game Section
     <string name="waiting_player">Waiting Player</string>
-    <string name="game_name">Game Name: %s</string>
     <string name="waiting_time">Waiting Time: %s</string>
 
     // Game Screen - Ready Check Section

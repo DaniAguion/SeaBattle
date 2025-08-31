@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 
 
 @Composable
@@ -28,7 +29,7 @@ fun TabNavigation(
         TabRow(selectedTabIndex = tabIndex) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
-                    text = { Text(tab.title) },
+                    text = { Text(stringResource(tab.textRef)) },
                     icon = { Icon(tab.icon, contentDescription = tab.icon.name) },
                     selected = tabIndex == index,
                     onClick = {
