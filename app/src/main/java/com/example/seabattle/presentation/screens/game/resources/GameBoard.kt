@@ -39,6 +39,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,6 +57,8 @@ import com.example.seabattle.presentation.theme.SeaBattleTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.random.Random
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 
 
 @Composable
@@ -94,6 +103,8 @@ fun GameBoard(
                 Row  {
                     for (j in 0 until (gameBoard[i.toString()]?.size ?: 0)) {
                         Cell(
+                            row = i,
+                            col = j,
                             cellValue = gameBoard[i.toString()]?.get(j.toString()) ?: 0,
                             cellUnhidden = cellsUnhidden,
                             onClickCell = { onClickCell(i, j) },
@@ -110,6 +121,8 @@ fun GameBoard(
 
 @Composable
 fun Cell(
+    row: Int,
+    col: Int,
     cellValue: Int,
     cellUnhidden : Boolean,
     onClickCell: () -> Unit,
@@ -119,6 +132,7 @@ fun Cell(
     val context = LocalContext.current
     val density = LocalDensity.current
 
+    val positionDescription = context.getString(R.string.cell_position, row + 1, col + 1)
     val finalCellValue = cellValue
 
     val finalCellStyle: CellStyle =
@@ -366,6 +380,7 @@ fun Cell(
         }
     }
 
+    val actionLabel = R.string.action_reveal_cell
 
 
     // Draw the cell
@@ -376,7 +391,14 @@ fun Cell(
             .clickable(
                 enabled = cellClickable,
                 onClick = onClickCell
-            ),
+            )
+            .semantics(mergeDescendants = true) {
+                contentDescription = positionDescription
+                stateDescription = context.getString(finalCellStyle.cellDescription)
+                role = Role.Button
+                if (!cellClickable) disabled()
+                onClick(label = context.getString(actionLabel)) { true }
+            },
         shape = RectangleShape,
         color = Color.Transparent,
         contentColor = LocalContentColor.current,

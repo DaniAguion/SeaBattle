@@ -15,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.seabattle.R
@@ -65,6 +68,7 @@ fun ReadyCheckSection(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_xsmall))
+                    .semantics { liveRegion = LiveRegionMode.Polite }
             )
             Text(
                 text = if (game.player2Ready) {

@@ -43,6 +43,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.seabattle.data.local.sampleGame
 import com.example.seabattle.presentation.resources.toErrorMessageUI
@@ -248,7 +250,12 @@ fun GameScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = dimensionResource(R.dimen.padding_xsmall))
             ) {
-                IconButton(onClick = { toggleMute() }) {
+                IconButton(
+                    onClick = { toggleMute() },
+                    modifier = Modifier.semantics {
+                        traversalIndex = 100f
+                    }
+                ) {
                     Icon(
                         imageVector = if (soundMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = if (soundMuted) stringResource(R.string.unmute_sound) else stringResource(R.string.mute_sound)

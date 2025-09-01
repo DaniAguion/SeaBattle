@@ -75,6 +75,8 @@
     <string name="reject_button">Reject</string>
 
     // Game Screen
+    <string name="user_online">%s online</string>
+    <string name="user_offline">%s offline</string>
     <string name="leave_dialog_title">Confirm you want to leave</string>
     <string name="leave_dialog_desc">Are you sure you want to leave?</string>
     <string name="leave_dialog_confirm">Leave</string>
@@ -85,6 +87,12 @@
     <string name="claim_dialog_cancel">Continue Playing</string>
     <string name="unmute_sound">Unmute sound</string>
     <string name="mute_sound">Mute sound</string>
+    <string name="unknown_cell">Unknown</string>
+    <string name="hit_cell">Hit</string>
+    <string name="water_cell">Water</string>
+    <string name="ship_cell">Ship</string>
+    <string name="sunk_cell">Sunk</string>
+    <string name="none_cell">None</string>
 
     // Game Screen - Wait Game Section
     <string name="waiting_player">Waiting Player</string>
@@ -144,4 +152,8 @@
     <string name="invalid_password">Invalid password</string>
     <string name="password_reset_sent">Password reset email sent</string>
     <string name="password_reset_failed">Try to reset password failed</string>
+    <string name="action_reveal_cell">Shot</string>
+    <string name="game_card_title">Against %s (%d)</string>
+    <string name="logout_button">Sign Out</string>
+    <string name="cell_position">Row %d, Column %d</string>
 </resources>

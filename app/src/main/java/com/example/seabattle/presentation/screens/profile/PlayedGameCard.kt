@@ -114,13 +114,13 @@ fun PlayerInfo(
         if (player.photoUrl.isEmpty()) {
             Image(
                 painter = painterResource(id = R.drawable.account_box_40px),
-                contentDescription = "User photo",
+                contentDescription = null,
 
             )
         } else {
             AsyncImage(
                 model = player.photoUrl,
-                contentDescription = "User photo",
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.account_box_40px),
                 modifier = Modifier

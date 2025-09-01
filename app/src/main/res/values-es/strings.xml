@@ -57,6 +57,7 @@
     <string name="invitations_title">Invitaciones recibidas</string>
     <string name="no_invitations">No se han recibido invitaciones</string>
     <string name="reject_button">Rechazar</string>
+    <string name="user_offline">%s offline</string>
     <string name="leave_dialog_title">Confirma que deseas salir</string>
     <string name="leave_dialog_desc">¿Estás seguro de que deseas salir?</string>
     <string name="leave_dialog_confirm">Salir</string>
@@ -67,6 +68,7 @@
     <string name="claim_dialog_cancel">Continuar jugando</string>
     <string name="unmute_sound">Activar sonido</string>
     <string name="mute_sound">Silenciar sonido</string>
+    <string name="none_cell">Nada</string>
     <string name="waiting_player">Esperando jugador</string>
     <string name="waiting_time">Tiempo de espera: %s</string>
     <string name="ready_check_title">¡Confirma cuando estés listo!</string>
@@ -76,7 +78,7 @@
     <string name="ready_button">Listo</string>
     <string name="your_turn">¡Es tu turno!</string>
     <string name="oponnent_turn">¡Es el turno de tu oponente!</string>
-    <string name="game_finished">¡Parida finalizada!</string>
+    <string name="game_finished">¡Partida finalizada!</string>
     <string name="winner_message">¡Has ganado!!</string>
     <string name="loser_message">Has perdido :(</string>
     <string name="initial_score">Puntuación inicial:</string>
@@ -113,4 +115,14 @@
     <string name="password_reset_failed">El intento de restablecimiento de contraseña ha fallado</string>
     <string name="tab_home">Principal</string>
     <string name="tab_leaderboard">Clasificación</string>
+    <string name="user_online">%s online</string>
+    <string name="unknown_cell">Desconocido</string>
+    <string name="hit_cell">Tocado</string>
+    <string name="water_cell">Agua</string>
+    <string name="ship_cell">Barco</string>
+    <string name="sunk_cell">Hundido</string>
+    <string name="action_reveal_cell">Disparar</string>
+    <string name="game_card_title">Contra %s (%d)</string>
+    <string name="logout_button">Cerrar sesión</string>
+    <string name="cell_position">Fila %d, Columna %d</string>
 </resources>

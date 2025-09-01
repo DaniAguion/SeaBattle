@@ -25,6 +25,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +52,7 @@ fun PlayersInfoHeader(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
+            .clearAndSetSemantics { }
     ) {
         PlayerStatusCard(
             player = player1,
@@ -69,10 +75,25 @@ fun PlayerStatusCard(
     player: Player,
     modifier: Modifier = Modifier
 ){
+    val statusDescription =
+        if (player.displayName.isEmpty()) {
+            ""
+        } else {
+            if (player.status == "online") {
+                stringResource(R.string.user_online, player.displayName)
+            } else {
+                stringResource(R.string.user_offline, player.displayName)
+            }
+        }
+
     Card(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.card_corner_radius)),
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.card_elevation)),
         modifier = modifier
+            .clearAndSetSemantics {
+                stateDescription = statusDescription
+                liveRegion = LiveRegionMode.Polite
+            },
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -84,18 +105,20 @@ fun PlayerStatusCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+
             ) {
                 if (player.photoUrl.isEmpty()) {
                     Image(
                         painter = painterResource(id = R.drawable.account_box_40px),
-                        contentDescription = "User photo",
+                        contentDescription = null,
                         modifier = Modifier.size(dimensionResource(R.dimen.profile_image_size))
                     )
                 } else {
                     AsyncImage(
                         model = player.photoUrl,
-                        contentDescription = "User photo",
+                        contentDescription = null,
                         modifier = Modifier.size(dimensionResource(R.dimen.profile_image_size)),
                         contentScale = ContentScale.Crop,
                         error = painterResource(id = R.drawable.account_box_40px),

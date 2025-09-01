@@ -214,7 +214,7 @@ fun ProfileScreenContent(
             if (user.photoUrl.isEmpty()) {
                 Image(
                     painter = painterResource(id = R.drawable.account_box_40px),
-                    contentDescription = "User photo",
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(top= dimensionResource(R.dimen.padding_small))
                         .size(dimensionResource(R.dimen.profile_image_size))
@@ -223,7 +223,7 @@ fun ProfileScreenContent(
             } else {
                 AsyncImage(
                     model = user.photoUrl,
-                    contentDescription = "User photo",
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.account_box_40px),
                     modifier = Modifier
@@ -258,7 +258,7 @@ fun ProfileScreenContent(
                 modifier = Modifier
                     .padding(bottom = dimensionResource(R.dimen.padding_small)),
             ) {
-                Text("SignOut")
+                Text(stringResource(R.string.logout_button))
             }
         }
 

@@ -52,7 +52,7 @@ fun GameCard(
                     .padding(end = dimensionResource(id = R.dimen.padding_xsmall))
             ){
                 Text(
-                    text = "Against $playerName ($score)",
+                    text = stringResource(id = R.string.game_card_title, playerName, score),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,

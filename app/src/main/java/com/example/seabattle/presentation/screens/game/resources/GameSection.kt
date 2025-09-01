@@ -28,6 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.seabattle.R
@@ -100,25 +103,19 @@ fun GameSectionContent(
     enableClickCell: (gameBoardOwner: String) -> Boolean = { true },
     enableSeeShips: (watcher: String) -> Boolean = { false }
 ) {
-    if (delayedCurrentPlayer == userId) {
-        Text(
-            text = stringResource(R.string.your_turn),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = SemiBold,
-            modifier = Modifier
-                .padding(bottom = dimensionResource(R.dimen.padding_medium))
-                .padding(horizontal = dimensionResource(R.dimen.padding_medium))
-        )
-    } else {
-        Text(
-            text = stringResource(R.string.oponnent_turn),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = SemiBold,
-            modifier = Modifier
-                .padding(bottom = dimensionResource(R.dimen.padding_medium))
-                .padding(horizontal = dimensionResource(R.dimen.padding_medium))
-        )
-    }
+    Text(
+        text = if (delayedCurrentPlayer == userId) {
+            stringResource(R.string.your_turn)
+        } else {
+            stringResource(R.string.oponnent_turn)
+        },
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = SemiBold,
+        modifier = Modifier
+            .padding(bottom = dimensionResource(R.dimen.padding_medium))
+            .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+            .semantics { liveRegion = LiveRegionMode.Polite }
+    )
     AnimatedContent(
         targetState = delayedCurrentPlayer,
         transitionSpec = {

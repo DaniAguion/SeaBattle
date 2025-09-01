@@ -18,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.platform.LocalConfiguration
 import android.content.res.Configuration
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.example.seabattle.presentation.screens.leaderboard.LeaderBoardScreen
 import com.example.seabattle.presentation.screens.game.GameScreen
 import com.example.seabattle.presentation.screens.home.HomeScreen
@@ -130,6 +131,7 @@ fun SeaBattleTopBar() {
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary
-        )
+        ),
+        modifier = Modifier.clearAndSetSemantics{}
     )
 }
