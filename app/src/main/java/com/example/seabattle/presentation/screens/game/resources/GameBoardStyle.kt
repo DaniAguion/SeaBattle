@@ -1,6 +1,5 @@
 package com.example.seabattle.presentation.screens.game.resources
 
-import androidx.compose.ui.res.stringResource
 import com.example.seabattle.R
 
 sealed class CellStyle(
