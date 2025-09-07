@@ -101,6 +101,7 @@
     <string name="cancel_button">Cancelar</string>
     <string name="error_recent_login_required">Se requiere un inicio de sesión reciente. Por favor, vuelve a iniciar sesión.</string>
     <string name="delete_confirmation_text">Confirmación de eliminación</string>
+    <string name="delete_confirmation_field">Eliminar</string>
     <string name="delete_confirmation_error">Escribe \"Eliminar\" antes de confirmar</string>
     <string name="delete_account_button">Eliminar cuenta</string>
     <string name="change_username_button">Cambiar nombre de usuario</string>

@@ -137,6 +137,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="error_recent_login_required">Recent login required. Please log in again.</string>
     <string name="delete_confirmation_text">Delete confirmation</string>
+    <string name="delete_confirmation_field">Delete</string>
     <string name="delete_confirmation_error">Write \"Delete\" before confirm</string>
     <string name="delete_account_button">Delete Account</string>
     <string name="change_username_button">Change Username</string>

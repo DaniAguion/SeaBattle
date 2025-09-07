@@ -13,7 +13,7 @@ data class ProfileUiState(
     val errorList: Boolean = false,
     val loadingList: Boolean = true,
     val deleteDialog: Boolean = false,
-    val deleteConfirmationText: String = "",
+    val deleteConfirmationField: String = "",
     val msgResult: InfoMessages? = null,
     val error: Throwable? = null,
 )

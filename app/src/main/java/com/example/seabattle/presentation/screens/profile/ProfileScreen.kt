@@ -79,6 +79,9 @@ fun ProfileScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
+    val deleteTextField = stringResource(R.string.delete_confirmation_field)
+    val isDeleteEnabled = profileUiState.deleteConfirmationField.equals(deleteTextField)
+
     // Stop listeners when the screen is disposed
     DisposableEffect(Unit) {
         profileViewModel.startListening()
@@ -122,13 +125,13 @@ fun ProfileScreen(
                 ){
                     Text(stringResource(R.string.delete_account_title_msg))
                     OutlinedTextField(
-                        value = profileUiState.deleteConfirmationText,
+                        value = profileUiState.deleteConfirmationField,
                         onValueChange = { profileViewModel.onDeleteConfirmTextUpdated(it) },
                         label = { Text(stringResource(R.string.delete_confirmation_text)) },
                         singleLine = true,
-                        isError = profileUiState.deleteConfirmationText != "Delete",
+                        isError = !isDeleteEnabled,
                         supportingText = {
-                            if (profileUiState.deleteConfirmationText != "Delete") {
+                            if (!isDeleteEnabled) {
                                 Text(
                                     text = stringResource(R.string.delete_confirmation_error),
                                     color = MaterialTheme.colorScheme.error
@@ -140,7 +143,7 @@ fun ProfileScreen(
             },
             confirmButton = {
                 Button(
-                    enabled = profileUiState.deleteConfirmationText == "Delete",
+                    enabled = isDeleteEnabled,
                     onClick = {
                         profileViewModel.onClickConfirm()
                     },

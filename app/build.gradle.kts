@@ -19,10 +19,10 @@ android {
 
     defaultConfig {
         applicationId = "com.upsa.seabattle"
-        minSdk = 31
+        minSdk = 29
         targetSdk = 35
-        versionCode = 2
-        versionName = "2.0"
+        versionCode = 4
+        versionName = "4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
