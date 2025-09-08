@@ -71,6 +71,7 @@ fun GameScreen(
     val currentRoute = navBackStackEntry.value?.destination?.route ?: Screen.Game.name
 
     var showLeaveDialog by remember { mutableStateOf(false) }
+    var showSurrenderDialog by remember { mutableStateOf(false) }
 
 
     // Stop listeners when the screen is disposed
@@ -94,9 +95,17 @@ fun GameScreen(
     }
 
 
-    // If the user presses the back button, show a confirmation dialog
+    // If the user presses the back button, show a confirmation dialog to abandon or leave the game
     BackHandler(
-        onBack = { showLeaveDialog = true }
+        onBack = {
+            if (gameUiState.game?.gameState == GameState.GAME_FINISHED.name) {
+                gameViewModel.onUserLeave()
+            } else if (gameUiState.game?.gameState == GameState.IN_PROGRESS.name) {
+                showSurrenderDialog = true
+            } else {
+                showLeaveDialog = true
+            }
+        }
     )
 
     // Observe the game state and call onUserLeave if the game was aborted
@@ -152,6 +161,41 @@ fun GameScreen(
         )
     }
 
+    // Show a dialog to confirm the user wants to surrender
+    if (showSurrenderDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showSurrenderDialog = false
+            },
+            title = {
+                Text(stringResource(R.string.surrender_dialog_title))
+            },
+            text = {
+                Text(stringResource(R.string.surrender_dialog_desc))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showSurrenderDialog = false
+                        gameViewModel.onUserSurrender()
+                    }
+                ) {
+                    Text(stringResource(R.string.surrender_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showSurrenderDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.leave_dialog_cancel))
+                }
+            }
+        )
+    }
+
+
 
     if (gameUiState.showClaimDialog) {
         AlertDialog(
@@ -185,6 +229,7 @@ fun GameScreen(
         )
     }
 
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -196,7 +241,13 @@ fun GameScreen(
             userScore = gameUiState.userScore,
             onClickReady = gameViewModel::onClickReady,
             enableReadyButton = gameViewModel::enableReadyButton,
-            onClickLeave = { showLeaveDialog = true },
+            onClickLeave = {
+                if (gameUiState.game?.gameState == GameState.GAME_FINISHED.name) {
+                    gameViewModel.onUserLeave()
+                } else {
+                    showLeaveDialog = true
+                }
+            },
             onClickCell = gameViewModel::onClickCell,
             enableClickCell = gameViewModel::enableClickCell,
             enableSeeShips = gameViewModel::enableSeeShips,

@@ -126,4 +126,7 @@
     <string name="game_card_title">Contra %s (%d)</string>
     <string name="logout_button">Cerrar sesión</string>
     <string name="cell_position">Fila %d, Columna %d</string>
+    <string name="surrender_dialog_confirm">Rendirse</string>
+    <string name="surrender_dialog_title">Confirma que quieres rendirte</string>
+    <string name="surrender_dialog_desc">Seguro que quieres abandonar?\nPerderás la partida!</string>
 </resources>

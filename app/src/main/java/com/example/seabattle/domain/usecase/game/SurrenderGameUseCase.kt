@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
-class LeaveGameUseCase(
+class SurrenderGameUseCase(
     val gameRepository: GameRepository,
     val userGamesRepository: UserGamesRepository,
     val sessionService: SessionService,
@@ -30,29 +30,25 @@ class LeaveGameUseCase(
                 throw GameError.GameNotFound()
             }
 
-            // If the games is in WAITING_FOR_PLAYER or CHECK_READY state,
-            // it is necessary to update the game state to ABORTED to inform the opponent
-            if (game.gameState == GameState.WAITING_FOR_PLAYER.name ||
-                game.gameState == GameState.CHECK_READY.name){
-                fun abortGame(game: Game): Map<String, Any> {
-                    if (game.gameState == GameState.WAITING_FOR_PLAYER.name ||
-                        game.gameState == GameState.CHECK_READY.name) {
-                        return mapOf(
-                            "gameState" to GameState.GAME_ABORTED.name,
-                        )
-                    } else {
-                        throw GameError.InvalidGameState()
-                    }
-                }
-                gameRepository.updateGameFields(gameId = game.gameId, logicFunction = ::abortGame).getOrThrow()
+            if (game.gameState != GameState.IN_PROGRESS.name){
+                throw GameError.InvalidGameState()
             }
 
-            // Clear current game for the user
-            userGamesRepository.updateCurrentGameId(userId = userId, gameId = null).getOrThrow()
-            sessionService.clearCurrentGame()
+            fun surrenderGame(game: Game): Map<String, Any> {
+                 if (game.gameState == GameState.IN_PROGRESS.name) {
+                    val winnerId = if (game.player1.userId == userId) game.player2.userId else game.player1.userId
+                    return mapOf(
+                        "gameState" to GameState.GAME_FINISHED.name,
+                        "winnerId" to winnerId
+                    )
+                } else {
+                    throw GameError.InvalidGameState()
+                }
+            }
+            gameRepository.updateGameFields(gameId = game.gameId, logicFunction = ::surrenderGame).getOrThrow()
         }
         .onFailure { e ->
-            Timber.e(e, "LeaveGameUseCase failed.")
+            Timber.e(e, "SurrenderGameUseCase failed.")
         }
         .recoverCatching { throwable ->
             when (throwable) {

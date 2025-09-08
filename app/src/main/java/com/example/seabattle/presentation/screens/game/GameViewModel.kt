@@ -18,6 +18,7 @@ import com.example.seabattle.domain.usecase.game.UserReadyUseCase
 import com.example.seabattle.domain.usecase.user.GetUserProfileUseCase
 import com.example.seabattle.domain.usecase.userGames.CancelInvitationUseCase
 import com.example.seabattle.domain.repository.SoundManagerRepo
+import com.example.seabattle.domain.usecase.game.SurrenderGameUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,7 @@ class GameViewModel(
     private val userReadyUseCase: UserReadyUseCase,
     private val makeMoveUseCase: MakeMoveUseCase,
     private val listenGameUseCase: ListenGameUseCase,
+    private val surrenderGameUseCase: SurrenderGameUseCase,
     private val leaveGameUseCase: LeaveGameUseCase,
     private val cancelInvitationUseCase: CancelInvitationUseCase,
     private val enableClaimUseCase: EnableClaimUseCase,
@@ -270,6 +272,17 @@ class GameViewModel(
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(game = null, hasLeftGame = true)
                 }
+                .onFailure { e ->
+                    _uiState.value = _uiState.value.copy(error = e)
+                }
+        }
+    }
+
+
+    // This function is called when the user clicks on the "Surrender" button
+    fun onUserSurrender() {
+        viewModelScope.launch {
+            surrenderGameUseCase.invoke(userId = _uiState.value.userId, game = _uiState.value.game)
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(error = e)
                 }

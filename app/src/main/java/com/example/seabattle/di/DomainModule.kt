@@ -1,6 +1,7 @@
 package com.example.seabattle.di
 
 import com.example.seabattle.domain.SessionService
+import com.example.seabattle.domain.usecase.game.SurrenderGameUseCase
 import com.example.seabattle.domain.usecase.leaderboard.GetLeaderboardUseCase
 import com.example.seabattle.domain.usecase.user.GetAuthUserUseCase
 import com.example.seabattle.domain.usecase.user.LoginUserUseCase
@@ -61,6 +62,7 @@ val domainModule = module {
     factory { CreateGameUseCase(get(), get(), get(), get(), get(), get())}
     factory { JoinGameUseCase(get(), get(), get(), get(), get())}
     factory { ListenGameUseCase(get())}
+    factory { SurrenderGameUseCase(get(), get(), get(), get()) }
     factory { LeaveGameUseCase(get(), get(), get(), get()) }
     factory { MakeMoveUseCase(get(), get(), get())}
     factory { EnableReadyUseCase() }
