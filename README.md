@@ -3,6 +3,8 @@
   <img src="https://img.shields.io/badge/status-active-success.svg" />
   <img src="https://img.shields.io/badge/platform-Android-green.svg" />
   <img src="https://img.shields.io/badge/Kotlin-100%25-purple.svg" />
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-UI-blue.svg" />
+  <img src="https://img.shields.io/badge/Firebase-integrated-orange.svg" />
 </p>
 
 ## 🎮 About
