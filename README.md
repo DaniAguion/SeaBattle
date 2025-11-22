@@ -9,7 +9,7 @@
 
 ## 🎮 About
 
-**SeaBattle** is a native Android application that brings the classic Battleship game online with real-time multiplayer, competitive rankings, and social features. Built as a Master's thesis project at Universidad Pontificia de Salamanca, it demonstrates modern mobile architecture and Firebase integration.
+**SeaBattle** brings the classic naval strategy gameboard to Android devices with synchronized real-time multiplayer, global leaderboards, and social gaming features. This Master's thesis project from Universidad Pontificia de Salamanca exemplifies modern mobile development through clean architecture, reactive UI design, and scalable Firebase cloud services.
 
 ---
 
