@@ -5,8 +5,6 @@
   <img src="https://img.shields.io/badge/Kotlin-100%25-purple.svg" />
 </p>
 
----
-
 ## 🎮 About
 
 **SeaBattle** brings the classic naval strategy gameboard to Android devices with synchronized real-time multiplayer, global leaderboards, and social gaming features. This Master's thesis project from Universidad Pontificia de Salamanca exemplifies modern mobile development through clean architecture, reactive UI design, and scalable Firebase cloud services.
